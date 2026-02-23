@@ -1,988 +1,1803 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>CSS Challenge Lab</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS Cheatsheet Interaktif — Layout & Responsiveness</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  /* ── RESET & ROOT ───────────────────────── */
-  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-
-  :root {
-    --bg:       #0d0f14;
-    --surface:  #161920;
-    --border:   #252a35;
-    --muted:    #3a4055;
-    --text:     #e2e8f0;
-    --soft:     #8892a4;
-    --accent:   #00e5a0;
-    --accent2:  #3b82f6;
-    --warn:     #f59e0b;
-    --danger:   #ef4444;
-    --mono:     'JetBrains Mono', monospace;
-    --sans:     'Syne', sans-serif;
-  }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    font-family: var(--sans);
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* ── GRID BG ────────────────────────────── */
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background-image:
-      linear-gradient(var(--border) 1px, transparent 1px),
-      linear-gradient(90deg, var(--border) 1px, transparent 1px);
-    background-size: 40px 40px;
-    opacity: 0.3;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* ── HEADER ─────────────────────────────── */
-  header {
-    position: relative; z-index: 10;
-    padding: 32px 24px 24px;
-    max-width: 860px;
-    margin: 0 auto;
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
-
-  .logo {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--accent);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-
-  h1 {
-    font-size: clamp(26px, 5vw, 38px);
-    font-weight: 800;
-    line-height: 1.1;
-    letter-spacing: -1px;
-  }
-
-  h1 span { color: var(--accent); }
-
-  .subtitle {
-    font-family: var(--mono);
-    font-size: 13px;
-    color: var(--soft);
-    margin-top: 8px;
-  }
-
-  /* ── HUD (points + timer) ───────────────── */
-  .hud {
-    display: flex;
-    gap: 16px;
-    align-items: flex-start;
-  }
-
-  .hud-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 12px 20px;
-    text-align: center;
-    min-width: 90px;
-  }
-
-  .hud-label {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--soft);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-
-  .hud-value {
-    font-family: var(--mono);
-    font-size: 26px;
-    font-weight: 700;
-    color: var(--accent);
-    line-height: 1;
-  }
-
-  #timer-val { color: var(--warn); }
-  #timer-val.urgent { color: var(--danger); animation: pulse 0.5s infinite alternate; }
-
-  @keyframes pulse { from { opacity: 1; } to { opacity: 0.4; } }
-
-  /* ── PROGRESS BAR ───────────────────────── */
-  .progress-wrap {
-    max-width: 860px;
-    margin: 0 auto 28px;
-    padding: 0 24px;
-    position: relative; z-index: 10;
-  }
-
-  .progress-meta {
-    display: flex;
-    justify-content: space-between;
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--soft);
-    margin-bottom: 8px;
-  }
-
-  .progress-bar {
-    height: 4px;
-    background: var(--border);
-    border-radius: 99px;
-    overflow: hidden;
-  }
-
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent2), var(--accent));
-    border-radius: 99px;
-    transition: width 0.4s ease;
-    width: 0%;
-  }
-
-  /* ── MAIN AREA ──────────────────────────── */
-  main {
-    position: relative; z-index: 10;
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 0 24px 60px;
-  }
-
-  /* ── QUESTION CARD ──────────────────────── */
-  .q-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 32px;
-    margin-bottom: 20px;
-    transition: border-color 0.3s;
-  }
-
-  .q-card.correct  { border-color: var(--accent); box-shadow: 0 0 30px rgba(0,229,160,.1); }
-  .q-card.wrong    { border-color: var(--danger);  box-shadow: 0 0 30px rgba(239,68,68,.1); }
-
-  .q-meta {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-  }
-
-  .badge {
-    font-family: var(--mono);
-    font-size: 11px;
-    padding: 4px 10px;
-    border-radius: 6px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    font-weight: 700;
-  }
-
-  .badge-type  { background: rgba(59,130,246,.15); color: var(--accent2); }
-  .badge-pts   { background: rgba(0,229,160,.12);  color: var(--accent); }
-  .badge-diff  { background: rgba(245,158,11,.12); color: var(--warn); }
-  .badge-diff.hard { background: rgba(239,68,68,.12); color: var(--danger); }
-
-  .q-text {
-    font-size: 18px;
-    font-weight: 700;
-    line-height: 1.5;
-    margin-bottom: 8px;
-    letter-spacing: -0.3px;
-  }
-
-  .q-hint {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--soft);
-    margin-bottom: 24px;
-  }
-
-  /* ── CODE SNIPPET ───────────────────────── */
-  .code-block {
-    background: #0a0c10;
-    border: 1px solid var(--muted);
-    border-radius: 10px;
-    padding: 16px 20px;
-    margin-bottom: 24px;
-    font-family: var(--mono);
-    font-size: 13px;
-    line-height: 1.8;
-    overflow-x: auto;
-  }
-
-  .code-block .prop  { color: #7dd3fc; }
-  .code-block .val   { color: #86efac; }
-  .code-block .sel   { color: #f9a8d4; }
-  .code-block .blank { 
-    display: inline-block;
-    min-width: 100px;
-    border-bottom: 2px dashed var(--accent2);
-    color: var(--accent2);
-    text-align: center;
-    font-style: italic;
-  }
-  .code-block .cmt   { color: var(--muted); }
-
-  /* ── OPTIONS ────────────────────────────── */
-  .options {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-
-  @media (max-width: 560px) { .options { grid-template-columns: 1fr; } }
-
-  .opt {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 18px;
-    cursor: pointer;
-    transition: all 0.18s ease;
-    text-align: left;
-    color: var(--text);
-    font-family: var(--mono);
-    font-size: 13px;
-    line-height: 1.5;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .opt::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: var(--accent);
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-
-  .opt:hover:not(:disabled) {
-    border-color: var(--accent2);
-    transform: translateY(-1px);
-  }
-
-  .opt:disabled { cursor: default; }
-  .opt.selected { border-color: var(--accent2); background: rgba(59,130,246,.08); }
-  .opt.correct-opt  { border-color: var(--accent); background: rgba(0,229,160,.1); color: var(--accent); }
-  .opt.wrong-opt    { border-color: var(--danger); background: rgba(239,68,68,.08); color: var(--danger); text-decoration: line-through; opacity: 0.7; }
-
-  .opt-key {
-    display: inline-block;
-    width: 22px; height: 22px;
-    border: 1px solid currentColor;
-    border-radius: 4px;
-    text-align: center;
-    line-height: 22px;
-    font-size: 11px;
-    margin-right: 10px;
-    opacity: 0.5;
-    flex-shrink: 0;
-  }
-
-  /* ── FILL BLANK ─────────────────────────── */
-  .fill-wrap {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-
-  .fill-input {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px 18px;
-    font-family: var(--mono);
-    font-size: 14px;
-    color: var(--text);
-    outline: none;
-    transition: border-color 0.2s;
-    flex: 1;
-    min-width: 200px;
-  }
-
-  .fill-input:focus { border-color: var(--accent2); }
-  .fill-input.correct { border-color: var(--accent); color: var(--accent); }
-  .fill-input.wrong   { border-color: var(--danger); color: var(--danger); }
-
-  .btn-submit {
-    background: var(--accent2);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    padding: 12px 22px;
-    font-family: var(--mono);
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-
-  .btn-submit:hover { opacity: 0.85; transform: translateY(-1px); }
-  .btn-submit:disabled { opacity: 0.4; cursor: default; transform: none; }
-
-  /* ── FEEDBACK BOX ───────────────────────── */
-  .feedback {
-    margin-top: 20px;
-    padding: 16px 20px;
-    border-radius: 12px;
-    font-family: var(--mono);
-    font-size: 13px;
-    line-height: 1.7;
-    display: none;
-    animation: slideUp 0.3s ease;
-  }
-
-  @keyframes slideUp {
-    from { opacity:0; transform: translateY(8px); }
-    to   { opacity:1; transform: translateY(0); }
-  }
-
-  .feedback.show { display: block; }
-  .feedback.win  { background: rgba(0,229,160,.08); border: 1px solid rgba(0,229,160,.3); color: var(--accent); }
-  .feedback.lose { background: rgba(239,68,68,.08);  border: 1px solid rgba(239,68,68,.3);  color: #fca5a5; }
-
-  .feedback strong { font-size: 15px; display: block; margin-bottom: 6px; }
-  .feedback .correct-ans { color: var(--accent); font-weight: 700; }
-
-  /* ── NEXT BTN ───────────────────────────── */
-  .btn-next {
-    margin-top: 24px;
-    width: 100%;
-    padding: 16px;
-    background: transparent;
-    border: 1px solid var(--accent);
-    color: var(--accent);
-    border-radius: 12px;
-    font-family: var(--mono);
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: none;
-  }
-
-  .btn-next.show { display: block; }
-  .btn-next:hover { background: var(--accent); color: var(--bg); }
-
-  /* ── STREAK ─────────────────────────────── */
-  .streak-toast {
-    position: fixed;
-    top: 24px; right: 24px;
-    background: var(--accent);
-    color: var(--bg);
-    font-family: var(--mono);
-    font-size: 13px;
-    font-weight: 700;
-    padding: 12px 20px;
-    border-radius: 10px;
-    transform: translateX(200px);
-    transition: transform 0.3s ease;
-    z-index: 999;
-    letter-spacing: 1px;
-  }
-
-  .streak-toast.show { transform: translateX(0); }
-
-  /* ── RESULT SCREEN ──────────────────────── */
-  #result-screen {
-    display: none;
-    text-align: center;
-    padding: 48px 32px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    animation: slideUp 0.5s ease;
-  }
-
-  #result-screen.show { display: block; }
-
-  .result-emoji { font-size: 64px; margin-bottom: 16px; }
-
-  .result-title {
-    font-size: 32px;
-    font-weight: 800;
-    letter-spacing: -1px;
-    margin-bottom: 8px;
-  }
-
-  .result-sub {
-    font-family: var(--mono);
-    font-size: 13px;
-    color: var(--soft);
-    margin-bottom: 36px;
-  }
-
-  .result-stats {
-    display: flex;
-    justify-content: center;
-    gap: 24px;
-    flex-wrap: wrap;
-    margin-bottom: 40px;
-  }
-
-  .stat-box {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 20px 28px;
-    min-width: 120px;
-  }
-
-  .stat-num {
-    font-family: var(--mono);
-    font-size: 36px;
-    font-weight: 700;
-    color: var(--accent);
-    line-height: 1;
-    margin-bottom: 6px;
-  }
-
-  .stat-label {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--soft);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-
-  .btn-restart {
-    background: var(--accent);
-    color: var(--bg);
-    border: none;
-    border-radius: 12px;
-    padding: 16px 40px;
-    font-family: var(--mono);
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    transition: opacity 0.2s;
-  }
-
-  .btn-restart:hover { opacity: 0.85; }
-
-  /* ── REVIEW TABLE ───────────────────────── */
-  .review {
-    margin-top: 40px;
-    text-align: left;
-  }
-
-  .review h3 {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--soft);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 16px;
-  }
-
-  .review-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 14px;
-  }
-
-  .review-icon { font-size: 16px; flex-shrink: 0; padding-top: 1px; }
-  .review-q { flex: 1; color: var(--soft); font-size: 13px; }
-  .review-pts { font-family: var(--mono); font-size: 12px; color: var(--accent); flex-shrink: 0; }
+:root {
+  --bg: #080b14;
+  --surface: #0f1320;
+  --card: #131926;
+  --card2: #1a2133;
+  --border: #1e2d47;
+  --border2: #263650;
+  --yellow: #ffd95a;
+  --cyan: #38f5d4;
+  --pink: #ff6b9d;
+  --purple: #a78bfa;
+  --orange: #fb923c;
+  --green: #4ade80;
+  --blue: #60a5fa;
+  --red: #f87171;
+  --text: #e2e8f5;
+  --muted: #64748b;
+  --muted2: #94a3b8;
+  --glow-cyan: 0 0 30px rgba(56,245,212,.15);
+  --glow-purple: 0 0 30px rgba(167,139,250,.15);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px;
+  line-height: 1.65;
+  overflow-x: hidden;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
+
+/* ── BG GRID ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: .3;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── GLOW ORBS ── */
+.orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(100px);
+  pointer-events: none;
+  z-index: 0;
+}
+.orb-1 { width: 400px; height: 400px; background: rgba(56,245,212,.06); top: -100px; right: -100px; }
+.orb-2 { width: 500px; height: 500px; background: rgba(167,139,250,.06); bottom: 20%; left: -150px; }
+
+/* ── NAV ── */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(8,11,20,.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nav-brand {
+  font-family: 'Syne', sans-serif;
+  font-weight: 900;
+  font-size: 1rem;
+  background: linear-gradient(135deg, var(--cyan), var(--purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.nav-links {
+  display: flex;
+  gap: 4px;
+  list-style: none;
+}
+.nav-links a {
+  color: var(--muted2);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: all .2s;
+}
+.nav-links a:hover, .nav-links a.active {
+  color: var(--text);
+  background: var(--card2);
+}
+.progress-bar-outer {
+  position: fixed;
+  top: 57px; left: 0; right: 0;
+  height: 2px;
+  background: var(--border);
+  z-index: 99;
+}
+.progress-bar-inner {
+  height: 100%;
+  background: linear-gradient(90deg, var(--cyan), var(--purple));
+  width: 0%;
+  transition: width .1s;
+}
+
+/* ── WRAPPER ── */
+.wrapper {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 100px 24px 80px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── HERO ── */
+.hero {
+  text-align: center;
+  padding: 60px 0 80px;
+}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(56,245,212,.1);
+  border: 1px solid rgba(56,245,212,.2);
+  color: var(--cyan);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
+  padding: 6px 16px;
+  border-radius: 99px;
+  letter-spacing: .5px;
+  margin-bottom: 24px;
+  animation: fadeUp .6s ease both;
+}
+.hero h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 900;
+  line-height: 1.05;
+  background: linear-gradient(160deg, #fff 0%, #fff 40%, var(--cyan) 70%, var(--purple) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: fadeUp .6s .1s ease both;
+}
+.hero-sub {
+  color: var(--muted2);
+  margin-top: 16px;
+  font-size: 16px;
+  animation: fadeUp .6s .2s ease both;
+}
+.hero-stats {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  margin-top: 32px;
+  animation: fadeUp .6s .3s ease both;
+}
+.stat {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 24px;
+  text-align: center;
+}
+.stat-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--cyan);
+}
+.stat-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── SECTION HEADER ── */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 64px 0 32px;
+  animation: fadeUp .5s ease both;
+}
+.section-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--cyan);
+  background: rgba(56,245,212,.1);
+  border: 1px solid rgba(56,245,212,.2);
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+.section-header h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+.section-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--border2), transparent);
+}
+
+/* ── CARD ── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color .2s, box-shadow .2s;
+}
+.card:hover { border-color: var(--border2); }
+.card-glow-cyan:hover  { box-shadow: var(--glow-cyan); border-color: rgba(56,245,212,.25); }
+.card-glow-purple:hover{ box-shadow: var(--glow-purple); border-color: rgba(167,139,250,.25); }
+
+.card-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.card-subtitle { color: var(--muted2); font-size: 13.5px; margin-bottom: 20px; }
+
+/* ── TABS ── */
+.tab-container { margin-bottom: 16px; }
+.tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 4px;
+  width: fit-content;
+  margin-bottom: 16px;
+}
+.tab-btn {
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 16px;
+  border-radius: 7px;
+  border: none;
+  background: transparent;
+  color: var(--muted2);
+  cursor: pointer;
+  transition: all .2s;
+}
+.tab-btn.active {
+  background: var(--card2);
+  color: var(--text);
+}
+.tab-panel { display: none; }
+.tab-panel.active { display: block; animation: fadeUp .3s ease; }
+
+/* ── DISPLAY TABLE ── */
+.display-table {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+.display-item {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all .2s;
+  position: relative;
+  overflow: hidden;
+}
+.display-item:hover { border-color: var(--border2); transform: translateY(-2px); }
+.display-item.selected { border-color: var(--cyan); background: rgba(56,245,212,.07); }
+.display-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cyan);
+  margin-bottom: 6px;
+}
+.display-name { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+.display-desc { font-size: 12px; color: var(--muted2); }
+.display-tags-row { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 8px; }
+
+/* ── DEMO PREVIEW ── */
+.demo-preview {
+  background: #060910;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 16px;
+  min-height: 80px;
+}
+.demo-label { font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--muted); margin-bottom: 10px; }
+
+/* ── FLEX PLAYGROUND ── */
+.flex-playground {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.control-group { margin-bottom: 14px; }
+.control-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted2);
+  font-family: 'JetBrains Mono', monospace;
+  margin-bottom: 6px;
+  display: block;
+}
+.btn-group { display: flex; flex-wrap: wrap; gap: 6px; }
+.ctrl-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--card2);
+  color: var(--muted2);
+  cursor: pointer;
+  transition: all .15s;
+}
+.ctrl-btn:hover { border-color: var(--border2); color: var(--text); }
+.ctrl-btn.on { background: rgba(56,245,212,.12); border-color: rgba(56,245,212,.4); color: var(--cyan); }
+
+.flex-canvas {
+  background: #060910;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: stretch;
+  gap: 8px;
+  min-height: 140px;
+  flex-wrap: nowrap;
+  transition: all .3s cubic-bezier(.34,1.56,.64,1);
+  position: relative;
+}
+.flex-canvas::before {
+  content: 'FLEX CONTAINER';
+  position: absolute;
+  top: 6px; left: 10px;
+  font-size: 9px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--border2);
+  letter-spacing: 1px;
+}
+.flex-child {
+  background: linear-gradient(135deg, rgba(167,139,250,.4), rgba(56,245,212,.2));
+  border: 1px solid rgba(167,139,250,.4);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--purple);
+  min-width: 44px;
+  min-height: 44px;
+  transition: all .3s;
+}
+.flex-child:nth-child(2) { min-height: 64px; }
+.flex-child:nth-child(3) { min-height: 36px; }
+
+.generated-css {
+  background: #060910;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  line-height: 1.9;
+  margin-top: 12px;
+}
+
+/* ── POSITION DEMO ── */
+.pos-demo-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+.pos-card {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all .2s;
+}
+.pos-card:hover { border-color: var(--border2); }
+.pos-card.active-pos { border-color: var(--yellow); background: rgba(255,217,90,.06); }
+.pos-card-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.pos-card-desc { font-size: 12px; color: var(--muted2); line-height: 1.5; }
+.pos-emoji { font-size: 1.4rem; margin-bottom: 8px; }
+
+.pos-visual {
+  background: #060910;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  height: 120px;
+  position: relative;
+  margin-top: 16px;
+  overflow: hidden;
+  transition: all .3s;
+}
+.pos-parent {
+  position: relative;
+  width: 70%;
+  height: 80px;
+  background: rgba(255,217,90,.08);
+  border: 1px dashed rgba(255,217,90,.3);
+  border-radius: 8px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: rgba(255,217,90,.5);
+  transition: all .3s;
+}
+.pos-child {
+  position: absolute;
+  background: var(--pink);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+  transition: all .4s cubic-bezier(.34,1.56,.64,1);
+  white-space: nowrap;
+}
+
+/* ── CODE BLOCK ── */
+.code-block {
+  background: #060910;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: 14px;
+}
+.code-header {
+  background: var(--card2);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.code-dots { display: flex; gap: 6px; }
+.code-dots span {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+}
+.code-dots span:nth-child(1) { background: #ff5f57; }
+.code-dots span:nth-child(2) { background: #febc2e; }
+.code-dots span:nth-child(3) { background: #28c840; }
+.code-lang {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+}
+.code-copy {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--muted2);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 3px 10px;
+  cursor: pointer;
+  transition: all .2s;
+}
+.code-copy:hover { color: var(--cyan); border-color: rgba(56,245,212,.4); }
+.code-copy.copied { color: var(--green); border-color: rgba(74,222,128,.4); }
+pre {
+  padding: 18px 20px;
+  overflow-x: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12.5px;
+  line-height: 2;
+}
+.kw  { color: #c792ea; }
+.prop { color: var(--cyan); }
+.val  { color: var(--orange); }
+.sel  { color: var(--yellow); }
+.at   { color: var(--pink); }
+.cm   { color: #3d5070; font-style: italic; }
+.str  { color: var(--green); }
+.num  { color: var(--blue); }
+
+/* ── UNIT INTERACTIVE ── */
+.unit-slider-section { margin-top: 14px; }
+.unit-tabs { display: flex; gap: 6px; margin-bottom: 14px; }
+.unit-tab {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--card2);
+  color: var(--muted2);
+  cursor: pointer;
+  transition: all .2s;
+}
+.unit-tab.active { background: rgba(167,139,250,.15); border-color: rgba(167,139,250,.4); color: var(--purple); }
+
+.unit-demo-box {
+  background: #060910;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.unit-element {
+  background: linear-gradient(135deg, rgba(167,139,250,.3), rgba(56,245,212,.2));
+  border: 1px solid rgba(167,139,250,.4);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--purple);
+  padding: 10px;
+  transition: all .3s;
+  min-height: 40px;
+}
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+}
+input[type=range] {
+  flex: 1;
+  -webkit-appearance: none;
+  height: 4px;
+  background: var(--border2);
+  border-radius: 99px;
+  outline: none;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--cyan);
+  cursor: pointer;
+}
+.slider-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cyan);
+  min-width: 60px;
+  text-align: right;
+}
+
+/* ── MEDIA QUERY SIMULATOR ── */
+.mq-simulator {
+  background: #060910;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: 16px;
+}
+.mq-topbar {
+  background: var(--card2);
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.mq-devices { display: flex; gap: 6px; }
+.mq-device-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--muted2);
+  padding: 6px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all .2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Outfit', sans-serif;
+}
+.mq-device-btn:hover { border-color: var(--border2); color: var(--text); }
+.mq-device-btn.active { background: rgba(56,245,212,.1); border-color: rgba(56,245,212,.3); color: var(--cyan); }
+.mq-width-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  margin-left: auto;
+}
+.mq-screen {
+  padding: 20px;
+  transition: all .4s cubic-bezier(.34,1.56,.64,1);
+}
+.mq-layout {
+  background: var(--card2);
+  border-radius: 10px;
+  padding: 14px;
+  transition: all .4s;
+}
+.mq-nav-bar {
+  background: rgba(56,245,212,.1);
+  border: 1px solid rgba(56,245,212,.2);
+  border-radius: 6px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  font-size: 12px;
+  color: var(--cyan);
+  margin-bottom: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  justify-content: space-between;
+}
+.mq-nav-links-demo { display: flex; gap: 6px; }
+.mq-nav-links-demo span {
+  background: rgba(255,255,255,.08);
+  border-radius: 4px;
+  width: 32px;
+  height: 12px;
+}
+.mq-hamburger { display: none; }
+.mq-body { display: flex; gap: 10px; }
+.mq-sidebar {
+  background: rgba(167,139,250,.08);
+  border: 1px solid rgba(167,139,250,.2);
+  border-radius: 6px;
+  width: 120px;
+  flex-shrink: 0;
+  padding: 10px;
+  transition: all .3s;
+}
+.mq-sidebar-item {
+  background: rgba(167,139,250,.15);
+  border-radius: 4px;
+  height: 8px;
+  margin-bottom: 6px;
+}
+.mq-main {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 8px;
+  transition: all .3s;
+}
+.mq-card-demo {
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  height: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: all .3s;
+}
+.mq-card-demo span {
+  background: rgba(255,255,255,.08);
+  border-radius: 3px;
+  height: 6px;
+  width: 60%;
+}
+.mq-card-demo span:last-child { width: 40%; }
+.mq-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  font-size: 12.5px;
+  color: var(--muted2);
+}
+.mq-info .pill { padding: 2px 10px; border-radius: 99px; font-size: 11px; font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+
+/* ── TRANSITION PLAYGROUND ── */
+.transition-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+.transition-card {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 16px;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.t-icon {
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+  display: block;
+  transition: transform .3s;
+}
+.t-label { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+.t-desc { font-size: 11px; color: var(--muted); }
+.t-hover-hint { font-size: 10px; color: var(--muted); margin-top: 8px; font-style: italic; }
+.t-code { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--cyan); margin-top: 6px; }
+
+/* transition demos */
+.tc-scale { transition: transform .3s ease; }
+.tc-scale:hover { transform: scale(1.1); }
+.tc-color {
+  background: var(--card2);
+  transition: background .4s ease, border-color .4s;
+}
+.tc-color:hover { background: rgba(56,245,212,.15); border-color: rgba(56,245,212,.4); }
+.tc-slide .t-icon { transition: transform .3s ease; }
+.tc-slide:hover .t-icon { transform: translateY(-8px); }
+.tc-shadow { transition: box-shadow .3s ease, transform .2s; }
+.tc-shadow:hover { box-shadow: 0 20px 40px rgba(0,0,0,.5); transform: translateY(-4px); }
+.tc-rotate .t-icon { transition: transform .4s ease; }
+.tc-rotate:hover .t-icon { transform: rotate(15deg) scale(1.1); }
+.tc-fade { transition: opacity .3s ease; opacity: 1; }
+.tc-fade:hover { opacity: .6; }
+
+/* ── QUIZ ── */
+.quiz-container { margin-top: 16px; }
+.quiz-question {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-opt {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: all .2s;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+}
+.quiz-opt:hover { border-color: var(--border2); }
+.quiz-opt.correct { background: rgba(74,222,128,.1); border-color: rgba(74,222,128,.4); color: var(--green); }
+.quiz-opt.wrong   { background: rgba(248,113,113,.08); border-color: rgba(248,113,113,.3); color: var(--red); }
+.quiz-opt-label {
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.quiz-feedback {
+  margin-top: 12px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  display: none;
+}
+.quiz-feedback.show { display: block; animation: fadeUp .3s ease; }
+.quiz-feedback.good { background: rgba(74,222,128,.08); border: 1px solid rgba(74,222,128,.2); color: var(--green); }
+.quiz-feedback.bad  { background: rgba(248,113,113,.07); border: 1px solid rgba(248,113,113,.2); color: var(--red); }
+.quiz-next {
+  margin-top: 12px;
+  background: var(--cyan);
+  color: #060910;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  display: none;
+  transition: all .2s;
+}
+.quiz-next:hover { opacity: .85; transform: translateY(-1px); }
+.quiz-next.show { display: inline-flex; align-items: center; gap: 6px; }
+.quiz-score {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: var(--muted2);
+}
+.score-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--border2);
+  transition: background .3s;
+}
+.score-dot.correct { background: var(--green); }
+.score-dot.wrong   { background: var(--red); }
+.quiz-complete {
+  text-align: center;
+  padding: 32px;
+  display: none;
+}
+.quiz-complete.show { display: block; animation: fadeUp .4s ease; }
+.quiz-complete-emoji { font-size: 3rem; margin-bottom: 12px; }
+.quiz-complete h3 { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; margin-bottom: 6px; }
+.quiz-complete p { color: var(--muted2); font-size: 14px; }
+.quiz-restart {
+  margin-top: 16px;
+  background: none;
+  border: 1px solid var(--border2);
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all .2s;
+}
+.quiz-restart:hover { border-color: var(--cyan); color: var(--cyan); }
+
+/* ── CHECKLIST ── */
+.checklist-grid { display: flex; flex-direction: column; gap: 10px; }
+.check-item {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  cursor: pointer;
+  transition: all .2s;
+  user-select: none;
+}
+.check-item:hover { border-color: var(--border2); }
+.check-item.checked { background: rgba(74,222,128,.06); border-color: rgba(74,222,128,.25); }
+.check-box {
+  width: 22px; height: 22px;
+  border: 2px solid var(--border2);
+  border-radius: 7px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .2s;
+  font-size: 13px;
+}
+.check-item.checked .check-box {
+  background: var(--green);
+  border-color: var(--green);
+}
+.check-text { font-size: 14px; }
+.check-text code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  background: rgba(255,255,255,.07);
+  border: 1px solid var(--border);
+  padding: 1px 6px;
+  border-radius: 4px;
+  color: var(--cyan);
+}
+.check-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  font-size: 13px;
+}
+.check-progress-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--border);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.check-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--green), var(--cyan));
+  border-radius: 99px;
+  transition: width .4s cubic-bezier(.34,1.56,.64,1);
+  width: 0%;
+}
+
+/* ── PILL / BADGE ── */
+.pill {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 99px;
+}
+.pill-c { background: rgba(56,245,212,.12); color: var(--cyan); }
+.pill-y { background: rgba(255,217,90,.12); color: var(--yellow); }
+.pill-p { background: rgba(167,139,250,.12); color: var(--purple); }
+.pill-g { background: rgba(74,222,128,.12); color: var(--green); }
+.pill-o { background: rgba(251,146,60,.12); color: var(--orange); }
+.pill-r { background: rgba(255,107,157,.12); color: var(--pink); }
+
+/* ── GRID ── */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+@media (max-width: 768px) {
+  .grid-2, .grid-3, .flex-playground, .pos-demo-container, .transition-grid, .display-table { grid-template-columns: 1fr !important; }
+  .nav-links { display: none; }
+}
+
+/* ── FOOTER ── */
+.footer {
+  text-align: center;
+  padding: 48px 0 32px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 13px;
+}
+.footer-tags { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 14px; }
+
+/* ── SCROLL ANIMATION ── */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity .5s ease, transform .5s ease;
+}
+.scroll-reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
 </style>
 </head>
 <body>
 
-<div class="streak-toast" id="streak-toast">🔥 STREAK x<span id="streak-num">0</span></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
 
-<header>
-  <div>
-    <div class="logo">// CSS Challenge Lab</div>
-    <h1>Level Up Your <span>CSS</span></h1>
-    <p class="subtitle">10 tantangan · sistem poin · feedback instan</p>
-  </div>
-  <div class="hud">
-    <div class="hud-card">
-      <div class="hud-label">Poin</div>
-      <div class="hud-value" id="score-val">0</div>
+<!-- PROGRESS BAR -->
+<div class="progress-bar-outer"><div class="progress-bar-inner" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-brand">⚡ CSS Cheatsheet</div>
+  <ul class="nav-links">
+    <li><a href="#display">Display</a></li>
+    <li><a href="#flexbox">Flexbox</a></li>
+    <li><a href="#positioning">Positioning</a></li>
+    <li><a href="#units">Units</a></li>
+    <li><a href="#mediaqueries">Media Queries</a></li>
+    <li><a href="#transitions">Transitions</a></li>
+    <li><a href="#quiz">Quiz</a></li>
+  </ul>
+</nav>
+
+<div class="wrapper">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">📚 SECTION 3 & 4 • CSS LAYOUT ENGINE</div>
+    <h1>Layout &<br>Responsiveness</h1>
+    <p class="hero-sub">Cheatsheet interaktif untuk SMA — coba langsung, bukan cuma baca! 🚀</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">6</div><div class="stat-label">Topik Utama</div></div>
+      <div class="stat"><div class="stat-num">5+</div><div class="stat-label">Live Demo</div></div>
+      <div class="stat"><div class="stat-num">10</div><div class="stat-label">Soal Quiz</div></div>
     </div>
-    <div class="hud-card">
-      <div class="hud-label">Waktu</div>
-      <div class="hud-value" id="timer-val">30</div>
+  </div>
+
+  <!-- ══════════════ SECTION 3 ══════════════ -->
+  <div class="section-header scroll-reveal">
+    <span class="section-num">SECTION 3</span>
+    <h2>🏗️ The Layout Engine</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <!-- 1. DISPLAY PROPERTY -->
+  <div id="display" class="card card-glow-cyan scroll-reveal" style="margin-bottom:20px">
+    <div class="card-title">🪟 1. Display Property</div>
+    <div class="card-subtitle">Setiap tag HTML punya "sifat bawaan" dalam mengambil ruang. Klik kartu di bawah untuk lihat contohnya!</div>
+
+    <div class="display-table" id="displayTable">
+      <div class="display-item" onclick="selectDisplay('block', this)">
+        <div class="display-tag">display: block</div>
+        <div class="display-name">🚌 Block — Si Rakus Baris</div>
+        <div class="display-desc">Selalu ambil satu baris penuh, bisa diatur lebar & tinggi.</div>
+        <div class="display-tags-row">
+          <span class="pill pill-y">div</span><span class="pill pill-y">h1</span><span class="pill pill-y">p</span><span class="pill pill-y">section</span>
+        </div>
+      </div>
+      <div class="display-item" onclick="selectDisplay('inline', this)">
+        <div class="display-tag">display: inline</div>
+        <div class="display-name">🚶 Inline — Ngikut Teks</div>
+        <div class="display-desc">Ikut aliran teks, lebar sesuai isi, TIDAK bisa diatur lebar/tinggi.</div>
+        <div class="display-tags-row">
+          <span class="pill pill-c">span</span><span class="pill pill-c">a</span><span class="pill pill-c">strong</span>
+        </div>
+      </div>
+      <div class="display-item" onclick="selectDisplay('inline-block', this)">
+        <div class="display-tag">display: inline-block</div>
+        <div class="display-name">🏍️ Inline-Block — Jalan Bareng tapi Bisa Diatur</div>
+        <div class="display-desc">Berjajar ke samping seperti inline, tapi bisa diatur ukurannya seperti block.</div>
+        <div class="display-tags-row">
+          <span class="pill pill-p">img</span><span class="pill pill-p">button</span>
+        </div>
+      </div>
+      <div class="display-item" onclick="selectDisplay('none', this)">
+        <div class="display-tag">display: none</div>
+        <div class="display-name">👻 None — Hilang Dari Dunia</div>
+        <div class="display-desc">Menghilangkan elemen sepenuhnya — tidak terlihat, tidak makan tempat.</div>
+        <div class="display-tags-row">
+          <span class="pill pill-r">menu dropdown</span><span class="pill pill-r">modal tersembunyi</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-preview" id="displayDemo">
+      <div class="demo-label">▶ Klik salah satu kartu di atas untuk melihat preview</div>
+    </div>
+
+    <div class="code-block" style="margin-top:16px">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span class="code-lang">CSS</span>
+        <button class="code-copy" onclick="copyCode(this, 'displayCode')">copy</button>
+      </div>
+      <pre id="displayCode"><span class="cm">/* Contoh penggunaan Display Property */</span>
+<span class="sel">.kotak-block</span>    { <span class="prop">display</span>: <span class="val">block</span>; }
+<span class="sel">.teks-inline</span>    { <span class="prop">display</span>: <span class="val">inline</span>; }
+<span class="sel">.button-custom</span>  { <span class="prop">display</span>: <span class="val">inline-block</span>; }
+<span class="sel">.menu-sembunyi</span>  { <span class="prop">display</span>: <span class="val">none</span>; }</pre>
     </div>
   </div>
-</header>
 
-<div class="progress-wrap">
-  <div class="progress-meta">
-    <span id="q-counter">Soal 1 dari 10</span>
-    <span id="streak-label"></span>
+  <!-- 2. FLEXBOX -->
+  <div id="flexbox" class="card card-glow-purple scroll-reveal" style="margin-bottom:20px">
+    <div class="card-title">📦 2. Flexbox — Playground Interaktif</div>
+    <div class="card-subtitle">Klik tombol-tombol di bawah untuk mengubah properti Flexbox dan lihat hasilnya secara langsung!</div>
+
+    <div class="flex-playground">
+      <div>
+        <div class="control-group">
+          <span class="control-label">flex-direction:</span>
+          <div class="btn-group">
+            <button class="ctrl-btn on" onclick="setFlex('direction','row',this)">row</button>
+            <button class="ctrl-btn" onclick="setFlex('direction','column',this)">column</button>
+            <button class="ctrl-btn" onclick="setFlex('direction','row-reverse',this)">row-reverse</button>
+            <button class="ctrl-btn" onclick="setFlex('direction','column-reverse',this)">column-reverse</button>
+          </div>
+        </div>
+        <div class="control-group">
+          <span class="control-label">justify-content:</span>
+          <div class="btn-group">
+            <button class="ctrl-btn on" onclick="setFlex('justify','flex-start',this)">flex-start</button>
+            <button class="ctrl-btn" onclick="setFlex('justify','center',this)">center</button>
+            <button class="ctrl-btn" onclick="setFlex('justify','flex-end',this)">flex-end</button>
+            <button class="ctrl-btn" onclick="setFlex('justify','space-between',this)">space-between</button>
+            <button class="ctrl-btn" onclick="setFlex('justify','space-around',this)">space-around</button>
+            <button class="ctrl-btn" onclick="setFlex('justify','space-evenly',this)">space-evenly</button>
+          </div>
+        </div>
+        <div class="control-group">
+          <span class="control-label">align-items:</span>
+          <div class="btn-group">
+            <button class="ctrl-btn on" onclick="setFlex('align','stretch',this)">stretch</button>
+            <button class="ctrl-btn" onclick="setFlex('align','flex-start',this)">flex-start</button>
+            <button class="ctrl-btn" onclick="setFlex('align','center',this)">center</button>
+            <button class="ctrl-btn" onclick="setFlex('align','flex-end',this)">flex-end</button>
+          </div>
+        </div>
+        <div class="control-group">
+          <span class="control-label">flex-wrap:</span>
+          <div class="btn-group">
+            <button class="ctrl-btn on" onclick="setFlex('wrap','nowrap',this)">nowrap</button>
+            <button class="ctrl-btn" onclick="setFlex('wrap','wrap',this)">wrap</button>
+            <button class="ctrl-btn" onclick="setFlex('wrap','wrap-reverse',this)">wrap-reverse</button>
+          </div>
+        </div>
+        <div class="control-group">
+          <span class="control-label">gap:</span>
+          <div class="btn-group">
+            <button class="ctrl-btn on" onclick="setFlex('gap','8px',this)">8px</button>
+            <button class="ctrl-btn" onclick="setFlex('gap','16px',this)">16px</button>
+            <button class="ctrl-btn" onclick="setFlex('gap','24px',this)">24px</button>
+            <button class="ctrl-btn" onclick="setFlex('gap','0px',this)">0px</button>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p class="control-label" style="margin-bottom:8px">LIVE PREVIEW:</p>
+        <div class="flex-canvas" id="flexCanvas">
+          <div class="flex-child">A</div>
+          <div class="flex-child">B</div>
+          <div class="flex-child">C</div>
+          <div class="flex-child">D</div>
+        </div>
+        <div class="generated-css" id="flexCss">
+<span class="sel">.container</span> {
+  <span class="prop">display</span>: <span class="val">flex</span>;
+  <span class="prop">flex-direction</span>: <span class="val">row</span>;
+  <span class="prop">justify-content</span>: <span class="val">flex-start</span>;
+  <span class="prop">align-items</span>: <span class="val">stretch</span>;
+  <span class="prop">flex-wrap</span>: <span class="val">nowrap</span>;
+  <span class="prop">gap</span>: <span class="val">8px</span>;
+}</div>
+      </div>
+    </div>
+
+    <div style="background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.2);border-radius:10px;padding:14px 16px;margin-top:16px;font-size:13.5px">
+      <strong style="color:var(--purple)">💡 Tips Ingatan:</strong>
+      <ul style="padding-left:18px;margin-top:8px;display:flex;flex-direction:column;gap:6px;color:var(--muted2)">
+        <li><strong style="color:var(--text)">justify-content</strong> = ngatur di arah panah <code style="font-family:'JetBrains Mono',monospace;background:rgba(255,255,255,.06);padding:1px 6px;border-radius:4px;font-size:11px">flex-direction</code></li>
+        <li><strong style="color:var(--text)">align-items</strong> = ngatur di arah yang TEGAK LURUS dari flex-direction</li>
+        <li>Kalau <code style="font-family:'JetBrains Mono',monospace;background:rgba(255,255,255,.06);padding:1px 6px;border-radius:4px;font-size:11px">flex-direction: column</code>, semuanya berbalik!</li>
+      </ul>
+    </div>
   </div>
-  <div class="progress-bar"><div class="progress-fill" id="prog-fill"></div></div>
-</div>
 
-<main>
-  <div id="quiz-area"></div>
-  <div id="result-screen"></div>
-</main>
+  <!-- 3. POSITIONING -->
+  <div id="positioning" class="card card-glow-cyan scroll-reveal" style="margin-bottom:20px">
+    <div class="card-title">📍 3. CSS Positioning</div>
+    <div class="card-subtitle">Klik setiap tipe positioning untuk melihat cara kerjanya secara visual.</div>
+
+    <div class="pos-demo-container">
+      <div class="pos-card active-pos" onclick="selectPos('relative', this)">
+        <div class="pos-emoji">🪑</div>
+        <div class="pos-card-title" style="color:var(--yellow)">relative</div>
+        <div class="pos-card-desc">Tetap di posisi asli, tapi bisa digeser pakai top/left/right/bottom. Parent lain tidak terpengaruh.</div>
+      </div>
+      <div class="pos-card" onclick="selectPos('absolute', this)">
+        <div class="pos-emoji">🏃</div>
+        <div class="pos-card-title" style="color:var(--pink)">absolute</div>
+        <div class="pos-card-desc">Melayang bebas relatif ke parent yang ber-<code style="font-family:'JetBrains Mono',monospace;font-size:11px">position: relative</code>. Keluar dari aliran normal.</div>
+      </div>
+      <div class="pos-card" onclick="selectPos('fixed', this)">
+        <div class="pos-emoji">🕶️</div>
+        <div class="pos-card-title" style="color:var(--cyan)">fixed</div>
+        <div class="pos-card-desc">Menempel di layar. Tidak peduli scroll, posisinya selalu sama di viewport.</div>
+      </div>
+    </div>
+
+    <div class="pos-visual" id="posVisual">
+      <div class="pos-parent" id="posParent">parent (relative)
+        <div class="pos-child" id="posChild" style="bottom:8px;right:8px">child (relative)</div>
+      </div>
+    </div>
+
+    <div class="code-block" style="margin-top:16px">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span class="code-lang">CSS — <span id="posCodeLabel">relative</span></span>
+        <button class="code-copy" onclick="copyCode(this,'posCode')">copy</button>
+      </div>
+      <pre id="posCode"><span class="cm">/* Trik: relative di parent, absolute di child */</span>
+<span class="sel">.parent</span> { <span class="prop">position</span>: <span class="val">relative</span>; }
+
+<span class="sel">.badge</span> {
+  <span class="prop">position</span>: <span class="val">relative</span>;
+  <span class="cm">/* Geser dari posisi asli */</span>
+  <span class="prop">top</span>: <span class="val">0px</span>; <span class="prop">right</span>: <span class="val">0px</span>;
+}</pre>
+    </div>
+
+    <div style="background:rgba(255,217,90,.07);border:1px solid rgba(255,217,90,.2);border-radius:10px;padding:14px 16px;margin-top:14px;font-size:13.5px">
+      <strong style="color:var(--yellow)">⚡ Kapan Pakai Apa?</strong>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;font-size:13px">
+        <div><span class="pill pill-y">relative</span><br><span style="color:var(--muted2);margin-top:4px;display:block">Buat "anchor" untuk anak yang absolute, atau geser elemen sedikit.</span></div>
+        <div><span class="pill pill-r">absolute</span><br><span style="color:var(--muted2);margin-top:4px;display:block">Badge, tooltip, dropdown, icon di atas gambar.</span></div>
+        <div><span class="pill pill-c">fixed</span><br><span style="color:var(--muted2);margin-top:4px;display:block">Navbar yang menempel saat scroll, tombol "back to top", chat widget.</span></div>
+        <div><span class="pill pill-p">sticky</span><br><span style="color:var(--muted2);margin-top:4px;display:block">Header tabel yang ikut sampai batas tertentu lalu nempel.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ SECTION 4 ══════════════ -->
+  <div class="section-header scroll-reveal">
+    <span class="section-num">SECTION 4</span>
+    <h2>📱 Responsive & Interactivity</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <!-- 4. RELATIVE UNITS -->
+  <div id="units" class="card card-glow-purple scroll-reveal" style="margin-bottom:20px">
+    <div class="card-title">📐 4. Relative Units — Geser Slider, Lihat Bedanya!</div>
+    <div class="card-subtitle">Pakai satuan relatif agar website bisa "bernafas" di semua ukuran layar.</div>
+
+    <div class="unit-tabs">
+      <button class="unit-tab active" onclick="selectUnit('percent', this)">%</button>
+      <button class="unit-tab" onclick="selectUnit('rem', this)">rem</button>
+      <button class="unit-tab" onclick="selectUnit('vw', this)">vw</button>
+      <button class="unit-tab" onclick="selectUnit('vh', this)">vh</button>
+    </div>
+
+    <div class="unit-demo-box" id="unitDemoBox">
+      <div class="unit-element" id="unitElement" style="width:50%;font-size:1rem">width: 50%</div>
+    </div>
+
+    <div class="slider-row">
+      <span style="font-size:12px;color:var(--muted);min-width:24px">0</span>
+      <input type="range" id="unitSlider" min="0" max="100" value="50" oninput="updateUnit(this.value)">
+      <span style="font-size:12px;color:var(--muted);min-width:30px">100</span>
+      <span class="slider-val" id="unitSliderVal">50%</span>
+    </div>
+
+    <div id="unitExplainer" style="background:var(--card2);border-radius:10px;padding:14px 16px;margin-top:14px;font-size:13.5px">
+      <strong style="color:var(--purple)">% — Persentase dari Parent</strong><br>
+      <span style="color:var(--muted2)">Kalau parent lebarnya 400px, maka <code style="font-family:'JetBrains Mono',monospace;font-size:11px;background:rgba(255,255,255,.06);padding:1px 6px;border-radius:4px">width: 50%</code> = 200px. Berguna untuk layout kolom-kolom yang proporsional.</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px">
+      <div style="background:var(--card2);border-radius:10px;padding:12px;border:1px solid var(--border)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:var(--cyan);margin-bottom:4px">%</div>
+        <div style="font-size:12px;color:var(--muted2)">Relatif ke <b style="color:var(--text)">parent</b>. Cocok untuk lebar kolom.</div>
+      </div>
+      <div style="background:var(--card2);border-radius:10px;padding:12px;border:1px solid var(--border)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:var(--purple);margin-bottom:4px">rem</div>
+        <div style="font-size:12px;color:var(--muted2)">Relatif ke <b style="color:var(--text)">root font</b> (1rem=16px). Cocok untuk font-size.</div>
+      </div>
+      <div style="background:var(--card2);border-radius:10px;padding:12px;border:1px solid var(--border)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:var(--orange);margin-bottom:4px">vw</div>
+        <div style="font-size:12px;color:var(--muted2)">Relatif ke <b style="color:var(--text)">lebar layar</b>. 100vw = layar penuh.</div>
+      </div>
+      <div style="background:var(--card2);border-radius:10px;padding:12px;border:1px solid var(--border)">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:var(--pink);margin-bottom:4px">vh</div>
+        <div style="font-size:12px;color:var(--muted2)">Relatif ke <b style="color:var(--text)">tinggi layar</b>. 100vh = tinggi penuh.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. MEDIA QUERIES -->
+  <div id="mediaqueries" class="card card-glow-cyan scroll-reveal" style="margin-bottom:20px">
+    <div class="card-title">🦎 5. Media Queries — Simulasi Responsif</div>
+    <div class="card-subtitle">Klik ikon perangkat untuk melihat bagaimana layout berubah di tiap ukuran layar.</div>
+
+    <div class="mq-simulator">
+      <div class="mq-topbar">
+        <div class="mq-devices">
+          <button class="mq-device-btn active" onclick="setDevice('mobile', this)">📱 HP</button>
+          <button class="mq-device-btn" onclick="setDevice('tablet', this)">📊 Tablet</button>
+          <button class="mq-device-btn" onclick="setDevice('desktop', this)">🖥️ Desktop</button>
+        </div>
+        <span class="mq-width-label" id="mqWidthLabel">< 480px</span>
+      </div>
+      <div class="mq-screen">
+        <div class="mq-layout" id="mqLayout">
+          <div class="mq-nav-bar">
+            <span>🌐 MySite</span>
+            <div class="mq-nav-links-demo" id="mqNavLinks"><span></span><span></span><span></span></div>
+            <span class="mq-hamburger" id="mqHamburger">☰</span>
+          </div>
+          <div class="mq-body" id="mqBody">
+            <div class="mq-sidebar" id="mqSidebar">
+              <div class="mq-sidebar-item"></div>
+              <div class="mq-sidebar-item" style="width:70%"></div>
+              <div class="mq-sidebar-item" style="width:85%"></div>
+              <div class="mq-sidebar-item" style="width:60%"></div>
+            </div>
+            <div class="mq-main" id="mqMain">
+              <div class="mq-card-demo"><span></span><span></span></div>
+              <div class="mq-card-demo"><span></span><span></span></div>
+              <div class="mq-card-demo"><span></span><span></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-info" id="mqInfo">
+      <span>Menampilkan:</span>
+      <span class="pill pill-r" id="mqInfoPill">Mobile (< 480px)</span>
+      <span id="mqInfoText">— Sidebar disembunyikan, grid 1 kolom, hamburger menu aktif</span>
+    </div>
+
+    <div class="code-block" style="margin-top:14px">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span class="code-lang">CSS — Mobile First Strategy</span>
+        <button class="code-copy" onclick="copyCode(this,'mqCode')">copy</button>
+      </div>
+      <pre id="mqCode"><span class="cm">/* ① TULIS UNTUK HP DULU (tanpa @media) */</span>
+<span class="sel">.sidebar</span>       { <span class="prop">display</span>: <span class="val">none</span>; }
+<span class="sel">.grid-container</span>{ <span class="prop">grid-template-columns</span>: <span class="val">1fr</span>; }
+<span class="sel">.hamburger</span>     { <span class="prop">display</span>: <span class="val">block</span>; }
+<span class="sel">.nav-links</span>     { <span class="prop">display</span>: <span class="val">none</span>; }
+
+<span class="cm">/* ② TABLET (≥ 768px) */</span>
+<span class="at">@media</span> (<span class="prop">min-width</span>: <span class="val">768px</span>) {
+  <span class="sel">.sidebar</span>        { <span class="prop">display</span>: <span class="val">block</span>; }
+  <span class="sel">.grid-container</span> { <span class="prop">grid-template-columns</span>: <span class="val">repeat(2, 1fr)</span>; }
+}
+
+<span class="cm">/* ③ DESKTOP (≥ 1024px) */</span>
+<span class="at">@media</span> (<span class="prop">min-width</span>: <span class="val">1024px</span>) {
+  <span class="sel">.hamburger</span>      { <span class="prop">display</span>: <span class="val">none</span>; }
+  <span class="sel">.nav-links</span>      { <span class="prop">display</span>: <span class="val">flex</span>; }
+  <span class="sel">.grid-container</span> { <span class="prop">grid-template-columns</span>: <span class="val">repeat(3, 1fr)</span>; }
+}</pre>
+    </div>
+  </div>
+
+  <!-- 6. TRANSITIONS -->
+  <div id="transitions" class="card card-glow-purple scroll-reveal" style="margin-bottom:20px">
+    <div class="card-title">✨ 6. Transitions & Hover Effects</div>
+    <div class="card-subtitle">Hover setiap kartu untuk merasakan efek animasi yang berbeda-beda!</div>
+
+    <div class="transition-grid">
+      <div class="transition-card tc-scale">
+        <span class="t-icon">📦</span>
+        <div class="t-label">Scale (Membesar)</div>
+        <div class="t-desc">Elemen mengecil/membesar saat hover</div>
+        <div class="t-code">transform: scale(1.1)</div>
+        <div class="t-hover-hint">← hover sini!</div>
+      </div>
+      <div class="transition-card tc-color">
+        <span class="t-icon">🎨</span>
+        <div class="t-label">Color Change</div>
+        <div class="t-desc">Background berubah warna secara halus</div>
+        <div class="t-code">transition: background .4s</div>
+        <div class="t-hover-hint">← hover sini!</div>
+      </div>
+      <div class="transition-card tc-slide">
+        <span class="t-icon">🚀</span>
+        <div class="t-label">Slide Up</div>
+        <div class="t-desc">Elemen bergerak naik saat hover</div>
+        <div class="t-code">transform: translateY(-8px)</div>
+        <div class="t-hover-hint">← hover sini!</div>
+      </div>
+      <div class="transition-card tc-shadow">
+        <span class="t-icon">🌑</span>
+        <div class="t-label">Shadow Lift</div>
+        <div class="t-desc">Bayangan muncul, berasa mengangkat</div>
+        <div class="t-code">box-shadow + transform</div>
+        <div class="t-hover-hint">← hover sini!</div>
+      </div>
+      <div class="transition-card tc-rotate">
+        <span class="t-icon">🔄</span>
+        <div class="t-label">Rotate</div>
+        <div class="t-desc">Elemen berputar sedikit saat hover</div>
+        <div class="t-code">transform: rotate(15deg)</div>
+        <div class="t-hover-hint">← hover sini!</div>
+      </div>
+      <div class="transition-card tc-fade">
+        <span class="t-icon">👁️</span>
+        <div class="t-label">Fade</div>
+        <div class="t-desc">Transparansi berubah secara halus</div>
+        <div class="t-code">transition: opacity .3s</div>
+        <div class="t-hover-hint">← hover sini!</div>
+      </div>
+    </div>
+
+    <div class="code-block" style="margin-top:20px">
+      <div class="code-header">
+        <div class="code-dots"><span></span><span></span><span></span></div>
+        <span class="code-lang">CSS — Template Transition Lengkap</span>
+        <button class="code-copy" onclick="copyCode(this,'transCode')">copy</button>
+      </div>
+      <pre id="transCode"><span class="cm">/* SELALU pasang transition di elemen NORMAL (bukan :hover) */</span>
+<span class="sel">.kartu</span> {
+  <span class="prop">transition</span>: <span class="val">all 0.3s ease</span>;
+  <span class="cm">/*         ↑      ↑       ↑</span>
+  <span class="cm">        apa   durasi   timing */</span>
+}
+
+<span class="sel">.kartu</span><span class="kw">:hover</span> {
+  <span class="prop">transform</span>: <span class="val">translateY(-4px) scale(1.02)</span>;
+  <span class="prop">box-shadow</span>: <span class="val">0 20px 40px rgba(0,0,0,0.3)</span>;
+}
+
+<span class="cm">/* Timing Functions: */</span>
+<span class="cm">/* ease         → mulai cepat, akhir melambat (default, paling natural) */</span>
+<span class="cm">/* ease-in-out  → lambat-cepat-lambat (elegan) */</span>
+<span class="cm">/* linear       → konstan (untuk loading bar, animasi berputar) */</span>
+<span class="cm">/* cubic-bezier → custom timing sesuai keinginan */</span></pre>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="quiz" class="card scroll-reveal" style="margin-bottom:20px;border-color:rgba(255,217,90,.2)">
+    <div class="card-title">🧠 Quiz — Uji Pemahamanmu!</div>
+    <div class="card-subtitle">10 pertanyaan untuk cek seberapa paham kamu tentang CSS Layout. Berani coba?</div>
+
+    <div class="quiz-score" id="quizScore"></div>
+    <div class="quiz-container" id="quizContainer"></div>
+    <div class="quiz-complete" id="quizComplete">
+      <div class="quiz-complete-emoji" id="quizEmoji">🎉</div>
+      <h3 id="quizResultTitle">Luar Biasa!</h3>
+      <p id="quizResultDesc">Kamu menjawab <span id="quizFinalScore">0</span> dari 10 soal dengan benar.</p>
+      <button class="quiz-restart" onclick="restartQuiz()">🔄 Mulai Ulang</button>
+    </div>
+  </div>
+
+  <!-- CHECKLIST -->
+  <div class="card scroll-reveal" style="border-color:rgba(74,222,128,.2)">
+    <div class="card-title">✅ Checklist Sebelum Submit Tugas</div>
+    <div class="card-subtitle">Centang semua sebelum mengumpulkan tugasmu! Klik untuk menandai.</div>
+
+    <div class="check-progress">
+      <span style="font-size:13px;color:var(--muted2)" id="checkCount">0 / 7 selesai</span>
+      <div class="check-progress-bar">
+        <div class="check-progress-fill" id="checkFill"></div>
+      </div>
+    </div>
+
+    <div class="checklist-grid" id="checklistGrid">
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text">Sudah pasang <code>* { box-sizing: border-box; }</code> di paling atas CSS? (Mencegah elemen meluber keluar container)</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text">Elemen yang perlu berjejer sudah pakai <code>display: flex</code> di elemen <strong>parent</strong>-nya?</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text">Sudah cek tampilan di layar HP? (Di Chrome: <code>F12</code> → ikon tablet di kiri atas DevTools)</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text">Ukuran font sudah pakai <code>rem</code> bukan <code>px</code> agar skala baik di semua perangkat?</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text">Kalau ada badge/ikon di atas gambar, sudah pakai <code>position: relative</code> di parent dan <code>position: absolute</code> di anak?</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text">Tombol/kartu sudah ada efek <code>:hover</code> dengan <code>transition</code> yang smooth (0.2s – 0.4s)?</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="check-box"></div>
+        <div class="check-text">Sudah test di 3 ukuran layar berbeda: HP (&lt;480px), tablet (~768px), dan desktop (≥1024px)?</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <p>CSS Layout & Responsiveness — Cheatsheet Interaktif untuk SMA ⚡</p>
+    <div class="footer-tags">
+      <span class="pill pill-c">#Flexbox</span>
+      <span class="pill pill-p">#Positioning</span>
+      <span class="pill pill-y">#MediaQueries</span>
+      <span class="pill pill-g">#Transitions</span>
+      <span class="pill pill-o">#MobilFirst</span>
+      <span class="pill pill-r">#CSSMaster</span>
+    </div>
+  </div>
+
+</div><!-- /wrapper -->
 
 <script>
-/* ── DATA SOAL ───────────────────────────────────────────── */
-const questions = [
-  {
-    type: "mcq",
-    diff: "mudah",
-    points: 10,
-    topic: "Box Model",
-    text: "Properti CSS mana yang mengatur jarak antara KONTEN dan BORDER sebuah elemen?",
-    hint: "Bayangkan kertas putih di dalam bingkai foto",
-    options: ["margin", "padding", "border-spacing", "gap"],
-    answer: 1,
-    explanation: "padding mengatur ruang di dalam elemen — antara konten dan border. margin adalah ruang di luar elemen (antara elemen dengan elemen lain)."
-  },
-  {
-    type: "fill",
-    diff: "mudah",
-    points: 10,
-    topic: "Selector",
-    text: "Lengkapi selector CSS untuk menarget elemen dengan class=\"kartu\"",
-    hint: "Ingat: class diawali simbol tertentu",
-    code: `<span class="blank">???</span><span class="prop">kartu</span> {\n  background: white;\n}`,
-    answer: ".",
-    accept: ["."],
-    explanation: "Class selector menggunakan titik (.) di depan nama class. Jadi .kartu akan menarget semua elemen yang punya class=\"kartu\"."
-  },
-  {
-    type: "mcq",
-    diff: "mudah",
-    points: 10,
-    topic: "Typography",
-    text: "Properti apa yang digunakan untuk mengatur jarak antar baris teks?",
-    hint: "Ini yang bikin teks enak dibaca (disarankan nilai 1.5–1.8)",
-    options: ["letter-spacing", "word-spacing", "line-height", "text-indent"],
-    answer: 2,
-    explanation: "line-height mengontrol jarak vertikal antar baris. Nilai 1.5–1.8 biasanya paling nyaman dibaca. letter-spacing mengatur jarak antar HURUF."
-  },
-  {
-    type: "mcq",
-    diff: "sedang",
-    points: 20,
-    topic: "Specificity",
-    text: "Mana yang akan MENANG jika ada konflik antara selector-selector ini?",
-    hint: "CSS punya urutan prioritas: semakin spesifik, semakin kuat",
-    code: `<span class="cmt">/* Manakah yang paling prioritas? */</span>\n<span class="sel">p</span>            { color: red; }\n<span class="sel">.teks</span>       { color: blue; }\n<span class="sel">#judul</span>      { color: green; }\n<span class="sel">p.teks#judul</span> { color: orange; }`,
-    options: [
-      "p { color: red }",
-      ".teks { color: blue }",
-      "#judul { color: green }",
-      "p.teks#judul { color: orange }"
-    ],
-    answer: 3,
-    explanation: "Specificty dihitung: ID (#) = 100 poin, Class (.) = 10 poin, Tag = 1 poin. p.teks#judul = 1+10+100 = 111 poin — paling tinggi!"
-  },
-  {
-    type: "fill",
-    diff: "sedang",
-    points: 20,
-    topic: "Box Model",
-    text: "Isi properti yang membuat padding & border TIDAK menambah total lebar elemen",
-    hint: "Ini wajib ada di CSS reset kamu!",
-    code: `* {\n  <span class="prop">box-sizing</span>: <span class="blank">???</span>;\n}`,
-    answer: "border-box",
-    accept: ["border-box"],
-    explanation: "box-sizing: border-box memastikan padding dan border sudah termasuk di dalam lebar/tinggi yang kamu set. Tanpa ini, elemen bisa 'meluber' keluar layout."
-  },
-  {
-    type: "mcq",
-    diff: "sedang",
-    points: 20,
-    topic: "Visual",
-    text: "Apa output dari nilai RGBA ini? rgba(0, 0, 0, 0.5)",
-    hint: "R=merah, G=hijau, B=biru, A=alpha (transparansi)",
-    options: [
-      "Putih 50% transparan",
-      "Hitam 50% transparan",
-      "Abu-abu solid",
-      "Hitam penuh (tidak transparan)"
-    ],
-    answer: 1,
-    explanation: "RGB(0,0,0) = hitam. Nilai alpha 0.5 = 50% transparan. Jadi rgba(0,0,0,0.5) adalah hitam setengah transparan — sering dipakai untuk overlay atau box-shadow!"
-  },
-  {
-    type: "mcq",
-    diff: "sedang",
-    points: 20,
-    topic: "Pseudo-class",
-    text: "CSS apa yang tepat untuk mengubah warna tombol HANYA saat mouse melayang di atasnya?",
-    hint: "Ada selector spesial untuk kondisi interaksi",
-    options: [
-      ".btn.mouse { color: blue; }",
-      ".btn:hover { color: blue; }",
-      ".btn::hover { color: blue; }",
-      ".btn[hover] { color: blue; }"
-    ],
-    answer: 1,
-    explanation: ":hover adalah pseudo-class — selector yang aktif berdasarkan kondisi/state. Penulisannya pakai titik dua tunggal (:), bukan dua (::). Dua titik dua (::) dipakai untuk pseudo-ELEMENT seperti ::before dan ::after."
-  },
-  {
-    type: "fill",
-    diff: "susah",
-    points: 30,
-    topic: "Shorthand",
-    text: "Tulis shorthand border yang setara dengan 3 baris ini sekaligus",
-    hint: "border: [ketebalan] [style] [warna] — urutannya penting!",
-    code: `<span class="cmt">/* Ini 3 baris terpisah: */</span>\n<span class="prop">border-width</span>: <span class="val">2px</span>;\n<span class="prop">border-style</span>: <span class="val">solid</span>;\n<span class="prop">border-color</span>: <span class="val">#333</span>;\n\n<span class="cmt">/* Tulis dalam 1 baris: */</span>\n<span class="prop">border</span>: <span class="blank">???</span>;`,
-    answer: "2px solid #333",
-    accept: ["2px solid #333", "2px solid #333333"],
-    explanation: "border adalah shorthand property. Urutan nilainya: lebar style warna. Banyak CSS properties punya shorthand seperti ini: margin, padding, background, font, dll."
-  },
-  {
-    type: "mcq",
-    diff: "susah",
-    points: 30,
-    topic: "Cascade",
-    text: "Berapa nilai akhir font-size elemen <p> ini?",
-    hint: "Perhatikan urutan deklarasi dan spesifisitas",
-    code: `<span class="sel">p</span> { <span class="prop">font-size</span>: <span class="val">16px</span>; }\n<span class="sel">p</span> { <span class="prop">font-size</span>: <span class="val">20px</span>; }\n<span class="sel">.teks</span> { <span class="prop">font-size</span>: <span class="val">14px</span>; }`,
-    options: ["16px", "20px", "14px", "Error — konflik tidak bisa diselesaikan"],
-    answer: 2,
-    explanation: "CSS Cascade: .teks memiliki specificity lebih tinggi (class=10 vs tag=1), sehingga 14px menang. Jika specificity sama, aturan yang TERAKHIR ditulis yang dipakai (makanya p { 20px } menang atas p { 16px })."
-  },
-  {
-    type: "fill",
-    diff: "susah",
-    points: 30,
-    topic: "Transition",
-    text: "Lengkapi kode agar perubahan background-color berlangsung smooth selama 0.3 detik",
-    hint: "Property, durasi, timing-function",
-    code: `<span class="sel">.btn</span> {\n  <span class="prop">background-color</span>: <span class="val">blue</span>;\n  <span class="prop">transition</span>: <span class="blank">???</span>;\n}\n<span class="sel">.btn:hover</span> {\n  <span class="prop">background-color</span>: <span class="val">darkblue</span>;\n}`,
-    answer: "background-color 0.3s ease",
-    accept: ["background-color 0.3s ease", "background-color 0.3s", "all 0.3s ease", "all 0.3s"],
-    explanation: "transition: [property] [duration] [timing]. 'ease' adalah kurva animasi default (mulai pelan, cepat di tengah, pelan lagi). Kamu juga bisa pakai 'all' untuk menerapkan transisi ke semua property yang berubah."
-  }
-];
-
-/* ── STATE ───────────────────────────────────────────────── */
-let state = {
-  current: 0,
-  score: 0,
-  streak: 0,
-  maxStreak: 0,
-  timeLeft: 30,
-  timer: null,
-  answered: false,
-  history: [],   // {correct, points, text}
-};
-
-/* ── ELEMENTS ────────────────────────────────────────────── */
-const quizArea      = document.getElementById('quiz-area');
-const resultScreen  = document.getElementById('result-screen');
-const scoreVal      = document.getElementById('score-val');
-const timerVal      = document.getElementById('timer-val');
-const progFill      = document.getElementById('prog-fill');
-const qCounter      = document.getElementById('q-counter');
-const streakLabel   = document.getElementById('streak-label');
-const streakToast   = document.getElementById('streak-toast');
-const streakNum     = document.getElementById('streak-num');
-
-/* ── RENDER SOAL ─────────────────────────────────────────── */
-function renderQuestion() {
-  const q = questions[state.current];
-  state.answered = false;
-  startTimer();
-
-  qCounter.textContent = `Soal ${state.current + 1} dari ${questions.length}`;
-  progFill.style.width = `${(state.current / questions.length) * 100}%`;
-  updateStreakLabel();
-
-  const diffClass = q.diff === 'susah' ? 'hard' : '';
-
-  let bodyHTML = '';
-
-  if (q.code) {
-    bodyHTML += `<div class="code-block">${q.code}</div>`;
-  }
-
-  if (q.type === 'mcq') {
-    bodyHTML += `<div class="options">` +
-      q.options.map((o, i) => `
-        <button class="opt" data-idx="${i}" onclick="answerMCQ(${i})">
-          <span class="opt-key">${String.fromCharCode(65+i)}</span>${o}
-        </button>`).join('') +
-      `</div>`;
-  } else {
-    bodyHTML += `
-      <div class="fill-wrap">
-        <input class="fill-input" id="fill-inp" type="text" placeholder="Ketik jawaban..." autocomplete="off" spellcheck="false"/>
-        <button class="btn-submit" id="fill-btn" onclick="answerFill()">Submit</button>
-      </div>`;
-  }
-
-  bodyHTML += `<div class="feedback" id="feedback"></div>`;
-  bodyHTML += `<button class="btn-next" id="btn-next" onclick="nextQuestion()">${state.current < questions.length - 1 ? 'SOAL BERIKUTNYA →' : 'LIHAT HASIL →'}</button>`;
-
-  quizArea.innerHTML = `
-    <div class="q-card" id="q-card">
-      <div class="q-meta">
-        <span class="badge badge-type">${q.topic}</span>
-        <span class="badge badge-pts">+${q.points} poin</span>
-        <span class="badge badge-diff ${diffClass}">${q.diff}</span>
-      </div>
-      <p class="q-text">${q.text}</p>
-      <p class="q-hint">💡 ${q.hint}</p>
-      ${bodyHTML}
-    </div>`;
-
-  if (q.type === 'fill') {
-    const inp = document.getElementById('fill-inp');
-    inp.addEventListener('keydown', e => { if (e.key === 'Enter') answerFill(); });
-    inp.focus();
-  }
-}
-
-/* ── TIMER ───────────────────────────────────────────────── */
-function startTimer() {
-  clearInterval(state.timer);
-  state.timeLeft = 30;
-  timerVal.textContent = 30;
-  timerVal.classList.remove('urgent');
-
-  state.timer = setInterval(() => {
-    state.timeLeft--;
-    timerVal.textContent = state.timeLeft;
-
-    if (state.timeLeft <= 10) timerVal.classList.add('urgent');
-
-    if (state.timeLeft <= 0) {
-      clearInterval(state.timer);
-      if (!state.answered) timeOut();
-    }
-  }, 1000);
-}
-
-function timeOut() {
-  state.answered = true;
-  state.streak = 0;
-  const q = questions[state.current];
-  state.history.push({ correct: false, points: 0, text: q.text });
-  showFeedback(false, q, true);
-}
-
-/* ── ANSWER MCQ ──────────────────────────────────────────── */
-function answerMCQ(idx) {
-  if (state.answered) return;
-  state.answered = true;
-  clearInterval(state.timer);
-
-  const q = questions[state.current];
-  const opts = document.querySelectorAll('.opt');
-  const correct = idx === q.answer;
-
-  opts.forEach((o, i) => {
-    o.disabled = true;
-    if (i === q.answer) o.classList.add('correct-opt');
-    else if (i === idx && !correct) o.classList.add('wrong-opt');
-  });
-
-  processResult(correct, q);
-}
-
-/* ── ANSWER FILL ─────────────────────────────────────────── */
-function answerFill() {
-  if (state.answered) return;
-  const inp = document.getElementById('fill-inp');
-  const btn = document.getElementById('fill-btn');
-  const raw = inp.value.trim();
-  if (!raw) return;
-
-  state.answered = true;
-  clearInterval(state.timer);
-  btn.disabled = true;
-
-  const q = questions[state.current];
-  const correct = q.accept.some(a => a.toLowerCase() === raw.toLowerCase());
-
-  inp.classList.add(correct ? 'correct' : 'wrong');
-  processResult(correct, q, raw);
-}
-
-/* ── PROCESS RESULT ──────────────────────────────────────── */
-function processResult(correct, q, userAns = null) {
-  const card = document.getElementById('q-card');
-
-  if (correct) {
-    const bonus = state.timeLeft >= 20 ? Math.floor(q.points * 0.5) : 0;
-    const earned = q.points + bonus;
-    state.score += earned;
-    state.streak++;
-    if (state.streak > state.maxStreak) state.maxStreak = state.streak;
-    scoreVal.textContent = state.score;
-    card.classList.add('correct');
-    state.history.push({ correct: true, points: earned, text: q.text });
-
-    if (state.streak >= 2) showStreakToast();
-    showFeedback(true, q, false, bonus);
-  } else {
-    state.streak = 0;
-    card.classList.add('wrong');
-    state.history.push({ correct: false, points: 0, text: q.text });
-    showFeedback(false, q, false);
-  }
-
-  updateStreakLabel();
-  document.getElementById('btn-next').classList.add('show');
-}
-
-/* ── FEEDBACK ────────────────────────────────────────────── */
-function showFeedback(correct, q, timeout = false, bonus = 0) {
-  const fb = document.getElementById('feedback');
-  fb.classList.add('show');
-
-  if (timeout) {
-    fb.className = 'feedback show lose';
-    fb.innerHTML = `<strong>⏱ Waktu habis!</strong>Jawaban yang benar: <span class="correct-ans">${
-      q.type === 'mcq' ? q.options[q.answer] : q.answer
-    }</span><br><br>${q.explanation}`;
-    return;
-  }
-
-  if (correct) {
-    fb.className = 'feedback show win';
-    fb.innerHTML = `<strong>✓ Benar! ${bonus > 0 ? `+${bonus} bonus speed!` : ''}</strong>${q.explanation}`;
-  } else {
-    fb.className = 'feedback show lose';
-    fb.innerHTML = `<strong>✗ Kurang tepat.</strong>Jawaban yang benar: <span class="correct-ans">${
-      q.type === 'mcq' ? q.options[q.answer] : q.answer
-    }</span><br><br>${q.explanation}`;
-  }
-}
-
-/* ── NEXT ────────────────────────────────────────────────── */
-function nextQuestion() {
-  state.current++;
-  if (state.current >= questions.length) {
-    showResult();
-  } else {
-    renderQuestion();
-  }
-}
-
-/* ── STREAK TOAST ────────────────────────────────────────── */
-function showStreakToast() {
-  streakNum.textContent = state.streak;
-  streakToast.classList.add('show');
-  setTimeout(() => streakToast.classList.remove('show'), 2000);
-}
-
-function updateStreakLabel() {
-  if (state.streak >= 2) {
-    streakLabel.textContent = `🔥 Streak: ${state.streak}`;
-    streakLabel.style.color = 'var(--warn)';
-  } else {
-    streakLabel.textContent = '';
-  }
-}
-
-/* ── RESULT ──────────────────────────────────────────────── */
-function showResult() {
-  clearInterval(state.timer);
-  quizArea.innerHTML = '';
-  progFill.style.width = '100%';
-
-  const correct = state.history.filter(h => h.correct).length;
-  const pct = Math.round((correct / questions.length) * 100);
-  const maxPossible = questions.reduce((s, q) => s + q.points, 0) + Math.floor(questions.reduce((s,q)=>s+q.points,0)*0.5);
-
-  let emoji = '💀', title = 'Perlu Belajar Lebih!', sub = 'Jangan menyerah — ulangi materi dan coba lagi.';
-  if (pct >= 80) { emoji = '🏆'; title = 'Luar Biasa!'; sub = 'Kamu sudah siap ke materi Flexbox & Layout!'; }
-  else if (pct >= 60) { emoji = '⚡'; title = 'Bagus!'; sub = 'Sedikit lagi! Review bagian yang salah, lalu coba ulang.'; }
-  else if (pct >= 40) { emoji = '💪'; title = 'Terus Berlatih!'; sub = 'Fokus ke Specificity dan Box Model dulu ya.'; }
-
-  const reviewRows = state.history.map((h, i) => `
-    <div class="review-row">
-      <div class="review-icon">${h.correct ? '✅' : '❌'}</div>
-      <div class="review-q">Soal ${i+1}: ${questions[i].text.substring(0, 60)}...</div>
-      <div class="review-pts">${h.correct ? '+'+h.points : '0'} pts</div>
-    </div>`).join('');
-
-  resultScreen.className = 'show';
-  resultScreen.innerHTML = `
-    <div class="result-emoji">${emoji}</div>
-    <div class="result-title">${title}</div>
-    <p class="result-sub">${sub}</p>
-    <div class="result-stats">
-      <div class="stat-box">
-        <div class="stat-num">${state.score}</div>
-        <div class="stat-label">Total Poin</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-num">${correct}/${questions.length}</div>
-        <div class="stat-label">Benar</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-num">${state.maxStreak}🔥</div>
-        <div class="stat-label">Best Streak</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-num">${pct}%</div>
-        <div class="stat-label">Skor</div>
-      </div>
-    </div>
-    <button class="btn-restart" onclick="restartQuiz()">ULANGI QUIZ</button>
-    <div class="review">
-      <h3>Review Jawaban</h3>
-      ${reviewRows}
-    </div>`;
-}
-
-/* ── RESTART ─────────────────────────────────────────────── */
-function restartQuiz() {
-  state = { current:0, score:0, streak:0, maxStreak:0, timeLeft:30, timer:null, answered:false, history:[] };
-  scoreVal.textContent = '0';
-  timerVal.textContent = '30';
-  timerVal.classList.remove('urgent');
-  resultScreen.className = '';
-  resultScreen.innerHTML = '';
-  renderQuestion();
-}
-
-/* ── KEYBOARD SHORTCUTS ──────────────────────────────────── */
-document.addEventListener('keydown', e => {
-  if (state.answered) {
-    if (e.key === 'Enter' || e.key === 'ArrowRight') nextQuestion();
-    return;
-  }
-  const q = questions[state.current];
-  if (q.type === 'mcq') {
-    const map = { 'a':0,'b':1,'c':2,'d':3,'1':0,'2':1,'3':2,'4':3 };
-    if (e.key.toLowerCase() in map) answerMCQ(map[e.key.toLowerCase()]);
-  }
+/* ── PROGRESS BAR ── */
+window.addEventListener('scroll', () => {
+  const el = document.getElementById('progressBar');
+  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+  el.style.width = Math.min(pct, 100) + '%';
 });
 
-/* ── INIT ────────────────────────────────────────────────── */
-renderQuestion();
+/* ── SCROLL REVEAL ── */
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+
+/* ── COPY CODE ── */
+function copyCode(btn, id) {
+  const el = document.getElementById(id);
+  navigator.clipboard.writeText(el.innerText);
+  btn.textContent = '✓ copied';
+  btn.classList.add('copied');
+  setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 2000);
+}
+
+/* ── DISPLAY PROPERTY ── */
+const displayDemos = {
+  block: {
+    html: `<div style="display:flex;flex-direction:column;gap:6px">
+      <div style="background:rgba(255,217,90,.15);border:1px dashed rgba(255,217,90,.4);border-radius:6px;padding:8px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#ffd95a">Block ① — ambil full baris</div>
+      <div style="background:rgba(255,217,90,.15);border:1px dashed rgba(255,217,90,.4);border-radius:6px;padding:8px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#ffd95a">Block ② — selalu baris baru</div>
+      <div style="background:rgba(255,217,90,.15);border:1px dashed rgba(255,217,90,.4);border-radius:6px;padding:8px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#ffd95a">Block ③ — lebar bisa diatur</div>
+    </div>`,
+    note: '📌 Block selalu mulai baris baru. Cocok untuk div, p, h1.'
+  },
+  inline: {
+    html: `<p style="font-size:13px;line-height:2">Ini teks biasa dengan <span style="background:rgba(56,245,212,.2);border:1px solid rgba(56,245,212,.4);border-radius:3px;padding:0 4px;color:#38f5d4;font-family:'JetBrains Mono',monospace;font-size:11px">inline ①</span> dan <span style="background:rgba(56,245,212,.2);border:1px solid rgba(56,245,212,.4);border-radius:3px;padding:0 4px;color:#38f5d4;font-family:'JetBrains Mono',monospace;font-size:11px">inline ②</span> yang menyatu dalam baris yang sama. Tidak bisa diatur lebar/tingginya.</p>`,
+    note: '📌 Inline mengikuti aliran teks. Lebar mengikuti kontennya.'
+  },
+  'inline-block': {
+    html: `<div style="display:flex;flex-direction:column;gap:4px"><p style="font-size:12px;color:#64748b;margin-bottom:4px">Berjajar seperti inline, tapi bisa diatur ukurannya:</p><div style="display:flex;gap:8px;flex-wrap:wrap"><div style="display:inline-block;background:rgba(167,139,250,.2);border:1px solid rgba(167,139,250,.4);border-radius:6px;width:60px;height:60px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:#a78bfa">60×60</div><div style="display:inline-block;background:rgba(167,139,250,.2);border:1px solid rgba(167,139,250,.4);border-radius:6px;width:80px;height:40px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:#a78bfa">80×40</div><div style="display:inline-block;background:rgba(167,139,250,.2);border:1px solid rgba(167,139,250,.4);border-radius:6px;width:50px;height:70px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:#a78bfa">50×70</div></div></div>`,
+    note: '📌 Inline-block: berjajar tapi ukuran bisa dikontrol. Cocok untuk tombol.'
+  },
+  none: {
+    html: `<div style="text-align:center;padding:10px"><div style="background:rgba(255,107,157,.1);border:1px dashed rgba(255,107,157,.3);border-radius:8px;padding:16px;font-size:13px;color:#ff6b9d">👻 Elemen ini ada di HTML tapi tidak tampil.<br><span style="font-size:11px;color:#64748b">display: none membuat elemen seolah tidak pernah ada — tidak mengambil ruang apapun.</span></div><button onclick="this.textContent=this.textContent==='Tampilkan!😲'?'Sembunyikan!':'Tampilkan!😲'" style="margin-top:10px;background:rgba(255,107,157,.15);border:1px solid rgba(255,107,157,.4);color:#ff6b9d;padding:6px 16px;border-radius:8px;cursor:pointer;font-family:'Outfit',sans-serif;font-size:13px">Sembunyikan!</button></div>`,
+    note: '📌 display: none berbeda dengan visibility: hidden. "none" tidak makan tempat sama sekali.'
+  }
+};
+function selectDisplay(type, el) {
+  document.querySelectorAll('.display-item').forEach(i => i.classList.remove('selected'));
+  el.classList.add('selected');
+  const demo = displayDemos[type];
+  document.getElementById('displayDemo').innerHTML = `<div class="demo-label">Preview: display: ${type}</div>${demo.html}<div style="margin-top:10px;font-size:12.5px;color:var(--muted2);background:rgba(255,255,255,.03);border-radius:6px;padding:8px 12px">${demo.note}</div>`;
+}
+
+/* ── FLEXBOX PLAYGROUND ── */
+const flexState = { direction:'row', justify:'flex-start', align:'stretch', wrap:'nowrap', gap:'8px' };
+function setFlex(prop, val, btn) {
+  const propMap = { direction:'direction', justify:'justify', align:'align', wrap:'wrap', gap:'gap' };
+  flexState[prop] = val;
+  btn.closest('.btn-group').querySelectorAll('.ctrl-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  const c = document.getElementById('flexCanvas');
+  c.style.flexDirection = flexState.direction;
+  c.style.justifyContent = flexState.justify;
+  c.style.alignItems = flexState.align;
+  c.style.flexWrap = flexState.wrap;
+  c.style.gap = flexState.gap;
+  document.getElementById('flexCss').innerHTML =
+    `<span class="sel">.container</span> {\n  <span class="prop">display</span>: <span class="val">flex</span>;\n  <span class="prop">flex-direction</span>: <span class="val">${flexState.direction}</span>;\n  <span class="prop">justify-content</span>: <span class="val">${flexState.justify}</span>;\n  <span class="prop">align-items</span>: <span class="val">${flexState.align}</span>;\n  <span class="prop">flex-wrap</span>: <span class="val">${flexState.wrap}</span>;\n  <span class="prop">gap</span>: <span class="val">${flexState.gap}</span>;\n}`;
+}
+
+/* ── POSITIONING ── */
+const posCodes = {
+  relative: `<span class="cm">/* relative: geser dari posisi asli */</span>\n<span class="sel">.elemen</span> {\n  <span class="prop">position</span>: <span class="val">relative</span>;\n  <span class="prop">top</span>: <span class="val">10px</span>;   <span class="cm">/* geser 10px dari atas */</span>\n  <span class="prop">left</span>: <span class="val">20px</span>;  <span class="cm">/* geser 20px dari kiri */</span>\n}`,
+  absolute: `<span class="cm">/* Trik: parent=relative, child=absolute */</span>\n<span class="sel">.parent</span> { <span class="prop">position</span>: <span class="val">relative</span>; }\n\n<span class="sel">.badge</span> {\n  <span class="prop">position</span>: <span class="val">absolute</span>;\n  <span class="prop">top</span>: <span class="val">8px</span>;\n  <span class="prop">right</span>: <span class="val">8px</span>;\n  <span class="cm">/* akan nempel di pojok kanan atas parent */</span>\n}`,
+  fixed: `<span class="cm">/* fixed: menempel di layar, tidak ikut scroll */</span>\n<span class="sel">.navbar</span> {\n  <span class="prop">position</span>: <span class="val">fixed</span>;\n  <span class="prop">top</span>: <span class="val">0</span>;\n  <span class="prop">left</span>: <span class="val">0</span>;\n  <span class="prop">right</span>: <span class="val">0</span>;\n  <span class="prop">z-index</span>: <span class="val">100</span>; <span class="cm">/* agar selalu di atas */</span>\n}`
+};
+function selectPos(type, el) {
+  document.querySelectorAll('.pos-card').forEach(c => c.classList.remove('active-pos'));
+  el.classList.add('active-pos');
+  document.getElementById('posCode').innerHTML = posCodes[type];
+  document.getElementById('posCodeLabel').textContent = type;
+  const child = document.getElementById('posChild');
+  const parent = document.getElementById('posParent');
+  child.style.all = 'unset';
+  child.style.position = 'absolute';
+  child.style.background = type === 'relative' ? 'var(--yellow)' : type === 'absolute' ? 'var(--pink)' : 'var(--cyan)';
+  child.style.borderRadius = '6px';
+  child.style.padding = '4px 10px';
+  child.style.fontFamily = "'JetBrains Mono', monospace";
+  child.style.fontSize = '11px';
+  child.style.fontWeight = '600';
+  child.style.color = type === 'fixed' ? '#060910' : '#fff';
+  child.style.whiteSpace = 'nowrap';
+  child.style.transition = 'all .4s cubic-bezier(.34,1.56,.64,1)';
+  child.textContent = `child (${type})`;
+  if (type === 'relative') { child.style.bottom = '8px'; child.style.right = '8px'; }
+  else if (type === 'absolute') { child.style.top = '6px'; child.style.right = '8px'; }
+  else { child.style.top = '50%'; child.style.left = '50%'; child.style.transform = 'translate(-50%,-50%)'; }
+}
+
+/* ── UNITS ── */
+const unitConfig = {
+  percent: {
+    min: 10, max: 100, default: 50, suffix: '%',
+    apply: v => ({ width: v+'%', fontSize: '1rem', height: 'auto', padding: '10px' }),
+    label: v => `width: ${v}%`,
+    explainer: `<strong style="color:var(--purple)">% — Persentase dari Parent</strong><br><span style="color:var(--muted2)">Kalau parent lebarnya 400px, maka <code style="font-family:'JetBrains Mono',monospace;font-size:11px;background:rgba(255,255,255,.06);padding:1px 6px;border-radius:4px">width: 50%</code> = 200px. Berguna untuk layout kolom-kolom yang proporsional.</span>`
+  },
+  rem: {
+    min: 1, max: 5, default: 2, suffix: 'rem',
+    apply: v => ({ width: 'auto', fontSize: v+'rem', height: 'auto', padding: '10px 20px' }),
+    label: v => `font-size: ${v}rem`,
+    explainer: `<strong style="color:var(--cyan)">rem — Relative to Root</strong><br><span style="color:var(--muted2)">1rem = 16px (ukuran default browser). 2rem = 32px. Kalau user ubah ukuran teks di browsernya, rem ikut menyesuaikan — ramah aksesibilitas!</span>`
+  },
+  vw: {
+    min: 10, max: 100, default: 50, suffix: 'vw',
+    apply: v => ({ width: v+'vw', maxWidth: '100%', fontSize: '0.8rem', height: 'auto', padding: '10px' }),
+    label: v => `width: ${v}vw`,
+    explainer: `<strong style="color:var(--orange)">vw — Viewport Width</strong><br><span style="color:var(--muted2)">100vw = lebar penuh layar. 50vw = setengah layar. Berguna untuk hero section yang mau full-width tanpa peduli parent.</span>`
+  },
+  vh: {
+    min: 10, max: 100, default: 30, suffix: 'vh',
+    apply: v => ({ width: '100%', height: v*0.8+'px', fontSize: '0.8rem', padding: '10px' }),
+    label: v => `height: ${v}vh`,
+    explainer: `<strong style="color:var(--pink)">vh — Viewport Height</strong><br><span style="color:var(--muted2)">100vh = tinggi penuh layar. Berguna untuk halaman yang mau full-height. Hero section biasanya pakai <code style="font-family:'JetBrains Mono',monospace;font-size:11px">height: 100vh</code>.</span>`
+  }
+};
+let currentUnit = 'percent';
+function selectUnit(type, btn) {
+  currentUnit = type;
+  document.querySelectorAll('.unit-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  const cfg = unitConfig[type];
+  const slider = document.getElementById('unitSlider');
+  slider.min = cfg.min; slider.max = cfg.max; slider.value = cfg.default;
+  document.getElementById('unitExplainer').innerHTML = cfg.explainer;
+  updateUnit(cfg.default);
+}
+function updateUnit(v) {
+  const cfg = unitConfig[currentUnit];
+  const el = document.getElementById('unitElement');
+  const styles = cfg.apply(v);
+  Object.assign(el.style, styles);
+  el.textContent = cfg.label(v);
+  document.getElementById('unitSliderVal').textContent = v + cfg.suffix;
+}
+
+/* ── MEDIA QUERIES SIMULATOR ── */
+const devices = {
+  mobile: {
+    width: '100%', label: '< 480px', pill: 'Mobile (< 480px)', pillClass: 'pill-r',
+    info: '— Sidebar disembunyikan, grid 1 kolom, hamburger menu aktif',
+    apply: () => {
+      document.getElementById('mqSidebar').style.display = 'none';
+      document.getElementById('mqMain').style.gridTemplateColumns = '1fr';
+      document.getElementById('mqNavLinks').style.display = 'none';
+      document.getElementById('mqHamburger').style.display = 'block';
+    }
+  },
+  tablet: {
+    width: '80%', label: '768px – 1023px', pill: 'Tablet (768px)', pillClass: 'pill-y',
+    info: '— Sidebar muncul, grid 2 kolom, nav mulai tampil',
+    apply: () => {
+      document.getElementById('mqSidebar').style.display = 'block';
+      document.getElementById('mqMain').style.gridTemplateColumns = 'repeat(2,1fr)';
+      document.getElementById('mqNavLinks').style.display = 'flex';
+      document.getElementById('mqHamburger').style.display = 'none';
+    }
+  },
+  desktop: {
+    width: '100%', label: '≥ 1024px', pill: 'Desktop (≥ 1024px)', pillClass: 'pill-g',
+    info: '— Sidebar full, grid 3 kolom, nav link lengkap',
+    apply: () => {
+      document.getElementById('mqSidebar').style.display = 'block';
+      document.getElementById('mqMain').style.gridTemplateColumns = 'repeat(3,1fr)';
+      document.getElementById('mqNavLinks').style.display = 'flex';
+      document.getElementById('mqHamburger').style.display = 'none';
+    }
+  }
+};
+// init mobile
+devices.mobile.apply();
+function setDevice(type, btn) {
+  document.querySelectorAll('.mq-device-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const d = devices[type];
+  document.getElementById('mqLayout').style.maxWidth = d.width;
+  document.getElementById('mqWidthLabel').textContent = d.label;
+  const pill = document.getElementById('mqInfoPill');
+  pill.className = 'pill ' + d.pillClass;
+  pill.textContent = d.pill;
+  document.getElementById('mqInfoText').textContent = d.info;
+  d.apply();
+}
+
+/* ── QUIZ ── */
+const questions = [
+  { q: 'Sebuah elemen <code style="font-family:\'JetBrains Mono\',monospace;background:rgba(255,255,255,.07);padding:1px 6px;border-radius:4px">&lt;span&gt;</code> secara default punya display apa?', opts: ['block', 'inline', 'inline-block', 'flex'], ans: 1, exp: '✅ Benar! &lt;span&gt; adalah inline. Artinya ia mengikuti aliran teks dan TIDAK bisa diatur lebar/tingginya.' },
+  { q: 'Property manakah yang mengatur jarak antar child di <strong>sumbu utama</strong> Flexbox?', opts: ['align-items', 'align-content', 'justify-content', 'flex-direction'], ans: 2, exp: '✅ Benar! justify-content mengatur posisi child di sepanjang main axis (arah flex-direction).' },
+  { q: 'Apa bedanya <code style="font-family:\'JetBrains Mono\',monospace;background:rgba(255,255,255,.07);padding:1px 6px;border-radius:4px">position: fixed</code> dan <code style="font-family:\'JetBrains Mono\',monospace;background:rgba(255,255,255,.07);padding:1px 6px;border-radius:4px">position: absolute</code>?', opts: ['fixed lebih cepat', 'fixed menempel di viewport saat scroll, absolute relatif ke parent', 'absolute bisa dipakai tanpa parent', 'Tidak ada bedanya'], ans: 1, exp: '✅ Benar! fixed menempel di layar, absolute mengikuti parent berposisi yang terdekat.' },
+  { q: 'Satuan <code style="font-family:\'JetBrains Mono\',monospace;background:rgba(255,255,255,.07);padding:1px 6px;border-radius:4px">rem</code> diukur relatif terhadap apa?', opts: ['Ukuran elemen parent', 'Ukuran font root/browser (biasanya 16px)', 'Lebar viewport', 'Tinggi viewport'], ans: 1, exp: '✅ Benar! rem = Root EM. 1rem = ukuran font root browser (defaultnya 16px).' },
+  { q: 'Di Mobile-First workflow, kita menulis CSS untuk ukuran layar apa TERLEBIH DAHULU?', opts: ['Desktop', 'Tablet', 'HP / Mobile', 'Smart TV'], ans: 2, exp: '✅ Benar! Mobile-First = tulis CSS dasar untuk HP, baru tambahkan @media untuk layar lebih besar.' },
+  { q: 'Property <code style="font-family:\'JetBrains Mono\',monospace;background:rgba(255,255,255,.07);padding:1px 6px;border-radius:4px">transition</code> harus dipasang di... ?', opts: ['Selector :hover', 'Selector normal (bukan :hover)', 'Di dalam @media', 'Di tag &lt;script&gt;'], ans: 1, exp: '✅ Benar! transition dipasang di elemen NORMAL. Saat hover terjadi, browser akan pakai transition itu untuk animasi perubahannya.' },
+  { q: 'Kamu mau buat navbar yang tetap di atas walaupun user scroll ke bawah. Property apa yang dipakai?', opts: ['position: relative', 'position: absolute', 'position: fixed', 'position: sticky'], ans: 2, exp: '✅ Benar! position: fixed membuat elemen selalu nempel di posisi viewport, tidak peduli scroll.' },
+  { q: '<code style="font-family:\'JetBrains Mono\',monospace;background:rgba(255,255,255,.07);padding:1px 6px;border-radius:4px">100vw</code> artinya apa?', opts: ['100% dari parent', 'Lebar penuh viewport (layar)', 'Tinggi penuh layar', '100 pixel'], ans: 1, exp: '✅ Benar! vw = Viewport Width. 100vw = lebar penuh layar pengguna.' },
+  { q: 'Mana cara TERBAIK untuk kasih jarak antar child di dalam flex container?', opts: ['margin di setiap child', 'padding di parent', 'gap di parent', 'border di setiap child'], ans: 2, exp: '✅ Benar! gap di parent lebih bersih karena otomatis diterapkan antar child tanpa merusak sisi luar.' },
+  { q: 'Agar elemen child yang <code style="font-family:\'JetBrains Mono\',monospace;background:rgba(255,255,255,.07);padding:1px 6px;border-radius:4px">absolute</code> bisa melayang di dalam parent-nya, parent harus punya...', opts: ['display: flex', 'position: fixed', 'position: relative', 'overflow: hidden'], ans: 2, exp: '✅ Benar! Parent harus punya position: relative agar menjadi "anchor point" bagi child yang absolute.' }
+];
+let qIdx = 0, scores = [], answered = false;
+function buildQuiz() {
+  const q = questions[qIdx];
+  const scoreHtml = scores.map((s,i) => `<div class="score-dot${i<qIdx?' '+(s?'correct':'wrong'):''}" ></div>`).join('') + Array(10-scores.length).fill('<div class="score-dot"></div>').join('');
+  document.getElementById('quizScore').innerHTML = `<span>${qIdx+1}/10</span>${scoreHtml}`;
+  document.getElementById('quizContainer').innerHTML = `
+    <div class="quiz-question">${q.q}</div>
+    <div class="quiz-options">
+      ${q.opts.map((o,i)=>`<div class="quiz-opt" onclick="answerQuiz(${i})" id="qopt${i}">
+        <span class="quiz-opt-label">${'ABCD'[i]}</span>${o}
+      </div>`).join('')}
+    </div>
+    <div class="quiz-feedback" id="quizFeedback"></div>
+    <button class="quiz-next" id="quizNext" onclick="nextQ()">${qIdx<9?'Soal Berikutnya →':'Lihat Hasil 🎉'}</button>
+  `;
+  answered = false;
+}
+function answerQuiz(i) {
+  if (answered) return;
+  answered = true;
+  const q = questions[qIdx];
+  const correct = i === q.ans;
+  scores.push(correct);
+  document.querySelectorAll('.quiz-opt').forEach((el,idx) => {
+    el.style.pointerEvents = 'none';
+    if (idx === q.ans) el.classList.add('correct');
+    else if (idx === i) el.classList.add('wrong');
+  });
+  const fb = document.getElementById('quizFeedback');
+  fb.className = 'quiz-feedback show ' + (correct ? 'good' : 'bad');
+  fb.innerHTML = correct ? q.exp : `❌ Jawaban kurang tepat. ${q.exp}`;
+  document.getElementById('quizNext').classList.add('show');
+}
+function nextQ() {
+  qIdx++;
+  if (qIdx >= 10) {
+    document.getElementById('quizContainer').style.display = 'none';
+    document.getElementById('quizScore').style.display = 'none';
+    const total = scores.filter(Boolean).length;
+    const complete = document.getElementById('quizComplete');
+    complete.classList.add('show');
+    document.getElementById('quizFinalScore').textContent = total;
+    const [emoji, title, desc] = total >= 9 ? ['🏆','Luar Biasa, Master CSS!','Kamu hafal semua konsepnya!'] :
+      total >= 7 ? ['🎉','Bagus Sekali!','Tinggal sedikit lagi jadi ahli CSS!'] :
+      total >= 5 ? ['💪','Lumayan!','Review lagi bagian yang salah ya.'] :
+      ['📚','Perlu Lebih Banyak Latihan','Tenang, baca ulang cheatsheet ini dan coba lagi!'];
+    document.getElementById('quizEmoji').textContent = emoji;
+    document.getElementById('quizResultTitle').textContent = title;
+    document.getElementById('quizResultDesc').innerHTML = `${desc}<br>Skor kamu: <strong style="color:var(--cyan)">${total}/10</strong>`;
+  } else {
+    buildQuiz();
+  }
+}
+function restartQuiz() {
+  qIdx = 0; scores = [];
+  document.getElementById('quizContainer').style.display = 'block';
+  document.getElementById('quizScore').style.display = 'flex';
+  document.getElementById('quizComplete').classList.remove('show');
+  buildQuiz();
+}
+buildQuiz();
+
+/* ── CHECKLIST ── */
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+  const box = el.querySelector('.check-box');
+  box.textContent = el.classList.contains('checked') ? '✓' : '';
+  updateCheckProgress();
+}
+function updateCheckProgress() {
+  const total = document.querySelectorAll('.check-item').length;
+  const done = document.querySelectorAll('.check-item.checked').length;
+  document.getElementById('checkCount').textContent = `${done} / ${total} selesai`;
+  document.getElementById('checkFill').style.width = (done/total*100) + '%';
+}
+
+/* ── NAV ACTIVE ── */
+const sections = ['display','flexbox','positioning','units','mediaqueries','transitions','quiz'];
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && window.scrollY >= el.offsetTop - 100) current = id;
+  });
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#'+current);
+  });
+});
 </script>
 </body>
 </html>
