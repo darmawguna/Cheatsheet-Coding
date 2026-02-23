@@ -1513,8 +1513,24 @@ window.addEventListener('scroll', () => {
 /* ── SCROLL REVEAL ── */
 const observer = new IntersectionObserver(entries => {
   entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
-}, { threshold: 0.1 });
+}, { threshold: 0.1, rootMargin: '0px 0px -20px 0px' });
+
 document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+
+// Fix: paksa trigger untuk elemen yang sudah visible di viewport saat halaman dibuka
+// Ini penting ketika user datang dari link (bukan scroll dari atas)
+function triggerVisibleElements() {
+  document.querySelectorAll('.scroll-reveal').forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      el.classList.add('visible');
+    }
+  });
+}
+// Jalankan setelah DOM siap dan setelah sedikit delay (fallback untuk lambat load)
+triggerVisibleElements();
+setTimeout(triggerVisibleElements, 100);
+setTimeout(triggerVisibleElements, 400);
 
 /* ── COPY CODE ── */
 function copyCode(btn, id) {
