@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CSS Challenge Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+<style>
+  /* ── RESET & ROOT ───────────────────────── */
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+  :root {
+    --bg:       #0d0f14;
+    --surface:  #161920;
+    --border:   #252a35;
+    --muted:    #3a4055;
+    --text:     #e2e8f0;
+    --soft:     #8892a4;
+    --accent:   #00e5a0;
+    --accent2:  #3b82f6;
+    --warn:     #f59e0b;
+    --danger:   #ef4444;
+    --mono:     'JetBrains Mono', monospace;
+    --sans:     'Syne', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── GRID BG ────────────────────────────── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.3;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── HEADER ─────────────────────────────── */
+  header {
+    position: relative; z-index: 10;
+    padding: 32px 24px 24px;
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .logo {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  h1 {
+    font-size: clamp(26px, 5vw, 38px);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -1px;
+  }
+
+  h1 span { color: var(--accent); }
+
+  .subtitle {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--soft);
+    margin-top: 8px;
+  }
+
+  /* ── HUD (points + timer) ───────────────── */
+  .hud {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .hud-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 20px;
+    text-align: center;
+    min-width: 90px;
+  }
+
+  .hud-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--soft);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .hud-value {
+    font-family: var(--mono);
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  #timer-val { color: var(--warn); }
+  #timer-val.urgent { color: var(--danger); animation: pulse 0.5s infinite alternate; }
+
+  @keyframes pulse { from { opacity: 1; } to { opacity: 0.4; } }
+
+  /* ── PROGRESS BAR ───────────────────────── */
+  .progress-wrap {
+    max-width: 860px;
+    margin: 0 auto 28px;
+    padding: 0 24px;
+    position: relative; z-index: 10;
+  }
+
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--soft);
+    margin-bottom: 8px;
+  }
+
+  .progress-bar {
+    height: 4px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    border-radius: 99px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  /* ── MAIN AREA ──────────────────────────── */
+  main {
+    position: relative; z-index: 10;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 24px 60px;
+  }
+
+  /* ── QUESTION CARD ──────────────────────── */
+  .q-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px;
+    margin-bottom: 20px;
+    transition: border-color 0.3s;
+  }
+
+  .q-card.correct  { border-color: var(--accent); box-shadow: 0 0 30px rgba(0,229,160,.1); }
+  .q-card.wrong    { border-color: var(--danger);  box-shadow: 0 0 30px rgba(239,68,68,.1); }
+
+  .q-meta {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  .badge-type  { background: rgba(59,130,246,.15); color: var(--accent2); }
+  .badge-pts   { background: rgba(0,229,160,.12);  color: var(--accent); }
+  .badge-diff  { background: rgba(245,158,11,.12); color: var(--warn); }
+  .badge-diff.hard { background: rgba(239,68,68,.12); color: var(--danger); }
+
+  .q-text {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.5;
+    margin-bottom: 8px;
+    letter-spacing: -0.3px;
+  }
+
+  .q-hint {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--soft);
+    margin-bottom: 24px;
+  }
+
+  /* ── CODE SNIPPET ───────────────────────── */
+  .code-block {
+    background: #0a0c10;
+    border: 1px solid var(--muted);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.8;
+    overflow-x: auto;
+  }
+
+  .code-block .prop  { color: #7dd3fc; }
+  .code-block .val   { color: #86efac; }
+  .code-block .sel   { color: #f9a8d4; }
+  .code-block .blank { 
+    display: inline-block;
+    min-width: 100px;
+    border-bottom: 2px dashed var(--accent2);
+    color: var(--accent2);
+    text-align: center;
+    font-style: italic;
+  }
+  .code-block .cmt   { color: var(--muted); }
+
+  /* ── OPTIONS ────────────────────────────── */
+  .options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  @media (max-width: 560px) { .options { grid-template-columns: 1fr; } }
+
+  .opt {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    text-align: left;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.5;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .opt::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: var(--accent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .opt:hover:not(:disabled) {
+    border-color: var(--accent2);
+    transform: translateY(-1px);
+  }
+
+  .opt:disabled { cursor: default; }
+  .opt.selected { border-color: var(--accent2); background: rgba(59,130,246,.08); }
+  .opt.correct-opt  { border-color: var(--accent); background: rgba(0,229,160,.1); color: var(--accent); }
+  .opt.wrong-opt    { border-color: var(--danger); background: rgba(239,68,68,.08); color: var(--danger); text-decoration: line-through; opacity: 0.7; }
+
+  .opt-key {
+    display: inline-block;
+    width: 22px; height: 22px;
+    border: 1px solid currentColor;
+    border-radius: 4px;
+    text-align: center;
+    line-height: 22px;
+    font-size: 11px;
+    margin-right: 10px;
+    opacity: 0.5;
+    flex-shrink: 0;
+  }
+
+  /* ── FILL BLANK ─────────────────────────── */
+  .fill-wrap {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .fill-input {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .fill-input:focus { border-color: var(--accent2); }
+  .fill-input.correct { border-color: var(--accent); color: var(--accent); }
+  .fill-input.wrong   { border-color: var(--danger); color: var(--danger); }
+
+  .btn-submit {
+    background: var(--accent2);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 22px;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .btn-submit:hover { opacity: 0.85; transform: translateY(-1px); }
+  .btn-submit:disabled { opacity: 0.4; cursor: default; transform: none; }
+
+  /* ── FEEDBACK BOX ───────────────────────── */
+  .feedback {
+    margin-top: 20px;
+    padding: 16px 20px;
+    border-radius: 12px;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.7;
+    display: none;
+    animation: slideUp 0.3s ease;
+  }
+
+  @keyframes slideUp {
+    from { opacity:0; transform: translateY(8px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+
+  .feedback.show { display: block; }
+  .feedback.win  { background: rgba(0,229,160,.08); border: 1px solid rgba(0,229,160,.3); color: var(--accent); }
+  .feedback.lose { background: rgba(239,68,68,.08);  border: 1px solid rgba(239,68,68,.3);  color: #fca5a5; }
+
+  .feedback strong { font-size: 15px; display: block; margin-bottom: 6px; }
+  .feedback .correct-ans { color: var(--accent); font-weight: 700; }
+
+  /* ── NEXT BTN ───────────────────────────── */
+  .btn-next {
+    margin-top: 24px;
+    width: 100%;
+    padding: 16px;
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    border-radius: 12px;
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: none;
+  }
+
+  .btn-next.show { display: block; }
+  .btn-next:hover { background: var(--accent); color: var(--bg); }
+
+  /* ── STREAK ─────────────────────────────── */
+  .streak-toast {
+    position: fixed;
+    top: 24px; right: 24px;
+    background: var(--accent);
+    color: var(--bg);
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    padding: 12px 20px;
+    border-radius: 10px;
+    transform: translateX(200px);
+    transition: transform 0.3s ease;
+    z-index: 999;
+    letter-spacing: 1px;
+  }
+
+  .streak-toast.show { transform: translateX(0); }
+
+  /* ── RESULT SCREEN ──────────────────────── */
+  #result-screen {
+    display: none;
+    text-align: center;
+    padding: 48px 32px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    animation: slideUp 0.5s ease;
+  }
+
+  #result-screen.show { display: block; }
+
+  .result-emoji { font-size: 64px; margin-bottom: 16px; }
+
+  .result-title {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 8px;
+  }
+
+  .result-sub {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--soft);
+    margin-bottom: 36px;
+  }
+
+  .result-stats {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+  }
+
+  .stat-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 28px;
+    min-width: 120px;
+  }
+
+  .stat-num {
+    font-family: var(--mono);
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .stat-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--soft);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .btn-restart {
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    border-radius: 12px;
+    padding: 16px 40px;
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: opacity 0.2s;
+  }
+
+  .btn-restart:hover { opacity: 0.85; }
+
+  /* ── REVIEW TABLE ───────────────────────── */
+  .review {
+    margin-top: 40px;
+    text-align: left;
+  }
+
+  .review h3 {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--soft);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .review-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+
+  .review-icon { font-size: 16px; flex-shrink: 0; padding-top: 1px; }
+  .review-q { flex: 1; color: var(--soft); font-size: 13px; }
+  .review-pts { font-family: var(--mono); font-size: 12px; color: var(--accent); flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<div class="streak-toast" id="streak-toast">🔥 STREAK x<span id="streak-num">0</span></div>
+
+<header>
+  <div>
+    <div class="logo">// CSS Challenge Lab</div>
+    <h1>Level Up Your <span>CSS</span></h1>
+    <p class="subtitle">10 tantangan · sistem poin · feedback instan</p>
+  </div>
+  <div class="hud">
+    <div class="hud-card">
+      <div class="hud-label">Poin</div>
+      <div class="hud-value" id="score-val">0</div>
+    </div>
+    <div class="hud-card">
+      <div class="hud-label">Waktu</div>
+      <div class="hud-value" id="timer-val">30</div>
+    </div>
+  </div>
+</header>
+
+<div class="progress-wrap">
+  <div class="progress-meta">
+    <span id="q-counter">Soal 1 dari 10</span>
+    <span id="streak-label"></span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="prog-fill"></div></div>
+</div>
+
+<main>
+  <div id="quiz-area"></div>
+  <div id="result-screen"></div>
+</main>
+
+<script>
+/* ── DATA SOAL ───────────────────────────────────────────── */
+const questions = [
+  {
+    type: "mcq",
+    diff: "mudah",
+    points: 10,
+    topic: "Box Model",
+    text: "Properti CSS mana yang mengatur jarak antara KONTEN dan BORDER sebuah elemen?",
+    hint: "Bayangkan kertas putih di dalam bingkai foto",
+    options: ["margin", "padding", "border-spacing", "gap"],
+    answer: 1,
+    explanation: "padding mengatur ruang di dalam elemen — antara konten dan border. margin adalah ruang di luar elemen (antara elemen dengan elemen lain)."
+  },
+  {
+    type: "fill",
+    diff: "mudah",
+    points: 10,
+    topic: "Selector",
+    text: "Lengkapi selector CSS untuk menarget elemen dengan class=\"kartu\"",
+    hint: "Ingat: class diawali simbol tertentu",
+    code: `<span class="blank">???</span><span class="prop">kartu</span> {\n  background: white;\n}`,
+    answer: ".",
+    accept: ["."],
+    explanation: "Class selector menggunakan titik (.) di depan nama class. Jadi .kartu akan menarget semua elemen yang punya class=\"kartu\"."
+  },
+  {
+    type: "mcq",
+    diff: "mudah",
+    points: 10,
+    topic: "Typography",
+    text: "Properti apa yang digunakan untuk mengatur jarak antar baris teks?",
+    hint: "Ini yang bikin teks enak dibaca (disarankan nilai 1.5–1.8)",
+    options: ["letter-spacing", "word-spacing", "line-height", "text-indent"],
+    answer: 2,
+    explanation: "line-height mengontrol jarak vertikal antar baris. Nilai 1.5–1.8 biasanya paling nyaman dibaca. letter-spacing mengatur jarak antar HURUF."
+  },
+  {
+    type: "mcq",
+    diff: "sedang",
+    points: 20,
+    topic: "Specificity",
+    text: "Mana yang akan MENANG jika ada konflik antara selector-selector ini?",
+    hint: "CSS punya urutan prioritas: semakin spesifik, semakin kuat",
+    code: `<span class="cmt">/* Manakah yang paling prioritas? */</span>\n<span class="sel">p</span>            { color: red; }\n<span class="sel">.teks</span>       { color: blue; }\n<span class="sel">#judul</span>      { color: green; }\n<span class="sel">p.teks#judul</span> { color: orange; }`,
+    options: [
+      "p { color: red }",
+      ".teks { color: blue }",
+      "#judul { color: green }",
+      "p.teks#judul { color: orange }"
+    ],
+    answer: 3,
+    explanation: "Specificty dihitung: ID (#) = 100 poin, Class (.) = 10 poin, Tag = 1 poin. p.teks#judul = 1+10+100 = 111 poin — paling tinggi!"
+  },
+  {
+    type: "fill",
+    diff: "sedang",
+    points: 20,
+    topic: "Box Model",
+    text: "Isi properti yang membuat padding & border TIDAK menambah total lebar elemen",
+    hint: "Ini wajib ada di CSS reset kamu!",
+    code: `* {\n  <span class="prop">box-sizing</span>: <span class="blank">???</span>;\n}`,
+    answer: "border-box",
+    accept: ["border-box"],
+    explanation: "box-sizing: border-box memastikan padding dan border sudah termasuk di dalam lebar/tinggi yang kamu set. Tanpa ini, elemen bisa 'meluber' keluar layout."
+  },
+  {
+    type: "mcq",
+    diff: "sedang",
+    points: 20,
+    topic: "Visual",
+    text: "Apa output dari nilai RGBA ini? rgba(0, 0, 0, 0.5)",
+    hint: "R=merah, G=hijau, B=biru, A=alpha (transparansi)",
+    options: [
+      "Putih 50% transparan",
+      "Hitam 50% transparan",
+      "Abu-abu solid",
+      "Hitam penuh (tidak transparan)"
+    ],
+    answer: 1,
+    explanation: "RGB(0,0,0) = hitam. Nilai alpha 0.5 = 50% transparan. Jadi rgba(0,0,0,0.5) adalah hitam setengah transparan — sering dipakai untuk overlay atau box-shadow!"
+  },
+  {
+    type: "mcq",
+    diff: "sedang",
+    points: 20,
+    topic: "Pseudo-class",
+    text: "CSS apa yang tepat untuk mengubah warna tombol HANYA saat mouse melayang di atasnya?",
+    hint: "Ada selector spesial untuk kondisi interaksi",
+    options: [
+      ".btn.mouse { color: blue; }",
+      ".btn:hover { color: blue; }",
+      ".btn::hover { color: blue; }",
+      ".btn[hover] { color: blue; }"
+    ],
+    answer: 1,
+    explanation: ":hover adalah pseudo-class — selector yang aktif berdasarkan kondisi/state. Penulisannya pakai titik dua tunggal (:), bukan dua (::). Dua titik dua (::) dipakai untuk pseudo-ELEMENT seperti ::before dan ::after."
+  },
+  {
+    type: "fill",
+    diff: "susah",
+    points: 30,
+    topic: "Shorthand",
+    text: "Tulis shorthand border yang setara dengan 3 baris ini sekaligus",
+    hint: "border: [ketebalan] [style] [warna] — urutannya penting!",
+    code: `<span class="cmt">/* Ini 3 baris terpisah: */</span>\n<span class="prop">border-width</span>: <span class="val">2px</span>;\n<span class="prop">border-style</span>: <span class="val">solid</span>;\n<span class="prop">border-color</span>: <span class="val">#333</span>;\n\n<span class="cmt">/* Tulis dalam 1 baris: */</span>\n<span class="prop">border</span>: <span class="blank">???</span>;`,
+    answer: "2px solid #333",
+    accept: ["2px solid #333", "2px solid #333333"],
+    explanation: "border adalah shorthand property. Urutan nilainya: lebar style warna. Banyak CSS properties punya shorthand seperti ini: margin, padding, background, font, dll."
+  },
+  {
+    type: "mcq",
+    diff: "susah",
+    points: 30,
+    topic: "Cascade",
+    text: "Berapa nilai akhir font-size elemen <p> ini?",
+    hint: "Perhatikan urutan deklarasi dan spesifisitas",
+    code: `<span class="sel">p</span> { <span class="prop">font-size</span>: <span class="val">16px</span>; }\n<span class="sel">p</span> { <span class="prop">font-size</span>: <span class="val">20px</span>; }\n<span class="sel">.teks</span> { <span class="prop">font-size</span>: <span class="val">14px</span>; }`,
+    options: ["16px", "20px", "14px", "Error — konflik tidak bisa diselesaikan"],
+    answer: 2,
+    explanation: "CSS Cascade: .teks memiliki specificity lebih tinggi (class=10 vs tag=1), sehingga 14px menang. Jika specificity sama, aturan yang TERAKHIR ditulis yang dipakai (makanya p { 20px } menang atas p { 16px })."
+  },
+  {
+    type: "fill",
+    diff: "susah",
+    points: 30,
+    topic: "Transition",
+    text: "Lengkapi kode agar perubahan background-color berlangsung smooth selama 0.3 detik",
+    hint: "Property, durasi, timing-function",
+    code: `<span class="sel">.btn</span> {\n  <span class="prop">background-color</span>: <span class="val">blue</span>;\n  <span class="prop">transition</span>: <span class="blank">???</span>;\n}\n<span class="sel">.btn:hover</span> {\n  <span class="prop">background-color</span>: <span class="val">darkblue</span>;\n}`,
+    answer: "background-color 0.3s ease",
+    accept: ["background-color 0.3s ease", "background-color 0.3s", "all 0.3s ease", "all 0.3s"],
+    explanation: "transition: [property] [duration] [timing]. 'ease' adalah kurva animasi default (mulai pelan, cepat di tengah, pelan lagi). Kamu juga bisa pakai 'all' untuk menerapkan transisi ke semua property yang berubah."
+  }
+];
+
+/* ── STATE ───────────────────────────────────────────────── */
+let state = {
+  current: 0,
+  score: 0,
+  streak: 0,
+  maxStreak: 0,
+  timeLeft: 30,
+  timer: null,
+  answered: false,
+  history: [],   // {correct, points, text}
+};
+
+/* ── ELEMENTS ────────────────────────────────────────────── */
+const quizArea      = document.getElementById('quiz-area');
+const resultScreen  = document.getElementById('result-screen');
+const scoreVal      = document.getElementById('score-val');
+const timerVal      = document.getElementById('timer-val');
+const progFill      = document.getElementById('prog-fill');
+const qCounter      = document.getElementById('q-counter');
+const streakLabel   = document.getElementById('streak-label');
+const streakToast   = document.getElementById('streak-toast');
+const streakNum     = document.getElementById('streak-num');
+
+/* ── RENDER SOAL ─────────────────────────────────────────── */
+function renderQuestion() {
+  const q = questions[state.current];
+  state.answered = false;
+  startTimer();
+
+  qCounter.textContent = `Soal ${state.current + 1} dari ${questions.length}`;
+  progFill.style.width = `${(state.current / questions.length) * 100}%`;
+  updateStreakLabel();
+
+  const diffClass = q.diff === 'susah' ? 'hard' : '';
+
+  let bodyHTML = '';
+
+  if (q.code) {
+    bodyHTML += `<div class="code-block">${q.code}</div>`;
+  }
+
+  if (q.type === 'mcq') {
+    bodyHTML += `<div class="options">` +
+      q.options.map((o, i) => `
+        <button class="opt" data-idx="${i}" onclick="answerMCQ(${i})">
+          <span class="opt-key">${String.fromCharCode(65+i)}</span>${o}
+        </button>`).join('') +
+      `</div>`;
+  } else {
+    bodyHTML += `
+      <div class="fill-wrap">
+        <input class="fill-input" id="fill-inp" type="text" placeholder="Ketik jawaban..." autocomplete="off" spellcheck="false"/>
+        <button class="btn-submit" id="fill-btn" onclick="answerFill()">Submit</button>
+      </div>`;
+  }
+
+  bodyHTML += `<div class="feedback" id="feedback"></div>`;
+  bodyHTML += `<button class="btn-next" id="btn-next" onclick="nextQuestion()">${state.current < questions.length - 1 ? 'SOAL BERIKUTNYA →' : 'LIHAT HASIL →'}</button>`;
+
+  quizArea.innerHTML = `
+    <div class="q-card" id="q-card">
+      <div class="q-meta">
+        <span class="badge badge-type">${q.topic}</span>
+        <span class="badge badge-pts">+${q.points} poin</span>
+        <span class="badge badge-diff ${diffClass}">${q.diff}</span>
+      </div>
+      <p class="q-text">${q.text}</p>
+      <p class="q-hint">💡 ${q.hint}</p>
+      ${bodyHTML}
+    </div>`;
+
+  if (q.type === 'fill') {
+    const inp = document.getElementById('fill-inp');
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') answerFill(); });
+    inp.focus();
+  }
+}
+
+/* ── TIMER ───────────────────────────────────────────────── */
+function startTimer() {
+  clearInterval(state.timer);
+  state.timeLeft = 30;
+  timerVal.textContent = 30;
+  timerVal.classList.remove('urgent');
+
+  state.timer = setInterval(() => {
+    state.timeLeft--;
+    timerVal.textContent = state.timeLeft;
+
+    if (state.timeLeft <= 10) timerVal.classList.add('urgent');
+
+    if (state.timeLeft <= 0) {
+      clearInterval(state.timer);
+      if (!state.answered) timeOut();
+    }
+  }, 1000);
+}
+
+function timeOut() {
+  state.answered = true;
+  state.streak = 0;
+  const q = questions[state.current];
+  state.history.push({ correct: false, points: 0, text: q.text });
+  showFeedback(false, q, true);
+}
+
+/* ── ANSWER MCQ ──────────────────────────────────────────── */
+function answerMCQ(idx) {
+  if (state.answered) return;
+  state.answered = true;
+  clearInterval(state.timer);
+
+  const q = questions[state.current];
+  const opts = document.querySelectorAll('.opt');
+  const correct = idx === q.answer;
+
+  opts.forEach((o, i) => {
+    o.disabled = true;
+    if (i === q.answer) o.classList.add('correct-opt');
+    else if (i === idx && !correct) o.classList.add('wrong-opt');
+  });
+
+  processResult(correct, q);
+}
+
+/* ── ANSWER FILL ─────────────────────────────────────────── */
+function answerFill() {
+  if (state.answered) return;
+  const inp = document.getElementById('fill-inp');
+  const btn = document.getElementById('fill-btn');
+  const raw = inp.value.trim();
+  if (!raw) return;
+
+  state.answered = true;
+  clearInterval(state.timer);
+  btn.disabled = true;
+
+  const q = questions[state.current];
+  const correct = q.accept.some(a => a.toLowerCase() === raw.toLowerCase());
+
+  inp.classList.add(correct ? 'correct' : 'wrong');
+  processResult(correct, q, raw);
+}
+
+/* ── PROCESS RESULT ──────────────────────────────────────── */
+function processResult(correct, q, userAns = null) {
+  const card = document.getElementById('q-card');
+
+  if (correct) {
+    const bonus = state.timeLeft >= 20 ? Math.floor(q.points * 0.5) : 0;
+    const earned = q.points + bonus;
+    state.score += earned;
+    state.streak++;
+    if (state.streak > state.maxStreak) state.maxStreak = state.streak;
+    scoreVal.textContent = state.score;
+    card.classList.add('correct');
+    state.history.push({ correct: true, points: earned, text: q.text });
+
+    if (state.streak >= 2) showStreakToast();
+    showFeedback(true, q, false, bonus);
+  } else {
+    state.streak = 0;
+    card.classList.add('wrong');
+    state.history.push({ correct: false, points: 0, text: q.text });
+    showFeedback(false, q, false);
+  }
+
+  updateStreakLabel();
+  document.getElementById('btn-next').classList.add('show');
+}
+
+/* ── FEEDBACK ────────────────────────────────────────────── */
+function showFeedback(correct, q, timeout = false, bonus = 0) {
+  const fb = document.getElementById('feedback');
+  fb.classList.add('show');
+
+  if (timeout) {
+    fb.className = 'feedback show lose';
+    fb.innerHTML = `<strong>⏱ Waktu habis!</strong>Jawaban yang benar: <span class="correct-ans">${
+      q.type === 'mcq' ? q.options[q.answer] : q.answer
+    }</span><br><br>${q.explanation}`;
+    return;
+  }
+
+  if (correct) {
+    fb.className = 'feedback show win';
+    fb.innerHTML = `<strong>✓ Benar! ${bonus > 0 ? `+${bonus} bonus speed!` : ''}</strong>${q.explanation}`;
+  } else {
+    fb.className = 'feedback show lose';
+    fb.innerHTML = `<strong>✗ Kurang tepat.</strong>Jawaban yang benar: <span class="correct-ans">${
+      q.type === 'mcq' ? q.options[q.answer] : q.answer
+    }</span><br><br>${q.explanation}`;
+  }
+}
+
+/* ── NEXT ────────────────────────────────────────────────── */
+function nextQuestion() {
+  state.current++;
+  if (state.current >= questions.length) {
+    showResult();
+  } else {
+    renderQuestion();
+  }
+}
+
+/* ── STREAK TOAST ────────────────────────────────────────── */
+function showStreakToast() {
+  streakNum.textContent = state.streak;
+  streakToast.classList.add('show');
+  setTimeout(() => streakToast.classList.remove('show'), 2000);
+}
+
+function updateStreakLabel() {
+  if (state.streak >= 2) {
+    streakLabel.textContent = `🔥 Streak: ${state.streak}`;
+    streakLabel.style.color = 'var(--warn)';
+  } else {
+    streakLabel.textContent = '';
+  }
+}
+
+/* ── RESULT ──────────────────────────────────────────────── */
+function showResult() {
+  clearInterval(state.timer);
+  quizArea.innerHTML = '';
+  progFill.style.width = '100%';
+
+  const correct = state.history.filter(h => h.correct).length;
+  const pct = Math.round((correct / questions.length) * 100);
+  const maxPossible = questions.reduce((s, q) => s + q.points, 0) + Math.floor(questions.reduce((s,q)=>s+q.points,0)*0.5);
+
+  let emoji = '💀', title = 'Perlu Belajar Lebih!', sub = 'Jangan menyerah — ulangi materi dan coba lagi.';
+  if (pct >= 80) { emoji = '🏆'; title = 'Luar Biasa!'; sub = 'Kamu sudah siap ke materi Flexbox & Layout!'; }
+  else if (pct >= 60) { emoji = '⚡'; title = 'Bagus!'; sub = 'Sedikit lagi! Review bagian yang salah, lalu coba ulang.'; }
+  else if (pct >= 40) { emoji = '💪'; title = 'Terus Berlatih!'; sub = 'Fokus ke Specificity dan Box Model dulu ya.'; }
+
+  const reviewRows = state.history.map((h, i) => `
+    <div class="review-row">
+      <div class="review-icon">${h.correct ? '✅' : '❌'}</div>
+      <div class="review-q">Soal ${i+1}: ${questions[i].text.substring(0, 60)}...</div>
+      <div class="review-pts">${h.correct ? '+'+h.points : '0'} pts</div>
+    </div>`).join('');
+
+  resultScreen.className = 'show';
+  resultScreen.innerHTML = `
+    <div class="result-emoji">${emoji}</div>
+    <div class="result-title">${title}</div>
+    <p class="result-sub">${sub}</p>
+    <div class="result-stats">
+      <div class="stat-box">
+        <div class="stat-num">${state.score}</div>
+        <div class="stat-label">Total Poin</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">${correct}/${questions.length}</div>
+        <div class="stat-label">Benar</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">${state.maxStreak}🔥</div>
+        <div class="stat-label">Best Streak</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">${pct}%</div>
+        <div class="stat-label">Skor</div>
+      </div>
+    </div>
+    <button class="btn-restart" onclick="restartQuiz()">ULANGI QUIZ</button>
+    <div class="review">
+      <h3>Review Jawaban</h3>
+      ${reviewRows}
+    </div>`;
+}
+
+/* ── RESTART ─────────────────────────────────────────────── */
+function restartQuiz() {
+  state = { current:0, score:0, streak:0, maxStreak:0, timeLeft:30, timer:null, answered:false, history:[] };
+  scoreVal.textContent = '0';
+  timerVal.textContent = '30';
+  timerVal.classList.remove('urgent');
+  resultScreen.className = '';
+  resultScreen.innerHTML = '';
+  renderQuestion();
+}
+
+/* ── KEYBOARD SHORTCUTS ──────────────────────────────────── */
+document.addEventListener('keydown', e => {
+  if (state.answered) {
+    if (e.key === 'Enter' || e.key === 'ArrowRight') nextQuestion();
+    return;
+  }
+  const q = questions[state.current];
+  if (q.type === 'mcq') {
+    const map = { 'a':0,'b':1,'c':2,'d':3,'1':0,'2':1,'3':2,'4':3 };
+    if (e.key.toLowerCase() in map) answerMCQ(map[e.key.toLowerCase()]);
+  }
+});
+
+/* ── INIT ────────────────────────────────────────────────── */
+renderQuestion();
+</script>
+</body>
+</html>
