@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Challenge: Mesin Sapa Otomatis 🤖</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080b14;
+  --surface: #0f1320;
+  --card: #131926;
+  --card2: #1a2133;
+  --border: #1e2d47;
+  --border2: #263650;
+  --yellow: #ffd95a;
+  --cyan: #38f5d4;
+  --pink: #ff6b9d;
+  --purple: #a78bfa;
+  --orange: #fb923c;
+  --green: #4ade80;
+  --blue: #60a5fa;
+  --red: #f87171;
+  --text: #e2e8f5;
+  --muted: #64748b;
+  --muted2: #94a3b8;
+  --glow-cyan: 0 0 30px rgba(56,245,212,.15);
+  --glow-purple: 0 0 30px rgba(167,139,250,.15);
+  --glow-yellow: 0 0 30px rgba(255,217,90,.15);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg); color: var(--text);
+  font-family: 'Outfit', sans-serif; font-weight: 400;
+  min-height: 100vh; overflow-x: hidden;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
+
+body::before {
+  content: ''; position: fixed; inset: 0;
+  background-image: linear-gradient(rgba(30,45,71,.3) 1px, transparent 1px), linear-gradient(90deg, rgba(30,45,71,.3) 1px, transparent 1px);
+  background-size: 40px 40px; pointer-events: none; z-index: 0;
+}
+
+.orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; }
+.orb-1 { width: 500px; height: 500px; top: -150px; left: -150px; background: radial-gradient(circle, rgba(255,217,90,.08) 0%, transparent 70%); filter: blur(60px); }
+.orb-2 { width: 500px; height: 500px; bottom: -150px; right: -150px; background: radial-gradient(circle, rgba(255,107,157,.08) 0%, transparent 70%); filter: blur(60px); }
+
+.progress-bar-outer { position: fixed; top: 60px; left: 0; right: 0; height: 2px; z-index: 1001; }
+.progress-bar-inner { height: 100%; width: 0%; background: linear-gradient(90deg, var(--yellow), var(--pink)); transition: width .1s; }
+
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; height: 60px;
+  display: flex; align-items: center; justify-content: space-between; padding: 0 24px;
+  backdrop-filter: blur(20px); background: rgba(8,11,20,.85);
+  border-bottom: 1px solid var(--border); z-index: 1000;
+}
+.nav-brand {
+  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 18px;
+  background: linear-gradient(90deg, var(--yellow), var(--pink));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  text-decoration: none;
+}
+.nav-links { display: flex; gap: 4px; list-style: none; }
+.nav-links a { font-size: 12.5px; font-weight: 500; color: var(--muted2); text-decoration: none; padding: 5px 10px; border-radius: 8px; transition: all .2s; }
+.nav-links a:hover, .nav-links a.active { color: var(--yellow); background: rgba(255,217,90,.08); }
+@media (max-width: 768px) { .nav-links { display: none; } }
+
+.wrapper { max-width: 1000px; margin: 0 auto; padding: 100px 24px 80px; position: relative; z-index: 1; }
+
+/* ── HERO ── */
+.hero { text-align: center; padding: 50px 0 60px; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; color: var(--yellow);
+  border: 1px solid rgba(255,217,90,.35); padding: 5px 14px; border-radius: 99px;
+  margin-bottom: 20px; animation: fadeUp .6s ease both;
+}
+.hero h1 {
+  font-family: 'Syne', sans-serif; font-weight: 900; font-size: clamp(32px, 6vw, 60px); line-height: 1.1;
+  background: linear-gradient(135deg, #fff 0%, var(--yellow) 50%, var(--pink) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  animation: fadeUp .6s .1s ease both; margin-bottom: 14px;
+}
+.hero-sub { font-size: 15px; color: var(--muted2); max-width: 500px; margin: 0 auto 32px; animation: fadeUp .6s .2s ease both; }
+
+/* Difficulty + time row */
+.meta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; animation: fadeUp .6s .3s ease both; margin-bottom: 0; }
+.meta-chip {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 8px 16px; font-size: 13px; font-weight: 500;
+}
+.meta-chip .mc-icon { font-size: 16px; }
+.meta-chip.diff { border-color: rgba(255,217,90,.25); color: var(--yellow); }
+.meta-chip.time { border-color: rgba(56,245,212,.25); color: var(--cyan); }
+.meta-chip.skill { border-color: rgba(167,139,250,.25); color: var(--purple); }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── SECTION HEADER ── */
+.section-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; margin-top: 64px; }
+.section-badge { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; color: var(--yellow); border: 1px solid rgba(255,217,90,.3); padding: 4px 10px; border-radius: 99px; white-space: nowrap; }
+.section-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(18px, 3vw, 26px); color: var(--text); white-space: nowrap; }
+.section-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--border), transparent); }
+
+/* ── CARDS ── */
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 28px; transition: border-color .2s, box-shadow .2s; margin-bottom: 16px; }
+.card:hover { border-color: var(--border2); }
+.card-glow-yellow:hover { box-shadow: var(--glow-yellow); border-color: rgba(255,217,90,.25); }
+.card-glow-cyan:hover { box-shadow: var(--glow-cyan); border-color: rgba(56,245,212,.25); }
+.card-glow-purple:hover { box-shadow: var(--glow-purple); border-color: rgba(167,139,250,.25); }
+.card-glow-pink:hover { box-shadow: 0 0 30px rgba(255,107,157,.15); border-color: rgba(255,107,157,.25); }
+
+.card-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 17px; color: var(--text); margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+.card-desc { font-size: 14px; color: var(--muted2); line-height: 1.75; }
+
+/* ── CODE BLOCK ── */
+.code-block { border-radius: 12px; overflow: hidden; border: 1px solid var(--border); margin-top: 14px; }
+.code-header { display: flex; align-items: center; justify-content: space-between; background: #0a0d18; padding: 10px 14px; border-bottom: 1px solid var(--border); }
+.mac-dots { display: flex; gap: 6px; }
+.mac-dots span { width: 11px; height: 11px; border-radius: 50%; }
+.dot-r { background: #f87171; } .dot-y { background: var(--yellow); } .dot-g { background: var(--green); }
+.code-lang { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+.copy-btn { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; background: var(--border); color: var(--muted2); border: none; padding: 4px 10px; border-radius: 6px; cursor: pointer; transition: all .2s; }
+.copy-btn:hover { background: var(--border2); color: var(--text); }
+.copy-btn.copied { background: rgba(74,222,128,.15); color: var(--green); }
+.code-body { background: #060910; padding: 18px 20px; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.85; overflow-x: auto; white-space: pre; }
+.kw { color: #c792ea; } .prop { color: var(--cyan); } .str { color: var(--green); }
+.fn { color: var(--blue); } .num2 { color: var(--orange); } .cm { color: #3d5070; font-style: italic; }
+.ph { color: var(--yellow); background: rgba(255,217,90,.08); border-radius: 3px; padding: 0 2px; } /* placeholder */
+
+/* ── LEVEL TABS ── */
+.level-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+.level-tab {
+  font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600;
+  padding: 8px 18px; border-radius: 10px; border: 1px solid var(--border);
+  background: var(--card2); color: var(--muted2); cursor: pointer; transition: all .2s;
+}
+.level-tab:hover { border-color: var(--border2); color: var(--text); }
+.level-tab.active-lv1 { background: rgba(74,222,128,.1); border-color: rgba(74,222,128,.35); color: var(--green); }
+.level-tab.active-lv2 { background: rgba(255,217,90,.1); border-color: rgba(255,217,90,.35); color: var(--yellow); }
+.level-tab.active-lv3 { background: rgba(255,107,157,.1); border-color: rgba(255,107,157,.35); color: var(--pink); }
+.level-panel { display: none; }
+.level-panel.show { display: block; }
+
+/* ── TASK LIST ── */
+.task-list { list-style: none; padding: 0; margin: 0; }
+.task-item {
+  display: flex; gap: 14px; align-items: flex-start;
+  padding: 14px 0; border-bottom: 1px solid var(--border);
+}
+.task-item:last-child { border-bottom: none; }
+.task-num {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+  min-width: 26px; height: 26px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px;
+}
+.tn-g { background: rgba(74,222,128,.12); color: var(--green); border: 1px solid rgba(74,222,128,.25); }
+.tn-y { background: rgba(255,217,90,.12); color: var(--yellow); border: 1px solid rgba(255,217,90,.25); }
+.tn-p { background: rgba(255,107,157,.12); color: var(--pink); border: 1px solid rgba(255,107,157,.25); }
+.task-content { flex: 1; }
+.task-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.task-desc { font-size: 13px; color: var(--muted2); line-height: 1.65; }
+.task-hint { display: inline-flex; align-items: center; gap: 5px; margin-top: 7px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); background: var(--surface); border: 1px solid var(--border); padding: 3px 9px; border-radius: 6px; }
+
+/* ── EXPECTED OUTPUT BOX ── */
+.output-box {
+  background: #060910; border: 1px solid var(--border); border-radius: 12px;
+  padding: 18px 20px; font-family: 'JetBrains Mono', monospace; font-size: 12.5px;
+  line-height: 1.9; color: var(--muted2); margin-top: 12px; position: relative;
+}
+.output-box::before {
+  content: 'Expected Output'; position: absolute; top: -10px; left: 14px;
+  font-size: 10px; font-weight: 600; color: var(--muted);
+  background: #060910; padding: 0 8px; letter-spacing: .05em;
+  font-family: 'JetBrains Mono', monospace;
+}
+.out-green { color: var(--green); }
+.out-yellow { color: var(--yellow); }
+.out-pink { color: var(--pink); }
+.out-cyan { color: var(--cyan); }
+.out-muted { color: var(--muted); font-style: italic; }
+
+/* ── PILL ── */
+.pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 99px; display: inline-block; }
+.pill-g { background: rgba(74,222,128,.12); color: var(--green); border: 1px solid rgba(74,222,128,.25); }
+.pill-y { background: rgba(255,217,90,.12); color: var(--yellow); border: 1px solid rgba(255,217,90,.25); }
+.pill-p { background: rgba(167,139,250,.12); color: var(--purple); border: 1px solid rgba(167,139,250,.25); }
+.pill-r { background: rgba(255,107,157,.12); color: var(--pink); border: 1px solid rgba(255,107,157,.25); }
+.pill-c { background: rgba(56,245,212,.12); color: var(--cyan); border: 1px solid rgba(56,245,212,.25); }
+.pill-o { background: rgba(251,146,60,.12); color: var(--orange); border: 1px solid rgba(251,146,60,.25); }
+
+/* ── DEMO INTERAKTIF ── */
+.demo-wrap {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+  overflow: hidden; margin-top: 0;
+}
+.demo-top {
+  display: flex; gap: 0; border-bottom: 1px solid var(--border);
+}
+.demo-panel {
+  flex: 1; padding: 20px; min-height: 320px;
+}
+.demo-panel:first-child { border-right: 1px solid var(--border); }
+.demo-panel-title {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
+  color: var(--muted); margin-bottom: 16px; display: flex; align-items: center; gap: 7px;
+}
+.demo-panel-title::before { content: '●'; font-size: 8px; }
+
+@media (max-width: 640px) { .demo-top { flex-direction: column; } .demo-panel:first-child { border-right: none; border-bottom: 1px solid var(--border); } }
+
+/* inputs inside demo */
+.demo-label { font-size: 12.5px; font-weight: 600; color: var(--muted2); margin-bottom: 6px; display: block; }
+.demo-input {
+  width: 100%; background: var(--card2); border: 1.5px solid var(--border);
+  color: var(--text); padding: 10px 14px; border-radius: 10px;
+  font-family: 'Outfit', sans-serif; font-size: 14px; outline: none;
+  transition: border-color .2s; margin-bottom: 12px;
+}
+.demo-input:focus { border-color: rgba(255,217,90,.4); }
+.demo-select {
+  width: 100%; background: var(--card2); border: 1.5px solid var(--border);
+  color: var(--text); padding: 10px 14px; border-radius: 10px;
+  font-family: 'Outfit', sans-serif; font-size: 14px; outline: none;
+  transition: border-color .2s; margin-bottom: 12px; cursor: pointer;
+  -webkit-appearance: none;
+}
+.demo-select:focus { border-color: rgba(255,217,90,.4); }
+.demo-btn {
+  width: 100%; padding: 12px; border-radius: 10px;
+  background: linear-gradient(90deg, rgba(255,217,90,.15), rgba(255,107,157,.15));
+  border: 1px solid rgba(255,217,90,.3); color: var(--yellow);
+  font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 700;
+  cursor: pointer; transition: all .25s; letter-spacing: .01em;
+}
+.demo-btn:hover { background: linear-gradient(90deg, rgba(255,217,90,.25), rgba(255,107,157,.25)); transform: translateY(-1px); }
+.demo-btn:active { transform: translateY(0); }
+
+/* output panel */
+.output-panel { padding: 20px; background: #060910; border-top: 1px solid var(--border); min-height: 90px; }
+.output-panel-title { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); margin-bottom: 12px; letter-spacing: .05em; }
+.sapa-result {
+  font-family: 'Syne', sans-serif; font-size: clamp(18px, 3vw, 26px); font-weight: 800;
+  line-height: 1.3; min-height: 40px; transition: all .3s;
+}
+.sapa-result.empty { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 400; color: var(--muted); }
+.sapa-sub { font-size: 13.5px; color: var(--muted2); margin-top: 8px; font-family: 'Outfit', sans-serif; }
+.sapa-code-out { margin-top: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--muted2); line-height: 1.7; }
+
+/* ── STARTER CODE ── */
+.starter-tabs { display: flex; gap: 6px; margin-bottom: 0; }
+.starter-tab {
+  font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 600;
+  padding: 7px 14px; border-radius: 8px 8px 0 0; border: 1px solid var(--border);
+  border-bottom: none; background: var(--card2); color: var(--muted); cursor: pointer; transition: all .2s;
+}
+.starter-tab.active { background: #060910; color: var(--text); border-color: var(--border2); }
+.starter-file { display: none; }
+.starter-file.show { display: block; }
+.starter-file .code-block { border-radius: 0 12px 12px 12px; margin-top: 0; }
+
+/* ── HINT SYSTEM ── */
+.hint-trigger {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600;
+  color: var(--muted); border: 1px solid var(--border); background: var(--card2);
+  padding: 6px 14px; border-radius: 8px; cursor: pointer; transition: all .2s;
+  margin-top: 12px;
+}
+.hint-trigger:hover { border-color: var(--yellow); color: var(--yellow); }
+.hint-trigger .ht-icon { transition: transform .2s; }
+.hint-trigger.open .ht-icon { transform: rotate(90deg); }
+.hint-body {
+  max-height: 0; overflow: hidden; transition: max-height .4s ease;
+  background: rgba(255,217,90,.04); border: 1px solid rgba(255,217,90,.15);
+  border-radius: 10px; margin-top: 10px;
+}
+.hint-body.open { max-height: 400px; }
+.hint-inner { padding: 14px 18px; font-size: 13.5px; color: var(--muted2); line-height: 1.75; }
+.hint-inner strong { color: var(--yellow); }
+.hint-inner code { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--cyan); background: var(--surface); padding: 1px 5px; border-radius: 4px; }
+
+/* ── CHECKLIST ── */
+.check-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; border-radius: 10px; cursor: pointer; transition: all .2s; border: 1px solid transparent; margin-bottom: 8px; user-select: none; }
+.check-item:hover { background: rgba(255,255,255,.02); border-color: var(--border); }
+.check-item.checked { background: rgba(74,222,128,.05); border-color: rgba(74,222,128,.2); }
+.check-box { width: 20px; height: 20px; border-radius: 6px; border: 2px solid var(--border2); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--green); transition: all .2s; margin-top: 1px; }
+.check-item.checked .check-box { background: rgba(74,222,128,.2); border-color: var(--green); }
+.check-text { font-size: 14px; font-weight: 500; color: var(--muted2); line-height: 1.5; }
+.check-item.checked .check-text { color: var(--text); }
+.check-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.progress-check { margin-top: 20px; background: var(--border); border-radius: 99px; height: 6px; overflow: hidden; }
+.progress-check-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--green), var(--cyan)); border-radius: 99px; transition: width .3s ease; }
+.check-counter { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted2); margin-top: 10px; text-align: right; }
+
+/* ── INFO / WARNING BOXES ── */
+.info-box { border-radius: 10px; padding: 12px 16px; font-size: 13.5px; line-height: 1.7; margin: 12px 0; }
+.info-box strong { }
+.ib-blue { background: rgba(96,165,250,.07); border: 1px solid rgba(96,165,250,.2); color: var(--muted2); }
+.ib-blue strong { color: var(--blue); }
+.ib-yellow { background: rgba(255,217,90,.07); border: 1px solid rgba(255,217,90,.2); color: var(--muted2); }
+.ib-yellow strong { color: var(--yellow); }
+.ib-green { background: rgba(74,222,128,.07); border: 1px solid rgba(74,222,128,.2); color: var(--muted2); }
+.ib-green strong { color: var(--green); }
+
+/* ── SCROLL REVEAL ── */
+.scroll-reveal { opacity: 0; transform: translateY(20px); transition: opacity .5s ease, transform .5s ease; }
+.scroll-reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ── GRID ── */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 680px) { .grid-2 { grid-template-columns: 1fr; } }
+
+/* ── FOOTER ── */
+.footer { margin-top: 80px; padding-top: 32px; border-top: 1px solid var(--border); text-align: center; }
+.footer-tags { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 16px; }
+.footer-credit { font-size: 13px; color: var(--muted); }
+
+/* ── BADGE ── */
+.level-badge { display: inline-flex; align-items: center; gap: 6px; border-radius: 8px; padding: 4px 12px; font-size: 12px; font-weight: 600; }
+.lb-g { background: rgba(74,222,128,.1); border: 1px solid rgba(74,222,128,.25); color: var(--green); }
+.lb-y { background: rgba(255,217,90,.1); border: 1px solid rgba(255,217,90,.25); color: var(--yellow); }
+.lb-p { background: rgba(255,107,157,.1); border: 1px solid rgba(255,107,157,.25); color: var(--pink); }
+
+/* ── CONFETTI burst (pure CSS) ── */
+@keyframes burst { 0% { transform: scale(0) rotate(0deg); opacity: 1; } 100% { transform: scale(1.5) rotate(360deg); opacity: 0; } }
+.burst { position: fixed; pointer-events: none; z-index: 9999; font-size: 22px; animation: burst .8s ease-out forwards; }
+</style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="progress-bar-outer"><div class="progress-bar-inner" id="progressBar"></div></div>
+
+<nav class="nav">
+  <a href="#hero" class="nav-brand">🤖 Mesin Sapa</a>
+  <ul class="nav-links">
+    <li><a href="#s-briefing">Briefing</a></li>
+    <li><a href="#s-demo">Demo</a></li>
+    <li><a href="#s-level">Challenge</a></li>
+    <li><a href="#s-starter">Starter Code</a></li>
+    <li><a href="#s-checklist">Checklist</a></li>
+  </ul>
+</nav>
+
+<div class="wrapper">
+
+  <!-- ═══════════════════════════════ HERO ═══════════════════════════════ -->
+  <div class="hero" id="hero">
+    <div class="hero-badge">⚡ Function Challenge — Week 3 & 4</div>
+    <h1>Mesin Sapa<br>Otomatis 🤖</h1>
+    <p class="hero-sub">Buat sebuah fungsi JavaScript yang bisa menyapa siapa saja, kapan saja — secara otomatis dan personal!</p>
+    <div class="meta-row">
+      <div class="meta-chip diff"><span class="mc-icon">🟡</span> Tingkat: Pemula</div>
+      <div class="meta-chip time"><span class="mc-icon">⏱️</span> Estimasi: 30–60 menit</div>
+      <div class="meta-chip skill"><span class="mc-icon">🎯</span> Skill: Function + if/else</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ BRIEFING ═══════════════════════════════ -->
+  <div class="section-header scroll-reveal" id="s-briefing">
+    <span class="section-badge">BRIEFING</span>
+    <span class="section-title">Apa yang Harus Dibuat?</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card card-glow-yellow scroll-reveal">
+    <div class="card-title">📋 Deskripsi Challenge</div>
+    <p class="card-desc">Kamu diminta membuat sebuah <strong style="color:var(--yellow);">function JavaScript bernama <code style="font-family:'JetBrains Mono',monospace; background:rgba(255,217,90,.1); padding:1px 6px; border-radius:4px;">sapa()</code></strong> yang menerima input dari user dan menghasilkan sapaan yang berbeda-beda tergantung kondisi.</p>
+    <div class="info-box ib-yellow" style="margin-top:16px;">
+      <strong>🎯 Tujuan Utama:</strong> Latihan membuat function yang menerima parameter, menggunakan if/else untuk logika kondisi, dan menghubungkannya ke DOM sehingga hasilnya tampil di halaman.
+    </div>
+
+    <div class="grid-2" style="margin-top:20px;">
+      <div>
+        <p style="font-size:13px; font-weight:600; color:var(--muted2); margin-bottom:12px;">📥 Input yang Diterima:</p>
+        <ul style="list-style:none; padding:0; display:flex; flex-direction:column; gap:8px;">
+          <li style="display:flex; align-items:center; gap:8px; font-size:13.5px; color:var(--muted2);"><span class="pill pill-y">nama</span> Nama pengguna (string)</li>
+          <li style="display:flex; align-items:center; gap:8px; font-size:13.5px; color:var(--muted2);"><span class="pill pill-c">waktu</span> Pagi / Siang / Malam</li>
+          <li style="display:flex; align-items:center; gap:8px; font-size:13.5px; color:var(--muted2);"><span class="pill pill-p">mood</span> Semangat / Santai / Ngantuk</li>
+        </ul>
+      </div>
+      <div>
+        <p style="font-size:13px; font-weight:600; color:var(--muted2); margin-bottom:12px;">📤 Output yang Dihasilkan:</p>
+        <ul style="list-style:none; padding:0; display:flex; flex-direction:column; gap:8px;">
+          <li style="display:flex; align-items:center; gap:8px; font-size:13.5px; color:var(--muted2);"><span style="font-size:18px;">👋</span> Sapaan yang berubah sesuai waktu</li>
+          <li style="display:flex; align-items:center; gap:8px; font-size:13.5px; color:var(--muted2);"><span style="font-size:18px;">💬</span> Pesan motivasi sesuai mood</li>
+          <li style="display:flex; align-items:center; gap:8px; font-size:13.5px; color:var(--muted2);"><span style="font-size:18px;">🎨</span> Tampil di halaman (DOM)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ DEMO ═══════════════════════════════ -->
+  <div class="section-header scroll-reveal" id="s-demo">
+    <span class="section-badge">DEMO</span>
+    <span class="section-title">Begini Hasil Akhirnya</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card card-glow-cyan scroll-reveal" style="padding:0; overflow:hidden;">
+    <div class="demo-wrap" style="border:none; border-radius:0; margin:0;">
+      <div class="demo-top">
+        <div class="demo-panel">
+          <div class="demo-panel-title" style="color:var(--yellow);">INPUT — Isi form di bawah</div>
+
+          <label class="demo-label">Nama kamu</label>
+          <input type="text" class="demo-input" id="dNama" placeholder="Contoh: Budi, Andi, Siti...">
+
+          <label class="demo-label">Waktu sekarang</label>
+          <select class="demo-select" id="dWaktu">
+            <option value="">— Pilih waktu —</option>
+            <option value="pagi">🌅 Pagi (05:00 – 11:59)</option>
+            <option value="siang">☀️ Siang (12:00 – 17:59)</option>
+            <option value="malam">🌙 Malam (18:00 – 04:59)</option>
+          </select>
+
+          <label class="demo-label">Mood kamu hari ini</label>
+          <select class="demo-select" id="dMood">
+            <option value="">— Pilih mood —</option>
+            <option value="semangat">🔥 Semangat</option>
+            <option value="santai">😎 Santai</option>
+            <option value="ngantuk">😴 Ngantuk</option>
+          </select>
+
+          <button class="demo-btn" onclick="jalankanSapa()">Sapa Sekarang! →</button>
+        </div>
+
+        <div class="demo-panel" style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:32px;">
+          <div id="sapaEmoji" style="font-size:52px; margin-bottom:16px; transition:all .4s;">🤖</div>
+          <div class="sapa-result empty" id="sapaResult">Isi form di kiri, lalu klik tombol!</div>
+          <div class="sapa-sub" id="sapaSub" style="display:none;"></div>
+        </div>
+      </div>
+
+      <div class="output-panel">
+        <div class="output-panel-title">▶ KODE YANG BERJALAN DI BALIK LAYAR</div>
+        <div class="sapa-code-out" id="sapaCodeOut"><span class="cm">// Kode function akan tampil di sini setelah tombol diklik...</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-box ib-blue scroll-reveal">
+    <strong>💡 Perhatikan:</strong> Demo di atas adalah contoh hasil akhir yang harus kamu buat sendiri. Lihat bagaimana function menerima 3 parameter (nama, waktu, mood) lalu menghasilkan output yang berbeda-beda. Itulah kekuatan function!
+  </div>
+
+  <!-- ═══════════════════════════════ LEVEL CHALLENGE ═══════════════════════════════ -->
+  <div class="section-header scroll-reveal" id="s-level">
+    <span class="section-badge">CHALLENGE</span>
+    <span class="section-title">Soal Bertingkat</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card scroll-reveal" style="padding-bottom:20px;">
+    <div class="info-box ib-yellow" style="margin-bottom:20px; margin-top:0;">
+      <strong>📌 Cara mengerjakan:</strong> Kerjakan dari Level 1 dulu. Setelah berhasil, lanjut ke Level 2, dst. Setiap level <em>membangun di atas</em> level sebelumnya — jangan skip!
+    </div>
+
+    <div class="level-tabs">
+      <button class="level-tab active-lv1" onclick="gantiLevel(1, this)">✅ Level 1 — Dasar</button>
+      <button class="level-tab" onclick="gantiLevel(2, this)">⭐ Level 2 — Tambah Kondisi</button>
+      <button class="level-tab" onclick="gantiLevel(3, this)">🔥 Level 3 — Full Feature</button>
+    </div>
+
+    <!-- ── LEVEL 1 ── -->
+    <div class="level-panel show" id="lv1">
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:16px;">
+        <span class="level-badge lb-g">✅ Level 1</span>
+        <span style="font-size:14px; color:var(--muted2);">Function dasar dengan 1 parameter</span>
+      </div>
+      <ul class="task-list">
+        <li class="task-item">
+          <div class="task-num tn-g">01</div>
+          <div class="task-content">
+            <div class="task-title">Buat function bernama <code style="font-family:'JetBrains Mono',monospace; color:var(--cyan); background:rgba(56,245,212,.08); padding:1px 6px; border-radius:4px;">sapa(nama)</code></div>
+            <div class="task-desc">Function ini menerima satu parameter: <strong>nama</strong> (string). Gunakan <code style="font-family:'JetBrains Mono',monospace; color:var(--cyan);">function</code> keyword untuk membuatnya.</div>
+            <span class="task-hint">💡 Ingat: function namaFungsi(parameter) { ... }</span>
+          </div>
+        </li>
+        <li class="task-item">
+          <div class="task-num tn-g">02</div>
+          <div class="task-content">
+            <div class="task-title">Return kalimat sapaan sederhana</div>
+            <div class="task-desc">Fungsi harus mengembalikan string: <strong>"Halo, [nama]! Selamat datang."</strong> Gunakan <code style="font-family:'JetBrains Mono',monospace; color:var(--cyan);">return</code> dan gabungkan string dengan <code style="font-family:'JetBrains Mono',monospace; color:var(--cyan);">+</code> atau template literal.</div>
+            <span class="task-hint">💡 return "Halo, " + nama + "!" atau `Halo, ${nama}!`</span>
+          </div>
+        </li>
+        <li class="task-item">
+          <div class="task-num tn-g">03</div>
+          <div class="task-content">
+            <div class="task-title">Hubungkan ke HTML — tampilkan di halaman</div>
+            <div class="task-desc">Ambil nilai dari <code style="font-family:'JetBrains Mono',monospace; color:var(--cyan);">&lt;input id="inputNama"&gt;</code>, panggil function, dan tampilkan hasilnya di <code style="font-family:'JetBrains Mono',monospace; color:var(--cyan);">&lt;p id="hasil"&gt;</code> menggunakan <code style="font-family:'JetBrains Mono',monospace; color:var(--cyan);">.textContent</code>.</div>
+            <span class="task-hint">💡 document.getElementById('hasil').textContent = sapa(nama);</span>
+          </div>
+        </li>
+      </ul>
+
+      <p style="font-size:13px; font-weight:600; color:var(--muted2); margin-top:18px; margin-bottom:10px;">Expected Output Level 1:</p>
+      <div class="output-box">
+<span class="out-muted">// saat user mengetik "Budi" lalu klik tombol:</span>
+<span class="out-green">Halo, Budi! Selamat datang.</span>
+
+<span class="out-muted">// saat user mengetik "Siti":</span>
+<span class="out-green">Halo, Siti! Selamat datang.</span></div>
+
+      <button class="hint-trigger" onclick="toggleHint('h1')"><span class="ht-icon">▶</span> Tampilkan Bantuan Level 1</button>
+      <div class="hint-body" id="h1">
+        <div class="hint-inner">
+          <strong>Struktur function untuk Level 1:</strong><br><br>
+          1. Buat function dengan keyword <code>function</code>, diikuti nama fungsi dan parameter dalam kurung.<br>
+          2. Di dalam kurung kurawal <code>{ }</code>, tulis <code>return</code> diikuti string sapaan.<br>
+          3. Untuk menggabungkan teks dan variabel, gunakan tanda <code>+</code> atau backtick template literal <code>`Halo, ${nama}!`</code>.<br>
+          4. Panggil fungsi dari event listener tombol, simpan hasilnya, lalu masukkan ke <code>.textContent</code> elemen HTML.
+        </div>
+      </div>
+    </div>
+
+    <!-- ── LEVEL 2 ── -->
+    <div class="level-panel" id="lv2">
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:16px;">
+        <span class="level-badge lb-y">⭐ Level 2</span>
+        <span style="font-size:14px; color:var(--muted2);">Tambah parameter waktu + logika if/else</span>
+      </div>
+      <ul class="task-list">
+        <li class="task-item">
+          <div class="task-num tn-y">01</div>
+          <div class="task-content">
+            <div class="task-title">Tambah parameter <code style="font-family:'JetBrains Mono',monospace; color:var(--yellow);">waktu</code> ke function</div>
+            <div class="task-desc">Ubah function menjadi <code style="font-family:'JetBrains Mono',monospace; color:var(--cyan);">sapa(nama, waktu)</code>. Parameter <strong>waktu</strong> menerima string: <code style="font-family:'JetBrains Mono',monospace;color:var(--cyan);">"pagi"</code>, <code style="font-family:'JetBrains Mono',monospace;color:var(--cyan);">"siang"</code>, atau <code style="font-family:'JetBrains Mono',monospace;color:var(--cyan);">"malam"</code>.</div>
+          </div>
+        </li>
+        <li class="task-item">
+          <div class="task-num tn-y">02</div>
+          <div class="task-content">
+            <div class="task-title">Buat sapaan yang berubah sesuai waktu</div>
+            <div class="task-desc">Gunakan <strong>if / else if / else</strong> untuk membuat sapaan yang berbeda:<br>
+              • <code style="font-family:'JetBrains Mono',monospace;color:var(--cyan);">"pagi"</code> → <em>"Selamat pagi, [nama]! ☀️ Semangat ya!"</em><br>
+              • <code style="font-family:'JetBrains Mono',monospace;color:var(--cyan);">"siang"</code> → <em>"Selamat siang, [nama]! 🌤️ Jangan lupa makan siang!"</em><br>
+              • <code style="font-family:'JetBrains Mono',monospace;color:var(--cyan);">"malam"</code> → <em>"Selamat malam, [nama]! 🌙 Istirahat yang cukup ya!"</em>
+            </div>
+            <span class="task-hint">💡 Gunakan: if (waktu === "pagi") { return "..." }</span>
+          </div>
+        </li>
+        <li class="task-item">
+          <div class="task-num tn-y">03</div>
+          <div class="task-content">
+            <div class="task-title">Tambahkan dropdown waktu ke HTML</div>
+            <div class="task-desc">Tambahkan <code style="font-family:'JetBrains Mono',monospace;color:var(--cyan);">&lt;select id="pilihWaktu"&gt;</code> dengan 3 opsi. Ambil nilainya dengan <code style="font-family:'JetBrains Mono',monospace;color:var(--cyan);">.value</code> dan kirim ke function.</div>
+            <span class="task-hint">💡 const waktu = document.getElementById('pilihWaktu').value;</span>
+          </div>
+        </li>
+        <li class="task-item">
+          <div class="task-num tn-y">04</div>
+          <div class="task-content">
+            <div class="task-title">Validasi — jika nama kosong, jangan sapa!</div>
+            <div class="task-desc">Sebelum memanggil function, cek dulu apakah input nama tidak kosong. Jika kosong, tampilkan pesan error: <em>"Hei, siapa nama kamu? 👀"</em></div>
+            <span class="task-hint">💡 if (nama.trim() === "") { ... }</span>
+          </div>
+        </li>
+      </ul>
+
+      <p style="font-size:13px; font-weight:600; color:var(--muted2); margin-top:18px; margin-bottom:10px;">Expected Output Level 2:</p>
+      <div class="output-box">
+<span class="out-muted">// nama: "Andi", waktu: "pagi"</span>
+<span class="out-yellow">Selamat pagi, Andi! ☀️ Semangat ya!</span>
+
+<span class="out-muted">// nama: "Citra", waktu: "malam"</span>
+<span class="out-yellow">Selamat malam, Citra! 🌙 Istirahat yang cukup ya!</span>
+
+<span class="out-muted">// nama kosong:</span>
+<span class="out-pink">Hei, siapa nama kamu? 👀</span></div>
+
+      <button class="hint-trigger" onclick="toggleHint('h2')"><span class="ht-icon">▶</span> Tampilkan Bantuan Level 2</button>
+      <div class="hint-body" id="h2">
+        <div class="hint-inner">
+          <strong>Struktur if/else untuk waktu:</strong><br><br>
+          Gunakan <code>===</code> (triple equals) untuk perbandingan string yang tepat. Urutan yang disarankan:<br><br>
+          <code>if (waktu === "pagi") { ... }</code><br>
+          <code>else if (waktu === "siang") { ... }</code><br>
+          <code>else { ... }</code> ← ini untuk malam atau kondisi lainnya<br><br>
+          <strong>Untuk validasi nama kosong:</strong> lakukan pengecekan di luar function, sebelum memanggil <code>sapa()</code>. Gunakan <code>.trim()</code> agar spasi-spasi saja juga dianggap kosong.
+        </div>
+      </div>
+    </div>
+
+    <!-- ── LEVEL 3 ── -->
+    <div class="level-panel" id="lv3">
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:16px;">
+        <span class="level-badge lb-p">🔥 Level 3</span>
+        <span style="font-size:14px; color:var(--muted2);">Full feature + parameter mood</span>
+      </div>
+      <ul class="task-list">
+        <li class="task-item">
+          <div class="task-num tn-p">01</div>
+          <div class="task-content">
+            <div class="task-title">Tambah parameter ketiga: <code style="font-family:'JetBrains Mono',monospace; color:var(--pink);">mood</code></div>
+            <div class="task-desc">Function jadi <code style="font-family:'JetBrains Mono',monospace;color:var(--cyan);">sapa(nama, waktu, mood)</code>. Parameter mood menerima: <code style="font-family:'JetBrains Mono',monospace;color:var(--cyan);">"semangat"</code>, <code style="font-family:'JetBrains Mono',monospace;color:var(--cyan);">"santai"</code>, atau <code style="font-family:'JetBrains Mono',monospace;color:var(--cyan);">"ngantuk"</code>.</div>
+          </div>
+        </li>
+        <li class="task-item">
+          <div class="task-num tn-p">02</div>
+          <div class="task-content">
+            <div class="task-title">Tambah pesan motivasi berdasarkan mood</div>
+            <div class="task-desc">Buat pesan tambahan (terpisah dari sapaan waktu):<br>
+              • <code style="font-family:'JetBrains Mono',monospace;color:var(--cyan);">"semangat"</code> → <em>"Woah, energimu menular! 🔥 Ayo kita produktif hari ini!"</em><br>
+              • <code style="font-family:'JetBrains Mono',monospace;color:var(--cyan);">"santai"</code> → <em>"Santai itu perlu. Tapi jangan lupa tugas ya! 😄"</em><br>
+              • <code style="font-family:'JetBrains Mono',monospace;color:var(--cyan);">"ngantuk"</code> → <em>"Ngantuk? Minum kopi dulu atau splash air ke muka! 😂"</em>
+            </div>
+          </div>
+        </li>
+        <li class="task-item">
+          <div class="task-num tn-p">03</div>
+          <div class="task-content">
+            <div class="task-title">Return <strong>dua baris</strong> — sapaan + motivasi</div>
+            <div class="task-desc">Function harus mengembalikan kedua string. Tampilkan sapaan di satu elemen, dan pesan motivasi di elemen lain (gunakan 2 elemen HTML berbeda).</div>
+            <span class="task-hint">💡 Bisa return object: return { sapaan: "...", motivasi: "..." }</span>
+          </div>
+        </li>
+        <li class="task-item">
+          <div class="task-num tn-p">04</div>
+          <div class="task-content">
+            <div class="task-title">Tampilkan emoji yang berubah sesuai waktu di halaman</div>
+            <div class="task-desc">Tambahkan elemen <code style="font-family:'JetBrains Mono',monospace;color:var(--cyan);">&lt;span id="emojiDisplay"&gt;</code> yang menampilkan emoji berbeda: ☀️ untuk pagi, 🌤️ untuk siang, 🌙 untuk malam — diubah via <code style="font-family:'JetBrains Mono',monospace;color:var(--cyan);">.textContent</code>.</div>
+          </div>
+        </li>
+        <li class="task-item">
+          <div class="task-num tn-p">05</div>
+          <div class="task-content">
+            <div class="task-title">🏆 BONUS: Hitung berapa kali tombol sudah diklik</div>
+            <div class="task-desc">Buat variabel <code style="font-family:'JetBrains Mono',monospace;color:var(--cyan);">let hitungSapa = 0</code> di luar function. Setiap kali tombol diklik, tambahkan 1. Tampilkan: <em>"Kamu sudah disapa [N] kali!"</em></div>
+            <span class="task-hint">💡 hitungSapa++; lalu tampilkan nilainya</span>
+          </div>
+        </li>
+      </ul>
+
+      <p style="font-size:13px; font-weight:600; color:var(--muted2); margin-top:18px; margin-bottom:10px;">Expected Output Level 3:</p>
+      <div class="output-box">
+<span class="out-muted">// nama: "Dina", waktu: "pagi", mood: "semangat"</span>
+🌅 <span class="out-yellow">Selamat pagi, Dina! ☀️ Semangat ya!</span>
+💬 <span class="out-cyan">Woah, energimu menular! 🔥 Ayo kita produktif hari ini!</span>
+
+<span class="out-muted">// nama: "Eko", waktu: "malam", mood: "ngantuk"</span>
+🌙 <span class="out-yellow">Selamat malam, Eko! 🌙 Istirahat yang cukup ya!</span>
+💬 <span class="out-cyan">Ngantuk? Minum kopi dulu atau splash air ke muka! 😂</span>
+<span class="out-pink">Kamu sudah disapa 3 kali!</span></div>
+
+      <button class="hint-trigger" onclick="toggleHint('h3')"><span class="ht-icon">▶</span> Tampilkan Bantuan Level 3</button>
+      <div class="hint-body" id="h3">
+        <div class="hint-inner">
+          <strong>Tips mengembalikan dua nilai dari satu function:</strong><br><br>
+          Cara paling mudah: gunakan <strong>object</strong> sebagai return value.<br><br>
+          <code>function sapa(nama, waktu, mood) {</code><br>
+          <code>&nbsp;&nbsp;let sapaan = "";</code><br>
+          <code>&nbsp;&nbsp;let motivasi = "";</code><br>
+          <code>&nbsp;&nbsp;if (waktu === "pagi") { sapaan = "Selamat pagi..."; }</code><br>
+          <code>&nbsp;&nbsp;if (mood === "semangat") { motivasi = "Woah..."; }</code><br>
+          <code>&nbsp;&nbsp;return { sapaan, motivasi }; // return object!</code><br>
+          <code>}</code><br><br>
+          Lalu di luar:<br>
+          <code>const hasil = sapa(nama, waktu, mood);</code><br>
+          <code>document.getElementById('x').textContent = hasil.sapaan;</code><br>
+          <code>document.getElementById('y').textContent = hasil.motivasi;</code>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ STARTER CODE ═══════════════════════════════ -->
+  <div class="section-header scroll-reveal" id="s-starter">
+    <span class="section-badge">STARTER CODE</span>
+    <span class="section-title">Template Awal — Tinggal Isi!</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card card-glow-yellow scroll-reveal">
+    <div class="card-title">📁 File Starter</div>
+    <p class="card-desc">Copy kode di bawah ke file kamu. Bagian yang perlu diisi ditandai dengan <span style="color:var(--yellow); font-family:'JetBrains Mono',monospace; background:rgba(255,217,90,.1); padding:1px 6px; border-radius:4px;">// ??? ISIMU DI SINI</span>. Jangan ubah struktur HTML-nya dulu!</p>
+
+    <div class="starter-tabs">
+      <button class="starter-tab active" onclick="gantiFile('html', this)">index.html</button>
+      <button class="starter-tab" onclick="gantiFile('js', this)">script.js</button>
+      <!-- <button class="starter-tab" onclick="gantiFile('full', this)">✅ Kode Referensi (Level 3)</button> -->
+    </div>
+
+    <!-- HTML starter -->
+    <div class="starter-file show" id="file-html">
+      <div class="code-block">
+        <div class="code-header"><div class="mac-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div><span class="code-lang">index.html</span><button class="copy-btn" onclick="copyCode(this,'s-html')">copy</button></div>
+        <div class="code-body" id="s-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="id"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Mesin Sapa Otomatis 🤖&lt;/title&gt;
+  &lt;style&gt;
+    body { font-family: sans-serif; max-width: 500px; margin: 50px auto; padding: 0 20px; }
+    input, select { width: 100%; padding: 10px; margin: 8px 0 16px; border: 2px solid #ddd; border-radius: 8px; font-size: 15px; }
+    button { width: 100%; padding: 12px; background: #ffd95a; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
+    button:hover { background: #f5c800; }
+    #hasil { margin-top: 20px; padding: 16px; background: #f8f8f8; border-radius: 10px; font-size: 18px; min-height: 60px; display: none; }
+    #motivasi { margin-top: 10px; padding: 12px 16px; background: #e8f5e9; border-radius: 10px; font-size: 15px; display: none; }
+    #hitungLabel { margin-top: 12px; font-size: 13px; color: #888; text-align: right; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+  &lt;h1&gt;🤖 Mesin Sapa Otomatis&lt;/h1&gt;
+
+  &lt;label&gt;Nama kamu:&lt;/label&gt;
+  &lt;input type="text" id="inputNama" placeholder="Ketik nama kamu..."&gt;
+
+  &lt;label&gt;Waktu sekarang:&lt;/label&gt;
+  &lt;select id="pilihWaktu"&gt;
+    &lt;option value=""&gt;— Pilih waktu —&lt;/option&gt;
+    &lt;option value="pagi"&gt;🌅 Pagi&lt;/option&gt;
+    &lt;option value="siang"&gt;☀️ Siang&lt;/option&gt;
+    &lt;option value="malam"&gt;🌙 Malam&lt;/option&gt;
+  &lt;/select&gt;
+
+  &lt;label&gt;Mood kamu:&lt;/label&gt;
+  &lt;select id="pilihMood"&gt;
+    &lt;option value=""&gt;— Pilih mood —&lt;/option&gt;
+    &lt;option value="semangat"&gt;🔥 Semangat&lt;/option&gt;
+    &lt;option value="santai"&gt;😎 Santai&lt;/option&gt;
+    &lt;option value="ngantuk"&gt;😴 Ngantuk&lt;/option&gt;
+  &lt;/select&gt;
+
+  &lt;button id="btnSapa"&gt;Sapa Aku! 👋&lt;/button&gt;
+
+  &lt;div id="hasil"&gt;&lt;/div&gt;
+  &lt;div id="motivasi"&gt;&lt;/div&gt;
+  &lt;div id="hitungLabel"&gt;&lt;/div&gt;
+
+  &lt;script src="script.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</div>
+      </div>
+    </div>
+
+    <!-- JS starter -->
+    <div class="starter-file" id="file-js">
+      <div class="code-block">
+        <div class="code-header"><div class="mac-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div><span class="code-lang">script.js — Starter (Level 1 → 3)</span><button class="copy-btn" onclick="copyCode(this,'s-js')">copy</button></div>
+        <div class="code-body" id="s-js"><span class="cm">// ============================================</span>
+<span class="cm">// 🤖 MESIN SAPA OTOMATIS — script.js</span>
+<span class="cm">// Isi bagian "// ??? ISIMU DI SINI" di bawah!</span>
+<span class="cm">// ============================================</span>
+
+<span class="cm">// ── LEVEL 1: Buat function sapa() ──────────</span>
+<span class="cm">// Petunjuk: function menerima parameter "nama"</span>
+<span class="cm">// dan mengembalikan kalimat sapaan</span>
+
+<span class="kw">function</span> <span class="fn">sapa</span>(nama, waktu, mood) {
+
+  <span class="cm">// ── LEVEL 1: Buat sapaan dasar ────────────</span>
+  <span class="kw">let</span> sapaan = <span class="str">""</span>;
+
+  <span class="cm">// ── LEVEL 2: Cek waktu dengan if/else ─────</span>
+  <span class="cm">// ??? ISIMU DI SINI</span>
+  <span class="cm">// if (waktu === "pagi") {</span>
+  <span class="cm">//   sapaan = "Selamat pagi, " + nama + "! ☀️";</span>
+  <span class="cm">// } else if ...</span>
+
+  <span class="cm">// ── LEVEL 3: Buat pesan motivasi ──────────</span>
+  <span class="kw">let</span> motivasi = <span class="str">""</span>;
+  <span class="cm">// ??? ISIMU DI SINI</span>
+  <span class="cm">// if (mood === "semangat") { motivasi = "..."; }</span>
+
+  <span class="cm">// Return kedua nilai sekaligus (object)</span>
+  <span class="kw">return</span> {
+    sapaan: sapaan,
+    motivasi: motivasi
+  };
+}
+
+<span class="cm">// ── Variabel hitung (Level 3 BONUS) ────────</span>
+<span class="kw">let</span> hitungSapa = <span class="num2">0</span>;
+
+<span class="cm">// ── Event Listener tombol ──────────────────</span>
+<span class="kw">const</span> tombol = document.<span class="fn">getElementById</span>(<span class="str">'btnSapa'</span>);
+
+tombol.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, <span class="kw">function</span>() {
+
+  <span class="cm">// 1. Ambil nilai dari input</span>
+  <span class="kw">const</span> nama  = document.<span class="fn">getElementById</span>(<span class="str">'inputNama'</span>).<span class="prop">value</span>.<span class="fn">trim</span>();
+  <span class="kw">const</span> waktu = document.<span class="fn">getElementById</span>(<span class="str">'pilihWaktu'</span>).<span class="prop">value</span>;
+  <span class="kw">const</span> mood  = document.<span class="fn">getElementById</span>(<span class="str">'pilihMood'</span>).<span class="prop">value</span>;
+
+  <span class="cm">// 2. Validasi — jangan lanjut jika kosong</span>
+  <span class="cm">// ??? ISIMU DI SINI</span>
+  <span class="cm">// if (nama === "") { ... return; }</span>
+
+  <span class="cm">// 3. Panggil function sapa()</span>
+  <span class="cm">// ??? ISIMU DI SINI</span>
+  <span class="cm">// const hasil = sapa(nama, waktu, mood);</span>
+
+  <span class="cm">// 4. Tampilkan di halaman</span>
+  <span class="cm">// ??? ISIMU DI SINI</span>
+  <span class="cm">// document.getElementById('hasil').textContent = hasil.sapaan;</span>
+  <span class="cm">// document.getElementById('motivasi').textContent = hasil.motivasi;</span>
+
+  <span class="cm">// 5. Hitung dan tampilkan counter (Bonus!)</span>
+  <span class="cm">// ??? ISIMU DI SINI</span>
+  <span class="cm">// hitungSapa++;</span>
+
+});</div>
+      </div>
+    </div>
+
+    <!-- Full reference -->
+    <div class="starter-file" id="file-full">
+      <div class="info-box ib-yellow" style="border-radius:0 12px 0 0; margin:0 0 0 0;">
+        <strong>⚠️ Perhatian:</strong> Ini adalah kode referensi lengkap Level 3. Coba kerjakan sendiri dulu sebelum melihat ini — belajarnya lebih efektif!
+      </div>
+      <div class="code-block">
+        <div class="code-header"><div class="mac-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div><span class="code-lang">script.js — Referensi Level 3 (Lengkap)</span><button class="copy-btn" onclick="copyCode(this,'s-full')">copy</button></div>
+        <div class="code-body" id="s-full"><span class="cm">// ── Function utama ──────────────────────────</span>
+<span class="kw">function</span> <span class="fn">sapa</span>(nama, waktu, mood) {
+
+  <span class="cm">// Tentukan sapaan berdasarkan waktu</span>
+  <span class="kw">let</span> sapaan = <span class="str">""</span>;
+  <span class="kw">if</span> (waktu === <span class="str">"pagi"</span>) {
+    sapaan = <span class="str">`Selamat pagi, ${nama}! ☀️ Semangat ya!`</span>;
+  } <span class="kw">else if</span> (waktu === <span class="str">"siang"</span>) {
+    sapaan = <span class="str">`Selamat siang, ${nama}! 🌤️ Jangan lupa makan siang!`</span>;
+  } <span class="kw">else</span> {
+    sapaan = <span class="str">`Selamat malam, ${nama}! 🌙 Istirahat yang cukup ya!`</span>;
+  }
+
+  <span class="cm">// Tentukan pesan motivasi berdasarkan mood</span>
+  <span class="kw">let</span> motivasi = <span class="str">""</span>;
+  <span class="kw">if</span> (mood === <span class="str">"semangat"</span>) {
+    motivasi = <span class="str">"Woah, energimu menular! 🔥 Ayo kita produktif hari ini!"</span>;
+  } <span class="kw">else if</span> (mood === <span class="str">"santai"</span>) {
+    motivasi = <span class="str">"Santai itu perlu. Tapi jangan lupa tugas ya! 😄"</span>;
+  } <span class="kw">else</span> {
+    motivasi = <span class="str">"Ngantuk? Minum kopi dulu atau splash air ke muka! 😂"</span>;
+  }
+
+  <span class="kw">return</span> { sapaan, motivasi };
+}
+
+<span class="cm">// ── Counter ─────────────────────────────────</span>
+<span class="kw">let</span> hitungSapa = <span class="num2">0</span>;
+
+<span class="cm">// ── Event Listener ───────────────────────────</span>
+document.<span class="fn">getElementById</span>(<span class="str">'btnSapa'</span>).<span class="fn">addEventListener</span>(<span class="str">'click'</span>, <span class="kw">function</span>() {
+  <span class="kw">const</span> nama  = document.<span class="fn">getElementById</span>(<span class="str">'inputNama'</span>).<span class="prop">value</span>.<span class="fn">trim</span>();
+  <span class="kw">const</span> waktu = document.<span class="fn">getElementById</span>(<span class="str">'pilihWaktu'</span>).<span class="prop">value</span>;
+  <span class="kw">const</span> mood  = document.<span class="fn">getElementById</span>(<span class="str">'pilihMood'</span>).<span class="prop">value</span>;
+
+  <span class="cm">// Validasi</span>
+  <span class="kw">if</span> (nama === <span class="str">""</span>) {
+    document.<span class="fn">getElementById</span>(<span class="str">'hasil'</span>).<span class="prop">textContent</span> = <span class="str">"Hei, siapa nama kamu? 👀"</span>;
+    document.<span class="fn">getElementById</span>(<span class="str">'hasil'</span>).<span class="prop">style</span>.<span class="prop">display</span> = <span class="str">"block"</span>;
+    document.<span class="fn">getElementById</span>(<span class="str">'motivasi'</span>).<span class="prop">style</span>.<span class="prop">display</span> = <span class="str">"none"</span>;
+    <span class="kw">return</span>;
+  }
+  <span class="kw">if</span> (!waktu || !mood) {
+    document.<span class="fn">getElementById</span>(<span class="str">'hasil'</span>).<span class="prop">textContent</span> = <span class="str">"Pilih waktu dan mood dulu ya! 😊"</span>;
+    document.<span class="fn">getElementById</span>(<span class="str">'hasil'</span>).<span class="prop">style</span>.<span class="prop">display</span> = <span class="str">"block"</span>;
+    <span class="kw">return</span>;
+  }
+
+  <span class="cm">// Panggil function</span>
+  <span class="kw">const</span> hasilSapa = <span class="fn">sapa</span>(nama, waktu, mood);
+
+  <span class="cm">// Tampilkan ke DOM</span>
+  <span class="kw">const</span> elHasil    = document.<span class="fn">getElementById</span>(<span class="str">'hasil'</span>);
+  <span class="kw">const</span> elMotivasi = document.<span class="fn">getElementById</span>(<span class="str">'motivasi'</span>);
+  <span class="kw">const</span> elHitung   = document.<span class="fn">getElementById</span>(<span class="str">'hitungLabel'</span>);
+
+  elHasil.<span class="prop">textContent</span>    = hasilSapa.<span class="prop">sapaan</span>;
+  elMotivasi.<span class="prop">textContent</span> = hasilSapa.<span class="prop">motivasi</span>;
+  elHasil.<span class="prop">style</span>.<span class="prop">display</span>    = <span class="str">"block"</span>;
+  elMotivasi.<span class="prop">style</span>.<span class="prop">display</span> = <span class="str">"block"</span>;
+
+  hitungSapa++;
+  elHitung.<span class="prop">textContent</span> = <span class="str">`Kamu sudah disapa ${hitungSapa} kali!`</span>;
+});</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ CHECKLIST ═══════════════════════════════ -->
+  <div class="section-header scroll-reveal" id="s-checklist">
+    <span class="section-badge">CHECKLIST</span>
+    <span class="section-title">Kriteria Penilaian</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card card-glow-purple scroll-reveal">
+    <p class="card-desc" style="margin-bottom:16px;">Centang setiap poin setelah berhasil kamu implementasikan. Guru akan menilai berdasarkan checklist ini!</p>
+
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">✅ <strong>Function terdefinisi dengan benar</strong> — ada keyword <code style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--cyan);">function</code>, nama fungsi, dan parameter dalam kurung
+        <div class="check-sub">Level 1 — Wajib ada sebelum function dipanggil</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">✅ <strong>Function menggunakan <code style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--cyan);">return</code></strong> untuk mengembalikan nilai
+        <div class="check-sub">Level 1 — Tanpa return, function tidak bisa dipakai di luar</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">✅ <strong>DOM berhasil dihubungkan</strong> — hasil function tampil di halaman, bukan hanya di console
+        <div class="check-sub">Level 1 — Gunakan .textContent atau .innerHTML</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">⭐ <strong>Sapaan berubah sesuai waktu</strong> — if/else berfungsi dan diuji untuk ketiga kondisi (pagi, siang, malam)
+        <div class="check-sub">Level 2 — Coba klik dengan setiap pilihan waktu berbeda</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">⭐ <strong>Validasi nama kosong berjalan</strong> — muncul pesan error jika input dikosongkan
+        <div class="check-sub">Level 2 — Coba klik tombol tanpa isi nama</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">🔥 <strong>Parameter mood berfungsi</strong> — pesan motivasi berbeda untuk setiap mood
+        <div class="check-sub">Level 3 — Diuji dengan semua kombinasi waktu + mood</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">🔥 <strong>Dua output ditampilkan</strong> — sapaan dan motivasi muncul di elemen HTML yang berbeda
+        <div class="check-sub">Level 3 — Bukan digabung jadi satu string panjang</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">🏆 <strong>BONUS: Counter berjalan</strong> — angka bertambah setiap kali tombol diklik dan tampil di halaman
+        <div class="check-sub">Bonus — Nilai ekstra untuk yang berhasil!</div>
+      </div>
+    </div>
+
+    <div class="progress-check"><div class="progress-check-fill" id="checkFill"></div></div>
+    <div class="check-counter" id="checkCount">0 / 8 selesai</div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-tags">
+      <span class="pill pill-y">Function</span>
+      <span class="pill pill-c">Parameter</span>
+      <span class="pill pill-g">Return</span>
+      <span class="pill pill-p">if / else</span>
+      <span class="pill pill-r">DOM</span>
+      <span class="pill pill-o">Event Listener</span>
+    </div>
+    <p class="footer-credit">⚡ Function Challenge — Mesin Sapa Otomatis · Selamat mengerjakan! 🚀</p>
+  </div>
+
+</div><!-- /wrapper -->
+
+<script>
+// ── Progress bar ──
+window.addEventListener('scroll', () => {
+  const el = document.getElementById('progressBar');
+  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+  el.style.width = Math.min(pct, 100) + '%';
+});
+
+// ── Scroll Reveal ──
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1, rootMargin: '0px 0px -20px 0px' });
+document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+
+function triggerVisibleElements() {
+  document.querySelectorAll('.scroll-reveal').forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) el.classList.add('visible');
+  });
+}
+triggerVisibleElements();
+setTimeout(triggerVisibleElements, 100);
+setTimeout(triggerVisibleElements, 400);
+
+// ── Nav active ──
+const sIds = ['hero','s-briefing','s-demo','s-level','s-starter','s-checklist'];
+window.addEventListener('scroll', () => {
+  let cur = '';
+  sIds.forEach(id => { const el = document.getElementById(id); if (el && window.scrollY >= el.offsetTop - 120) cur = id; });
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + cur));
+});
+
+// ── Copy code ──
+function copyCode(btn, id) {
+  const el = document.getElementById(id);
+  navigator.clipboard.writeText(el.innerText);
+  btn.textContent = '✓ copied';
+  btn.classList.add('copied');
+  setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 2000);
+}
+
+// ── DEMO INTERAKTIF ──
+const sapaData = {
+  waktu: {
+    pagi:  { label: 'Selamat pagi', emoji: '🌅', color: '#ffd95a' },
+    siang: { label: 'Selamat siang', emoji: '☀️', color: '#fb923c' },
+    malam: { label: 'Selamat malam', emoji: '🌙', color: '#a78bfa' }
+  },
+  mood: {
+    semangat: { pesan: 'Woah, energimu menular! 🔥 Ayo kita produktif hari ini!' },
+    santai:   { pesan: 'Santai itu perlu. Tapi jangan lupa tugas ya! 😄' },
+    ngantuk:  { pesan: 'Ngantuk? Minum kopi dulu atau splash air ke muka! 😂' }
+  }
+};
+
+function sapa(nama, waktu, mood) {
+  const w = sapaData.waktu[waktu] || sapaData.waktu['pagi'];
+  const m = sapaData.mood[mood]   || sapaData.mood['semangat'];
+  const sapaanMap = { pagi: 'pagi! ☀️ Semangat ya!', siang: 'siang! 🌤️ Jangan lupa makan siang!', malam: 'malam! 🌙 Istirahat yang cukup ya!' };
+  const sapaan = `${w.label}, ${nama}! ${sapaanMap[waktu] ? sapaanMap[waktu].split('!').slice(1).join('!') : ''}`;
+  return {
+    sapaan: `${w.label}, ${nama}! ${(sapaanMap[waktu]||'').replace(/^[^!]+!/, '')}`.trim() || `${w.label}, ${nama}!`,
+    motivasi: m.pesan,
+    emoji: w.emoji,
+    color: w.color,
+    sapText: `${w.label}, ${nama}! ` + { pagi:'☀️ Semangat ya!', siang:'🌤️ Jangan lupa makan siang!', malam:'🌙 Istirahat yang cukup ya!' }[waktu]
+  };
+}
+
+function jalankanSapa() {
+  const nama  = document.getElementById('dNama').value.trim();
+  const waktu = document.getElementById('dWaktu').value;
+  const mood  = document.getElementById('dMood').value;
+
+  const res    = document.getElementById('sapaResult');
+  const sub    = document.getElementById('sapaSub');
+  const emoEl  = document.getElementById('sapaEmoji');
+  const codeEl = document.getElementById('sapaCodeOut');
+
+  if (!nama) {
+    res.className = 'sapa-result empty';
+    res.style.color = 'var(--red)';
+    res.textContent = 'Hei, siapa nama kamu? 👀';
+    sub.style.display = 'none';
+    emoEl.textContent = '❓';
+    codeEl.innerHTML = `<span class="cm">// Nama kosong — validasi berjalan:</span>\n<span class="kw">if</span> (nama.trim() === <span class="str">""</span>) {\n  hasil.<span class="prop">textContent</span> = <span class="str">"Hei, siapa nama kamu? 👀"</span>;\n  <span class="kw">return</span>; <span class="cm">// hentikan fungsi!</span>\n}`;
+    return;
+  }
+  if (!waktu || !mood) {
+    res.className = 'sapa-result empty';
+    res.style.color = 'var(--orange)';
+    res.textContent = 'Pilih waktu dan mood dulu! 😊';
+    sub.style.display = 'none';
+    emoEl.textContent = '🤔';
+    codeEl.innerHTML = `<span class="cm">// Waktu atau mood belum dipilih!</span>`;
+    return;
+  }
+
+  const w = sapaData.waktu[waktu];
+  const m = sapaData.mood[mood];
+  const sapaanTeks = { pagi:`Selamat pagi, ${nama}! ☀️ Semangat ya!`, siang:`Selamat siang, ${nama}! 🌤️ Jangan lupa makan siang!`, malam:`Selamat malam, ${nama}! 🌙 Istirahat yang cukup ya!` }[waktu];
+
+  res.className = 'sapa-result';
+  res.style.color = w.color;
+  res.textContent = sapaanTeks;
+
+  sub.style.display = 'block';
+  sub.textContent = '💬 ' + m.pesan;
+
+  emoEl.textContent = w.emoji;
+
+  // Confetti burst
+  spawnBurst(emoEl);
+
+  codeEl.innerHTML =
+    `<span class="cm">// Function dipanggil dengan:</span>\n` +
+    `<span class="fn">sapa</span>(<span class="str">"${nama}"</span>, <span class="str">"${waktu}"</span>, <span class="str">"${mood}"</span>);\n\n` +
+    `<span class="cm">// Di dalam function:</span>\n` +
+    `<span class="kw">if</span> (waktu === <span class="str">"${waktu}"</span>) {\n` +
+    `  sapaan = <span class="str">"${sapaanTeks}"</span>;\n}\n` +
+    `<span class="kw">if</span> (mood === <span class="str">"${mood}"</span>) {\n` +
+    `  motivasi = <span class="str">"${m.pesan}"</span>;\n}\n\n` +
+    `<span class="cm">// Hasil ditampilkan ke DOM:</span>\n` +
+    `hasil.<span class="prop">textContent</span> = sapaan;\nmotivasi.<span class="prop">textContent</span> = motivasi;`;
+}
+
+function spawnBurst(anchorEl) {
+  const emojis = ['🎉','✨','⭐','🎊','💥'];
+  const rect = anchorEl.getBoundingClientRect();
+  for (let i = 0; i < 5; i++) {
+    const b = document.createElement('div');
+    b.className = 'burst';
+    b.textContent = emojis[i];
+    b.style.left = (rect.left + rect.width/2 + (Math.random()-0.5)*80) + 'px';
+    b.style.top  = (rect.top  + rect.height/2 + (Math.random()-0.5)*60) + 'px';
+    b.style.animationDelay = (i * 0.07) + 's';
+    document.body.appendChild(b);
+    setTimeout(() => b.remove(), 900);
+  }
+}
+
+// ── Level tabs ──
+function gantiLevel(lv, btn) {
+  document.querySelectorAll('.level-tab').forEach(t => t.className = 'level-tab');
+  document.querySelectorAll('.level-panel').forEach(p => p.classList.remove('show'));
+  btn.classList.add(`active-lv${lv}`);
+  document.getElementById(`lv${lv}`).classList.add('show');
+}
+
+// ── Starter file tabs ──
+function gantiFile(file, btn) {
+  document.querySelectorAll('.starter-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.starter-file').forEach(f => f.classList.remove('show'));
+  btn.classList.add('active');
+  document.getElementById(`file-${file}`).classList.add('show');
+}
+
+// ── Hint toggle ──
+function toggleHint(id) {
+  const body = document.getElementById(id);
+  const btn  = body.previousElementSibling;
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  btn.classList.toggle('open', !isOpen);
+  btn.querySelector('.ht-icon').textContent = isOpen ? '▶' : '▼';
+}
+
+// ── Checklist ──
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+  el.querySelector('.check-box').textContent = el.classList.contains('checked') ? '✓' : '';
+  updateCheckProgress();
+}
+function updateCheckProgress() {
+  const total = document.querySelectorAll('.check-item').length;
+  const done  = document.querySelectorAll('.check-item.checked').length;
+  document.getElementById('checkCount').textContent = `${done} / ${total} selesai`;
+  document.getElementById('checkFill').style.width = (done / total * 100) + '%';
+  if (done === total) spawnBurst(document.getElementById('checkCount'));
+}
+</script>
+</body>
+</html>
