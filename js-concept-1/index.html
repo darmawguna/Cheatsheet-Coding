@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JS Cheat Sheet Part 2 — Array, String & Form</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080b14;
+  --surface: #0f1320;
+  --card: #131926;
+  --card2: #1a2133;
+  --border: #1e2d47;
+  --border2: #263650;
+  --yellow: #ffd95a;
+  --cyan: #38f5d4;
+  --pink: #ff6b9d;
+  --purple: #a78bfa;
+  --orange: #fb923c;
+  --green: #4ade80;
+  --blue: #60a5fa;
+  --red: #f87171;
+  --text: #e2e8f5;
+  --muted: #64748b;
+  --muted2: #94a3b8;
+  --glow-cyan: 0 0 30px rgba(56,245,212,.15);
+  --glow-purple: 0 0 30px rgba(167,139,250,.15);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 400;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(30,45,71,.3) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30,45,71,.3) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.orb { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; }
+.orb-1 { width: 500px; height: 500px; top: -150px; left: -150px; background: radial-gradient(circle, rgba(56,245,212,.1) 0%, transparent 70%); filter: blur(60px); }
+.orb-2 { width: 500px; height: 500px; bottom: -150px; right: -150px; background: radial-gradient(circle, rgba(167,139,250,.1) 0%, transparent 70%); filter: blur(60px); }
+
+.progress-bar-outer { position: fixed; top: 60px; left: 0; right: 0; height: 2px; z-index: 1001; }
+.progress-bar-inner { height: 100%; width: 0%; background: linear-gradient(90deg, var(--cyan), var(--purple)); transition: width .1s; }
+
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px;
+  backdrop-filter: blur(20px);
+  background: rgba(8,11,20,.85);
+  border-bottom: 1px solid var(--border);
+  z-index: 1000;
+}
+.nav-brand {
+  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 18px;
+  background: linear-gradient(90deg, var(--cyan), var(--purple));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  text-decoration: none;
+}
+.nav-part { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); margin-left: 8px; -webkit-text-fill-color: var(--muted); }
+.nav-links { display: flex; gap: 4px; list-style: none; }
+.nav-links a {
+  font-size: 12.5px; font-weight: 500; color: var(--muted2);
+  text-decoration: none; padding: 5px 10px; border-radius: 8px; transition: all .2s;
+}
+.nav-links a:hover, .nav-links a.active { color: var(--cyan); background: rgba(56,245,212,.08); }
+@media (max-width: 768px) { .nav-links { display: none; } }
+
+.wrapper { max-width: 1100px; margin: 0 auto; padding: 100px 24px 80px; position: relative; z-index: 1; }
+
+/* Hero */
+.hero { text-align: center; padding: 60px 0 80px; }
+.hero-badge {
+  display: inline-block; font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 600; color: var(--cyan);
+  border: 1px solid rgba(56,245,212,.35); padding: 5px 14px; border-radius: 99px;
+  margin-bottom: 24px; animation: fadeUp .6s ease both;
+}
+.hero-part-label {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: 99px; padding: 4px 12px 4px 8px;
+  font-size: 12px; font-weight: 500; color: var(--muted2);
+  margin-bottom: 16px; animation: fadeUp .6s .05s ease both;
+}
+.hero-part-label .dot { width: 8px; height: 8px; background: var(--orange); border-radius: 50%; }
+.hero h1 {
+  font-family: 'Syne', sans-serif; font-weight: 900;
+  font-size: clamp(34px, 6vw, 64px); line-height: 1.1;
+  background: linear-gradient(135deg, #fff 0%, var(--orange) 40%, var(--pink) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  animation: fadeUp .6s .1s ease both; margin-bottom: 16px;
+}
+.hero-sub { font-size: 16px; color: var(--muted2); max-width: 540px; margin: 0 auto 40px; animation: fadeUp .6s .2s ease both; }
+.stats-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; animation: fadeUp .6s .3s ease both; }
+.stat-box { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px 28px; text-align: center; min-width: 120px; }
+.stat-box .num { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: var(--orange); }
+.stat-box .lbl { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+/* Continuation badge */
+.cont-banner {
+  background: linear-gradient(90deg, rgba(251,146,60,.08), rgba(255,107,157,.08));
+  border: 1px solid rgba(251,146,60,.2);
+  border-radius: 12px;
+  padding: 14px 20px;
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 40px;
+  animation: fadeUp .6s .35s ease both;
+}
+.cont-banner .icon { font-size: 22px; }
+.cont-banner p { font-size: 13.5px; color: var(--muted2); }
+.cont-banner strong { color: var(--orange); }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Section header */
+.section-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; margin-top: 72px; }
+.section-badge { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; color: var(--cyan); border: 1px solid rgba(56,245,212,.3); padding: 4px 10px; border-radius: 99px; white-space: nowrap; }
+.section-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(20px, 3vw, 28px); color: var(--text); white-space: nowrap; }
+.section-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--border), transparent); }
+
+/* Cards */
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 28px; transition: border-color .2s, box-shadow .2s; margin-bottom: 20px; }
+.card:hover { border-color: var(--border2); }
+.card-glow-cyan:hover { box-shadow: var(--glow-cyan); border-color: rgba(56,245,212,.25); }
+.card-glow-purple:hover { box-shadow: var(--glow-purple); border-color: rgba(167,139,250,.25); }
+.card-glow-orange:hover { box-shadow: 0 0 30px rgba(251,146,60,.12); border-color: rgba(251,146,60,.25); }
+.card-glow-pink:hover { box-shadow: 0 0 30px rgba(255,107,157,.12); border-color: rgba(255,107,157,.25); }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+@media (max-width: 768px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+/* Pills */
+.pill { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 99px; display: inline-block; }
+.pill-c { background: rgba(56,245,212,.12); color: var(--cyan); border: 1px solid rgba(56,245,212,.25); }
+.pill-y { background: rgba(255,217,90,.12); color: var(--yellow); border: 1px solid rgba(255,217,90,.25); }
+.pill-p { background: rgba(167,139,250,.12); color: var(--purple); border: 1px solid rgba(167,139,250,.25); }
+.pill-g { background: rgba(74,222,128,.12); color: var(--green); border: 1px solid rgba(74,222,128,.25); }
+.pill-o { background: rgba(251,146,60,.12); color: var(--orange); border: 1px solid rgba(251,146,60,.25); }
+.pill-r { background: rgba(255,107,157,.12); color: var(--pink); border: 1px solid rgba(255,107,157,.25); }
+
+.card-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 17px; color: var(--text); margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+.card-desc { font-size: 14px; color: var(--muted2); line-height: 1.7; margin-bottom: 16px; }
+.analogi { background: rgba(167,139,250,.07); border: 1px solid rgba(167,139,250,.2); border-radius: 10px; padding: 12px 16px; font-size: 13px; color: var(--muted2); margin-bottom: 16px; }
+.analogi strong { color: var(--purple); }
+.analogi-o { background: rgba(251,146,60,.07); border: 1px solid rgba(251,146,60,.2); }
+.analogi-o strong { color: var(--orange); }
+.analogi-p { background: rgba(255,107,157,.07); border: 1px solid rgba(255,107,157,.2); }
+.analogi-p strong { color: var(--pink); }
+
+/* Code block */
+.code-block { border-radius: 12px; overflow: hidden; border: 1px solid var(--border); margin-top: 12px; }
+.code-header { display: flex; align-items: center; justify-content: space-between; background: #0a0d18; padding: 10px 14px; border-bottom: 1px solid var(--border); }
+.mac-dots { display: flex; gap: 6px; }
+.mac-dots span { width: 11px; height: 11px; border-radius: 50%; }
+.dot-r { background: #f87171; } .dot-y { background: var(--yellow); } .dot-g { background: var(--green); }
+.code-lang { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+.copy-btn { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; background: var(--border); color: var(--muted2); border: none; padding: 4px 10px; border-radius: 6px; cursor: pointer; transition: all .2s; }
+.copy-btn:hover { background: var(--border2); color: var(--text); }
+.copy-btn.copied { background: rgba(74,222,128,.15); color: var(--green); }
+.code-body { background: #060910; padding: 18px 20px; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.8; overflow-x: auto; white-space: pre; }
+.kw { color: #c792ea; } .prop { color: var(--cyan); } .val { color: var(--orange); }
+.sel { color: var(--yellow); } .at { color: var(--pink); } .cm { color: #3d5070; font-style: italic; }
+.str { color: var(--green); } .fn { color: var(--blue); } .num2 { color: var(--orange); }
+.mth { color: var(--pink); }
+
+/* Playground */
+.playground { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-top: 16px; }
+.play-title { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+.play-title::before { content: '▶'; color: var(--cyan); font-size: 9px; }
+.ctrl-group { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.ctrl-btn { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; padding: 7px 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--card2); color: var(--muted2); cursor: pointer; transition: all .2s; }
+.ctrl-btn:hover { border-color: var(--border2); color: var(--text); }
+.ctrl-btn.on { background: rgba(56,245,212,.1); border-color: rgba(56,245,212,.4); color: var(--cyan); }
+.ctrl-btn.on-o { background: rgba(251,146,60,.1); border-color: rgba(251,146,60,.4); color: var(--orange); }
+.play-preview { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 20px; min-height: 80px; display: flex; align-items: center; justify-content: center; transition: all .3s; }
+.play-code-out { margin-top: 12px; background: #060910; border-radius: 8px; padding: 12px 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted2); border: 1px solid var(--border); white-space: pre; line-height: 1.7; overflow-x: auto; }
+
+/* Table */
+.table-wrap { overflow-x: auto; margin-top: 8px; }
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+th { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; color: var(--muted); text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); text-transform: uppercase; letter-spacing: .05em; }
+td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--muted2); font-weight: 400; line-height: 1.5; }
+td:first-child { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--pink); }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,255,255,.02); }
+
+/* Array item visual */
+.arr-visual { display: flex; gap: 0; margin: 16px 0; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
+.arr-cell { flex: 1; text-align: center; border-right: 1px solid var(--border); }
+.arr-cell:last-child { border-right: none; }
+.arr-idx { background: var(--surface); font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted); padding: 4px 6px; border-bottom: 1px solid var(--border); }
+.arr-val { background: var(--card2); font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--cyan); padding: 10px 6px; font-weight: 600; }
+
+/* Loop flow visual */
+.loop-flow { display: flex; flex-direction: column; gap: 6px; margin: 16px 0; }
+.loop-step { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 8px; background: var(--card2); border: 1px solid var(--border); font-size: 13px; }
+.loop-step.active { background: rgba(56,245,212,.07); border-color: rgba(56,245,212,.25); }
+.loop-step .ls-idx { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); min-width: 40px; }
+.loop-step .ls-val { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--orange); }
+.loop-step .ls-out { font-size: 13px; color: var(--muted2); }
+.loop-arrow { text-align: center; color: var(--muted); font-size: 11px; }
+
+/* String visual */
+.str-visual { display: flex; flex-wrap: wrap; gap: 2px; margin: 12px 0; }
+.str-char { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: var(--card2); border: 1px solid var(--border); border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; color: var(--yellow); transition: all .3s; }
+.str-char.hl { background: rgba(56,245,212,.12); border-color: rgba(56,245,212,.4); color: var(--cyan); }
+.str-char.sp { background: rgba(255,107,157,.1); border-color: rgba(255,107,157,.3); color: var(--pink); font-size: 9px; }
+
+/* Selectable cards */
+.sel-cards { display: grid; gap: 12px; margin-bottom: 16px; }
+.sel-cards-2 { grid-template-columns: 1fr 1fr; }
+.sel-cards-3 { grid-template-columns: repeat(3,1fr); }
+.sel-cards-4 { grid-template-columns: repeat(4,1fr); }
+@media (max-width: 600px) { .sel-cards-3, .sel-cards-4 { grid-template-columns: 1fr 1fr; } }
+.sel-card { background: var(--card2); border: 1px solid var(--border); border-radius: 12px; padding: 14px; cursor: pointer; transition: all .2s; text-align: center; }
+.sel-card:hover { border-color: var(--border2); }
+.sel-card.selected { border-color: var(--cyan); background: rgba(56,245,212,.07); }
+.sel-card .icon { font-size: 22px; margin-bottom: 6px; }
+.sel-card .sc-title { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: var(--text); }
+.sel-card .sc-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.sel-preview { background: var(--card2); border: 1px solid var(--border); border-radius: 12px; padding: 18px; font-size: 13px; color: var(--muted2); line-height: 1.7; transition: all .3s; }
+.sel-preview .sp-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px; color: var(--text); margin-bottom: 6px; }
+
+/* Form playground */
+.form-demo { background: var(--card2); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+.form-field { margin-bottom: 16px; }
+.form-label { display: block; font-size: 13px; font-weight: 600; color: var(--muted2); margin-bottom: 6px; }
+.form-label .req { color: var(--pink); }
+.form-input {
+  width: 100%; background: var(--card); border: 1.5px solid var(--border);
+  color: var(--text); padding: 11px 14px; border-radius: 10px;
+  font-family: 'Outfit', sans-serif; font-size: 14px; outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+.form-input:focus { border-color: rgba(56,245,212,.5); box-shadow: 0 0 0 3px rgba(56,245,212,.07); }
+.form-input.valid { border-color: rgba(74,222,128,.5); box-shadow: 0 0 0 3px rgba(74,222,128,.07); }
+.form-input.invalid { border-color: rgba(248,113,113,.5); box-shadow: 0 0 0 3px rgba(248,113,113,.07); }
+.form-hint { font-size: 12px; margin-top: 5px; min-height: 18px; transition: color .2s; }
+.form-hint.ok { color: var(--green); }
+.form-hint.err { color: var(--red); }
+.form-submit {
+  width: 100%; padding: 12px; border-radius: 10px;
+  background: linear-gradient(90deg, rgba(56,245,212,.15), rgba(167,139,250,.15));
+  border: 1px solid rgba(56,245,212,.3); color: var(--cyan);
+  font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: all .2s;
+}
+.form-submit:hover { background: linear-gradient(90deg, rgba(56,245,212,.25), rgba(167,139,250,.25)); }
+.form-result { margin-top: 16px; border-radius: 10px; padding: 14px 18px; display: none; font-size: 13.5px; line-height: 1.7; }
+.form-result.show { display: block; }
+.form-result.ok { background: rgba(74,222,128,.08); border: 1px solid rgba(74,222,128,.25); color: var(--green); }
+.form-result.err { background: rgba(248,113,113,.08); border: 1px solid rgba(248,113,113,.25); color: var(--red); }
+
+/* Slider */
+.slider-wrap { margin-top: 14px; }
+.slider-label { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; }
+.slider-label span { font-family: 'JetBrains Mono', monospace; color: var(--orange); font-weight: 600; }
+input[type=range] { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 99px; background: var(--border2); outline: none; }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--orange); cursor: pointer; box-shadow: 0 0 8px rgba(251,146,60,.4); }
+
+/* Scroll reveal */
+.scroll-reveal { opacity: 0; transform: translateY(20px); transition: opacity .5s ease, transform .5s ease; }
+.scroll-reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* Quiz */
+.quiz-wrap { padding: 4px 0; }
+.score-dots { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
+.score-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--border2); transition: background .3s; }
+.score-dot.correct { background: var(--green); }
+.score-dot.wrong { background: var(--red); }
+.quiz-counter { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); margin-bottom: 14px; }
+.quiz-q { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 20px; line-height: 1.5; }
+.quiz-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+@media (max-width: 500px) { .quiz-opts { grid-template-columns: 1fr; } }
+.quiz-opt { background: var(--card2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; cursor: pointer; display: flex; gap: 10px; align-items: flex-start; font-size: 13.5px; font-weight: 500; transition: all .2s; text-align: left; }
+.quiz-opt:hover:not(.disabled) { border-color: var(--border2); background: rgba(255,255,255,.03); }
+.quiz-opt.correct-ans { background: rgba(74,222,128,.1); border-color: rgba(74,222,128,.4); color: var(--green); }
+.quiz-opt.wrong-ans { background: rgba(248,113,113,.1); border-color: rgba(248,113,113,.4); color: var(--red); }
+.quiz-opt.disabled { pointer-events: none; }
+.opt-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: var(--orange); min-width: 18px; }
+.quiz-feedback { border-radius: 10px; padding: 12px 16px; font-size: 13.5px; font-weight: 500; display: none; margin-bottom: 14px; line-height: 1.6; }
+.quiz-feedback.show { display: block; }
+.quiz-feedback.ok { background: rgba(74,222,128,.08); border: 1px solid rgba(74,222,128,.25); color: var(--green); }
+.quiz-feedback.no { background: rgba(248,113,113,.08); border: 1px solid rgba(248,113,113,.25); color: var(--red); }
+.quiz-next { font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 600; background: rgba(251,146,60,.1); border: 1px solid rgba(251,146,60,.3); color: var(--orange); padding: 10px 20px; border-radius: 10px; cursor: pointer; transition: all .2s; display: none; }
+.quiz-next.show { display: inline-block; }
+.quiz-next:hover { background: rgba(251,146,60,.18); }
+.quiz-result { text-align: center; padding: 30px 0; }
+.quiz-result .big-emoji { font-size: 52px; margin-bottom: 12px; }
+.quiz-result .res-title { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+.quiz-result .res-score { font-family: 'JetBrains Mono', monospace; font-size: 32px; font-weight: 700; color: var(--orange); margin-bottom: 8px; }
+.quiz-result .res-sub { font-size: 14px; color: var(--muted2); margin-bottom: 24px; }
+.quiz-restart { font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 600; background: var(--card2); border: 1px solid var(--border); color: var(--text); padding: 10px 24px; border-radius: 10px; cursor: pointer; transition: all .2s; }
+.quiz-restart:hover { border-color: var(--orange); color: var(--orange); }
+
+/* Checklist */
+.check-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; border-radius: 10px; cursor: pointer; transition: all .2s; border: 1px solid transparent; margin-bottom: 8px; user-select: none; }
+.check-item:hover { background: rgba(255,255,255,.02); border-color: var(--border); }
+.check-item.checked { background: rgba(74,222,128,.05); border-color: rgba(74,222,128,.2); }
+.check-box { width: 20px; height: 20px; border-radius: 6px; border: 2px solid var(--border2); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--green); transition: all .2s; margin-top: 1px; }
+.check-item.checked .check-box { background: rgba(74,222,128,.2); border-color: var(--green); }
+.check-text { font-size: 14px; font-weight: 500; color: var(--muted2); line-height: 1.5; }
+.check-item.checked .check-text { color: var(--text); }
+.check-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.progress-check { margin-top: 20px; background: var(--border); border-radius: 99px; height: 6px; overflow: hidden; }
+.progress-check-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--green), var(--cyan)); border-radius: 99px; transition: width .3s ease; }
+.check-counter { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted2); margin-top: 10px; text-align: right; }
+
+/* Method card mini */
+.method-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 12px; }
+@media (max-width: 600px) { .method-grid { grid-template-columns: 1fr; } }
+.method-card { background: var(--card2); border: 1px solid var(--border); border-radius: 10px; padding: 14px; transition: all .2s; }
+.method-card:hover { border-color: var(--border2); }
+.method-name { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; color: var(--pink); margin-bottom: 4px; }
+.method-desc { font-size: 12.5px; color: var(--muted2); margin-bottom: 6px; }
+.method-ex { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--muted); background: #060910; padding: 6px 10px; border-radius: 6px; }
+
+/* Foreach step */
+.foreach-demo { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
+.fe-row { display: flex; align-items: center; gap: 10px; }
+.fe-arr { display: flex; gap: 6px; }
+.fe-item { background: var(--card2); border: 1px solid var(--border); border-radius: 8px; padding: 8px 14px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--cyan); transition: all .3s; cursor: default; }
+.fe-item.active { background: rgba(56,245,212,.12); border-color: rgba(56,245,212,.4); transform: translateY(-3px); }
+.fe-arrow { color: var(--muted); font-size: 18px; }
+.fe-out { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--orange); padding: 4px 10px; border-radius: 6px; background: rgba(251,146,60,.08); border: 1px solid rgba(251,146,60,.2); min-width: 100px; text-align: center; }
+
+/* Input sim */
+.input-group { display: flex; gap: 10px; flex-wrap: wrap; }
+.sim-input { flex: 1; min-width: 160px; background: var(--card2); border: 1px solid var(--border2); color: var(--text); padding: 10px 14px; border-radius: 10px; font-family: 'Outfit', sans-serif; font-size: 14px; outline: none; transition: border-color .2s; }
+.sim-input:focus { border-color: rgba(56,245,212,.4); }
+.sim-btn { background: rgba(251,146,60,.1); border: 1px solid rgba(251,146,60,.3); color: var(--orange); padding: 10px 18px; border-radius: 10px; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: all .2s; white-space: nowrap; }
+.sim-btn:hover { background: rgba(251,146,60,.18); }
+.sim-output { margin-top: 12px; background: var(--card2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; font-size: 14px; font-weight: 500; min-height: 48px; display: flex; align-items: center; gap: 8px; color: var(--muted2); transition: all .3s; }
+
+/* Footer */
+.footer { margin-top: 80px; padding-top: 32px; border-top: 1px solid var(--border); text-align: center; }
+.footer-tags { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 16px; }
+.footer-credit { font-size: 13px; color: var(--muted); }
+
+/* Tag badge */
+.tag-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--card2); border: 1px solid var(--border); border-radius: 8px; padding: 4px 10px; font-size: 12px; color: var(--muted2); font-family: 'JetBrains Mono', monospace; }
+
+/* info box */
+.info-box { background: rgba(96,165,250,.07); border: 1px solid rgba(96,165,250,.2); border-radius: 10px; padding: 12px 16px; font-size: 13px; color: var(--muted2); margin: 12px 0; line-height: 1.7; }
+.info-box strong { color: var(--blue); }
+</style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="progress-bar-outer"><div class="progress-bar-inner" id="progressBar"></div></div>
+
+<nav class="nav">
+  <div style="display:flex; align-items:center; gap:0;">
+    <a href="#hero" class="nav-brand">⚡ JS Cheat Sheet</a>
+    <span class="nav-part">/ Part 2</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#s-array">Array</a></li>
+    <li><a href="#s-looping">Looping</a></li>
+    <li><a href="#s-string">String</a></li>
+    <li><a href="#s-form">Form</a></li>
+    <li><a href="#s-validasi">Validasi</a></li>
+    <li><a href="#s-quiz">Quiz</a></li>
+  </ul>
+</nav>
+
+<div class="wrapper">
+
+  <!-- HERO -->
+  <div class="hero" id="hero">
+    <div class="hero-badge">Lanjutan dari Part 1 — Week 3 & 4</div>
+    <div class="hero-part-label">
+      <span class="dot"></span>
+      <span>Materi Pelengkap</span>
+    </div>
+    <h1>Array, String<br>& Form Handling</h1>
+    <p class="hero-sub">Setelah paham variabel, fungsi, dan DOM — sekarang saatnya belajar menyimpan banyak data, manipulasi teks, dan bikin form yang pintar!</p>
+    <div class="stats-row">
+      <div class="stat-box"><div class="num">5</div><div class="lbl">Topik Baru</div></div>
+      <div class="stat-box"><div class="num">6</div><div class="lbl">Demo Interaktif</div></div>
+      <div class="stat-box"><div class="num">10</div><div class="lbl">Soal Quiz</div></div>
+    </div>
+  </div>
+
+  <div class="cont-banner scroll-reveal">
+    <div class="icon">🔗</div>
+    <p>Ini adalah lanjutan dari <strong>JS Cheat Sheet Part 1</strong>. Pastikan kamu sudah paham variabel, fungsi, DOM, dan event listener sebelum lanjut ke sini!</p>
+  </div>
+
+  <!-- ===================== SECTION 1: ARRAY ===================== -->
+  <div class="section-header scroll-reveal" id="s-array">
+    <span class="section-badge">SECTION 01</span>
+    <span class="section-title">Array — Daftar dalam Satu Kotak</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card card-glow-cyan scroll-reveal">
+    <div class="card-title">📋 Apa Itu Array?</div>
+    <p class="card-desc">Array adalah cara menyimpan <strong>banyak nilai sekaligus</strong> dalam satu variabel. Bayangkan kamu punya 30 teman sekelas — akan sangat repot kalau buat variabel satu-satu!</p>
+    <div class="analogi"><strong>Analogi:</strong> Array seperti rak buku bernomor. Setiap buku punya nomor urut (index), dimulai dari <strong>nomor 0</strong> — bukan 1! Jadi buku pertama ada di nomor 0.</div>
+    <div class="arr-visual">
+      <div class="arr-cell"><div class="arr-idx">[0]</div><div class="arr-val">"Andi"</div></div>
+      <div class="arr-cell"><div class="arr-idx">[1]</div><div class="arr-val">"Budi"</div></div>
+      <div class="arr-cell"><div class="arr-idx">[2]</div><div class="arr-val">"Citra"</div></div>
+      <div class="arr-cell"><div class="arr-idx">[3]</div><div class="arr-val">"Dina"</div></div>
+      <div class="arr-cell"><div class="arr-idx">[4]</div><div class="arr-val">"Eko"</div></div>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><div class="mac-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div><span class="code-lang">JavaScript</span><button class="copy-btn" onclick="copyCode(this,'c1')">copy</button></div>
+      <div class="code-body" id="c1"><span class="kw">const</span> teman = [<span class="str">"Andi"</span>, <span class="str">"Budi"</span>, <span class="str">"Citra"</span>, <span class="str">"Dina"</span>, <span class="str">"Eko"</span>];
+
+<span class="cm">// Akses berdasarkan index (mulai dari 0!)</span>
+console.<span class="fn">log</span>(teman[<span class="num2">0</span>]);     <span class="cm">// → "Andi"</span>
+console.<span class="fn">log</span>(teman[<span class="num2">2</span>]);     <span class="cm">// → "Citra"</span>
+
+<span class="cm">// Cek jumlah item</span>
+console.<span class="fn">log</span>(teman.<span class="prop">length</span>); <span class="cm">// → 5</span>
+
+<span class="cm">// Ambil item terakhir</span>
+console.<span class="fn">log</span>(teman[teman.<span class="prop">length</span> - <span class="num2">1</span>]); <span class="cm">// → "Eko"</span></div>
+    </div>
+    <div class="info-box" style="margin-top:14px; margin-bottom:0;"><strong>⚠️ Ingat!</strong> Index array dimulai dari <strong>0</strong>, bukan 1. Jadi item ke-1 ada di index 0, item ke-2 ada di index 1, dan seterusnya!</div>
+  </div>
+
+  <div class="card card-glow-purple scroll-reveal">
+    <div class="card-title">🔧 Metode Array yang Wajib Tahu</div>
+    <div class="method-grid">
+      <div class="method-card">
+        <div class="method-name">.push()</div>
+        <div class="method-desc">Tambah item ke <strong>akhir</strong> array</div>
+        <div class="method-ex">teman.push("Fajar");<br>// → ["Andi",...,"Fajar"]</div>
+      </div>
+      <div class="method-card">
+        <div class="method-name">.pop()</div>
+        <div class="method-desc">Hapus item <strong>paling akhir</strong></div>
+        <div class="method-ex">teman.pop();<br>// → "Eko" dihapus</div>
+      </div>
+      <div class="method-card">
+        <div class="method-name">.includes()</div>
+        <div class="method-desc">Cek apakah nilai <strong>ada</strong> di array</div>
+        <div class="method-ex">teman.includes("Budi");<br>// → true</div>
+      </div>
+      <div class="method-card">
+        <div class="method-name">.indexOf()</div>
+        <div class="method-desc">Cari <strong>index</strong> dari nilai tertentu</div>
+        <div class="method-ex">teman.indexOf("Citra");<br>// → 2</div>
+      </div>
+      <div class="method-card">
+        <div class="method-name">.join()</div>
+        <div class="method-desc">Gabung semua item jadi <strong>satu string</strong></div>
+        <div class="method-ex">teman.join(", ");<br>// → "Andi, Budi, ..."</div>
+      </div>
+      <div class="method-card">
+        <div class="method-name">.length</div>
+        <div class="method-desc">Hitung <strong>jumlah</strong> item (bukan metode, tapi property)</div>
+        <div class="method-ex">teman.length;<br>// → 5</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Playground Array -->
+  <div class="card card-glow-orange scroll-reveal">
+    <div class="card-title">🎛️ Playground — Array Builder</div>
+    <p class="card-desc">Coba tambah dan hapus nama dari array, lalu lihat hasilnya secara real-time!</p>
+    <div class="playground">
+      <div class="play-title">Manipulasi array teman secara langsung</div>
+      <div class="input-group" style="margin-bottom:12px;">
+        <input type="text" class="sim-input" id="arrInput" placeholder="Ketik nama..." maxlength="20">
+        <button class="sim-btn" onclick="arrPush()">+ Push</button>
+        <button class="sim-btn" style="background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.3);color:var(--red);" onclick="arrPop()">− Pop</button>
+      </div>
+      <div id="arrVisual" style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px; min-height:44px; align-items:center;"></div>
+      <div id="arrInfo" style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted); margin-bottom:10px;"></div>
+      <div class="play-code-out" id="arrCode"><span class="cm">// Mulai dengan menambah nama!</span></div>
+    </div>
+  </div>
+
+  <!-- ===================== SECTION 2: LOOPING ===================== -->
+  <div class="section-header scroll-reveal" id="s-looping">
+    <span class="section-badge">SECTION 02</span>
+    <span class="section-title">Looping — Kerja Berulang Otomatis</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card card-glow-cyan scroll-reveal">
+    <div class="card-title">🔁 Mengapa Butuh Loop?</div>
+    <p class="card-desc">Bayangkan kamu punya 100 siswa dan ingin mencetak nama mereka satu per satu. Tanpa loop, kamu harus tulis console.log() sebanyak 100 kali. Dengan loop, cukup tulis sekali!</p>
+    <div class="analogi"><strong>Analogi:</strong> Loop seperti mesin fotokopi. Kamu tidak perlu menekan tombol 100 kali — cukup atur jumlahnya, lalu biarkan mesin bekerja sendiri.</div>
+    <div class="grid-2">
+      <div>
+        <p style="font-size:13px; font-weight:600; color:var(--red); margin-bottom:8px;">❌ Tanpa Loop (tidak efisien)</p>
+        <div class="code-block">
+          <div class="code-header"><div class="mac-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div><span class="code-lang">JS</span></div>
+          <div class="code-body" style="font-size:11.5px;">console.<span class="fn">log</span>(teman[<span class="num2">0</span>]); <span class="cm">// Andi</span>
+console.<span class="fn">log</span>(teman[<span class="num2">1</span>]); <span class="cm">// Budi</span>
+console.<span class="fn">log</span>(teman[<span class="num2">2</span>]); <span class="cm">// Citra</span>
+<span class="cm">// ...terus sampai 100x 😩</span></div>
+        </div>
+      </div>
+      <div>
+        <p style="font-size:13px; font-weight:600; color:var(--green); margin-bottom:8px;">✅ Dengan Loop (efisien!)</p>
+        <div class="code-block">
+          <div class="code-header"><div class="mac-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div><span class="code-lang">JS</span></div>
+          <div class="code-body" style="font-size:11.5px;">teman.<span class="mth">forEach</span>(<span class="kw">function</span>(nama) {
+  console.<span class="fn">log</span>(nama);
+});
+<span class="cm">// Otomatis cetak semua! 🎉</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Selectable: jenis loop -->
+  <div class="card card-glow-purple scroll-reveal">
+    <div class="card-title">🃏 Jenis-Jenis Loop — Pilih yang Tepat!</div>
+    <p class="card-desc">Klik setiap kartu untuk melihat cara pakai dan kapan menggunakannya.</p>
+    <div class="sel-cards sel-cards-3">
+      <div class="sel-card selected" onclick="pilihLoop('foreach', this)">
+        <div class="icon">🔄</div>
+        <div class="sc-title">.forEach()</div>
+        <div class="sc-sub">untuk array</div>
+      </div>
+      <div class="sel-card" onclick="pilihLoop('for', this)">
+        <div class="icon">🔢</div>
+        <div class="sc-title">for loop</div>
+        <div class="sc-sub">paling fleksibel</div>
+      </div>
+      <div class="sel-card" onclick="pilihLoop('forof', this)">
+        <div class="icon">➿</div>
+        <div class="sc-title">for...of</div>
+        <div class="sc-sub">bersih & modern</div>
+      </div>
+    </div>
+    <div class="sel-preview" id="loopPreview">
+      <div class="sp-title">.forEach() — Paling mudah untuk array!</div>
+      <p>forEach adalah cara paling simpel untuk memproses setiap item dalam array. Cocok untuk pemula dan dipakai di mana saja.</p>
+      <div style="margin-top:10px; background:#060910; border-radius:8px; padding:12px 16px; font-family:'JetBrains Mono',monospace; font-size:12.5px; line-height:1.8;"><span class="kw">const</span> buah = [<span class="str">"apel"</span>, <span class="str">"mangga"</span>, <span class="str">"jeruk"</span>];<br><br>buah.<span class="mth">forEach</span>(<span class="kw">function</span>(item) {<br>  console.<span class="fn">log</span>(item);<br>});<br><span class="cm">// → apel</span><br><span class="cm">// → mangga</span><br><span class="cm">// → jeruk</span></div>
+    </div>
+  </div>
+
+  <!-- Playground loop animasi -->
+  <div class="card card-glow-orange scroll-reveal">
+    <div class="card-title">🎛️ Playground — Visualisasi forEach</div>
+    <p class="card-desc">Lihat bagaimana forEach "mengunjungi" setiap item satu per satu!</p>
+    <div class="playground">
+      <div class="play-title">Animasi forEach berjalan di array</div>
+      <div class="ctrl-group">
+        <button class="ctrl-btn" onclick="startForEach()" id="btnFE">▶ Jalankan forEach</button>
+        <button class="ctrl-btn" onclick="resetForEach()">↺ Reset</button>
+      </div>
+      <div class="fe-arr" id="feArr" style="flex-wrap:wrap; gap:8px; margin-bottom:14px;">
+        <div class="fe-item" data-i="0">🍎 apel</div>
+        <div class="fe-item" data-i="1">🥭 mangga</div>
+        <div class="fe-item" data-i="2">🍊 jeruk</div>
+        <div class="fe-item" data-i="3">🍇 anggur</div>
+        <div class="fe-item" data-i="4">🍌 pisang</div>
+      </div>
+      <div id="feOut" style="min-height:40px; background:#060910; border-radius:8px; padding:10px 14px; font-family:'JetBrains Mono',monospace; font-size:12.5px; line-height:1.8; border:1px solid var(--border); color:var(--muted2);">
+        <span class="cm">// Output forEach akan muncul di sini...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== SECTION 3: STRING METHODS ===================== -->
+  <div class="section-header scroll-reveal" id="s-string">
+    <span class="section-badge">SECTION 03</span>
+    <span class="section-title">String Methods — Manipulasi Teks</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card card-glow-cyan scroll-reveal">
+    <div class="card-title">✂️ Teks Bisa Dimanipulasi!</div>
+    <p class="card-desc">String (teks) punya banyak metode bawaan untuk diubah, dipotong, dicari, dan digabung. Ini sangat berguna saat kamu perlu memproses input dari user!</p>
+    <div class="analogi analogi-p"><strong>Analogi:</strong> String seperti kalimat di secarik kertas. Kamu bisa menggunting bagian tertentu, menghapus spasi, mengubah huruf besar-kecil, atau mengganti kata tertentu — semuanya tanpa mengubah kertas aslinya!</div>
+    <div class="code-block">
+      <div class="code-header"><div class="mac-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div><span class="code-lang">JavaScript</span><button class="copy-btn" onclick="copyCode(this,'c2')">copy</button></div>
+      <div class="code-body" id="c2"><span class="kw">const</span> kata = <span class="str">"  Halo Dunia!  "</span>;
+
+kata.<span class="mth">toUpperCase</span>();  <span class="cm">// → "  HALO DUNIA!  "</span>
+kata.<span class="mth">toLowerCase</span>();  <span class="cm">// → "  halo dunia!  "</span>
+kata.<span class="mth">trim</span>();          <span class="cm">// → "Halo Dunia!" (hapus spasi tepi)</span>
+kata.<span class="mth">length</span>;         <span class="cm">// → 15 (termasuk spasi!)</span>
+kata.<span class="mth">includes</span>(<span class="str">"Dunia"</span>); <span class="cm">// → true</span>
+kata.<span class="mth">replace</span>(<span class="str">"Dunia"</span>, <span class="str">"Indonesia"</span>); <span class="cm">// → "  Halo Indonesia!  "</span>
+kata.<span class="mth">slice</span>(<span class="num2">2</span>, <span class="num2">6</span>);    <span class="cm">// → "Halo"</span></div>
+    </div>
+  </div>
+
+  <!-- Playground String -->
+  <div class="card card-glow-pink scroll-reveal">
+    <div class="card-title">🎛️ Playground — String Method Explorer</div>
+    <p class="card-desc">Ketik teks, pilih metode, dan lihat hasilnya langsung!</p>
+    <div class="playground">
+      <div class="play-title">Eksplorasi metode string secara langsung</div>
+      <div style="margin-bottom:12px;">
+        <input type="text" class="sim-input" id="strInput" placeholder="Ketik teks di sini..." value="  Halo Dunia JavaScript!  " style="width:100%;" oninput="updateStrPlay()">
+      </div>
+      <div class="ctrl-group" id="strBtnGroup">
+        <button class="ctrl-btn on" onclick="applyStr('toUpperCase', this)">.toUpperCase()</button>
+        <button class="ctrl-btn" onclick="applyStr('toLowerCase', this)">.toLowerCase()</button>
+        <button class="ctrl-btn" onclick="applyStr('trim', this)">.trim()</button>
+        <button class="ctrl-btn" onclick="applyStr('length', this)">.length</button>
+        <button class="ctrl-btn" onclick="applyStr('reverse', this)">.split().reverse()</button>
+      </div>
+      <div class="play-preview" id="strPreview" style="font-family:'JetBrains Mono',monospace; font-size:14px; flex-direction:column; align-items:flex-start; gap:6px; word-break:break-all; color:var(--cyan);">
+        Pilih metode di atas!
+      </div>
+      <div class="play-code-out" id="strCode"></div>
+    </div>
+  </div>
+
+  <!-- ===================== SECTION 4: FORM HANDLING ===================== -->
+  <div class="section-header scroll-reveal" id="s-form">
+    <span class="section-badge">SECTION 04</span>
+    <span class="section-title">Form Handling — Ambil Data dari User</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card card-glow-cyan scroll-reveal">
+    <div class="card-title">📝 Mengambil Nilai dari Form</div>
+    <p class="card-desc">Hampir semua website punya form — login, registrasi, pencarian. JavaScript digunakan untuk <strong>mengambil</strong> apa yang diketik user dan <strong>melakukan sesuatu</strong> dengannya.</p>
+    <div class="analogi analogi-o"><strong>Analogi:</strong> Form seperti lembar ujian. User mengisi jawaban, lalu saat tombol submit ditekan, JavaScript berperan sebagai guru yang memeriksa dan memproses jawaban tersebut.</div>
+    <div class="code-block">
+      <div class="code-header"><div class="mac-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div><span class="code-lang">HTML + JavaScript</span><button class="copy-btn" onclick="copyCode(this,'c3')">copy</button></div>
+      <div class="code-body" id="c3"><span class="cm">&lt;!-- HTML --&gt;</span>
+&lt;<span class="sel">input</span> <span class="prop">type</span>=<span class="str">"text"</span> <span class="prop">id</span>=<span class="str">"namaInput"</span>&gt;
+&lt;<span class="sel">button</span> <span class="prop">id</span>=<span class="str">"btnKirim"</span>&gt;Kirim&lt;/<span class="sel">button</span>&gt;
+&lt;<span class="sel">p</span> <span class="prop">id</span>=<span class="str">"hasilnya"</span>&gt;&lt;/<span class="sel">p</span>&gt;
+
+<span class="cm">// JavaScript</span>
+<span class="kw">const</span> input  = document.<span class="fn">getElementById</span>(<span class="str">'namaInput'</span>);
+<span class="kw">const</span> tombol = document.<span class="fn">getElementById</span>(<span class="str">'btnKirim'</span>);
+<span class="kw">const</span> hasil  = document.<span class="fn">getElementById</span>(<span class="str">'hasilnya'</span>);
+
+tombol.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, <span class="kw">function</span>() {
+  <span class="kw">const</span> nama = input.<span class="prop">value</span>; <span class="cm">// .value = ambil isi input!</span>
+  hasil.<span class="prop">textContent</span> = <span class="str">"Halo, "</span> + nama + <span class="str">"!"</span>;
+});</div>
+    </div>
+    <div class="info-box" style="margin-top:14px; margin-bottom:0;"><strong>💡 Kunci Utama:</strong> Untuk mengambil nilai dari input, gunakan <code style="font-family:'JetBrains Mono',monospace; color:var(--cyan);">.value</code> — bukan .textContent. .value khusus untuk elemen form seperti input, textarea, dan select.</div>
+  </div>
+
+  <!-- Form types -->
+  <div class="card card-glow-purple scroll-reveal">
+    <div class="card-title">🃏 Jenis Input Form yang Umum</div>
+    <p class="card-desc">Klik kartu untuk melihat cara mengambil nilainya dengan JavaScript.</p>
+    <div class="sel-cards sel-cards-4">
+      <div class="sel-card selected" onclick="pilihForm('text', this)"><div class="icon">⌨️</div><div class="sc-title">text</div><div class="sc-sub">input teks</div></div>
+      <div class="sel-card" onclick="pilihForm('number', this)"><div class="icon">🔢</div><div class="sc-title">number</div><div class="sc-sub">angka</div></div>
+      <div class="sel-card" onclick="pilihForm('checkbox', this)"><div class="icon">☑️</div><div class="sc-title">checkbox</div><div class="sc-sub">ya/tidak</div></div>
+      <div class="sel-card" onclick="pilihForm('select', this)"><div class="icon">📋</div><div class="sc-title">select</div><div class="sc-sub">pilihan</div></div>
+    </div>
+    <div class="sel-preview" id="formPreview">
+      <div class="sp-title">Input Type: text</div>
+      <p>Paling umum digunakan. Untuk mengambil nilainya, gunakan <code style="font-family:'JetBrains Mono',monospace; color:var(--cyan);">.value</code> yang mengembalikan string.</p>
+      <div style="margin-top:10px; background:#060910; border-radius:8px; padding:12px 16px; font-family:'JetBrains Mono',monospace; font-size:12.5px; line-height:1.8;"><span class="cm">// HTML: &lt;input type="text" id="nama"&gt;</span><br><span class="kw">const</span> nilai = document.<span class="fn">getElementById</span>(<span class="str">'nama'</span>).<span class="prop">value</span>;<br>console.<span class="fn">log</span>(nilai); <span class="cm">// → "Budi" (string)</span></div>
+    </div>
+  </div>
+
+  <!-- ===================== SECTION 5: VALIDASI ===================== -->
+  <div class="section-header scroll-reveal" id="s-validasi">
+    <span class="section-badge">SECTION 05</span>
+    <span class="section-title">Validasi Form — Form yang Pintar</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card card-glow-orange scroll-reveal">
+    <div class="card-title">🛡️ Kenapa Harus Validasi?</div>
+    <p class="card-desc">Validasi adalah pengecekan data sebelum diproses. Tanpa validasi, user bisa mengosongkan form, mengirim email yang tidak valid, atau memasukkan angka negatif untuk umur!</p>
+    <div class="analogi analogi-o"><strong>Analogi:</strong> Validasi seperti satpam di pintu masuk. Sebelum boleh masuk, dicek dulu: "Ada KTP? Alamat benar? Sudah isi semua kolom?" — baru boleh lanjut!</div>
+    <div class="code-block">
+      <div class="code-header"><div class="mac-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div><span class="code-lang">JavaScript</span><button class="copy-btn" onclick="copyCode(this,'c4')">copy</button></div>
+      <div class="code-body" id="c4"><span class="kw">function</span> <span class="fn">validasiForm</span>() {
+  <span class="kw">const</span> nama  = document.<span class="fn">getElementById</span>(<span class="str">'nama'</span>).<span class="prop">value</span>.<span class="mth">trim</span>();
+  <span class="kw">const</span> email = document.<span class="fn">getElementById</span>(<span class="str">'email'</span>).<span class="prop">value</span>.<span class="mth">trim</span>();
+  <span class="kw">const</span> umur  = document.<span class="fn">getElementById</span>(<span class="str">'umur'</span>).<span class="prop">value</span>;
+
+  <span class="cm">// ✅ Cek apakah nama kosong</span>
+  <span class="kw">if</span> (nama === <span class="str">""</span>) {
+    alert(<span class="str">"Nama tidak boleh kosong!"</span>);
+    <span class="kw">return</span>; <span class="cm">// hentikan fungsi di sini</span>
+  }
+
+  <span class="cm">// ✅ Cek apakah email mengandung "@"</span>
+  <span class="kw">if</span> (!email.<span class="mth">includes</span>(<span class="str">"@"</span>)) {
+    alert(<span class="str">"Format email tidak valid!"</span>);
+    <span class="kw">return</span>;
+  }
+
+  <span class="cm">// ✅ Cek apakah umur masuk akal</span>
+  <span class="kw">if</span> (umur < <span class="num2">5</span> || umur > <span class="num2">100</span>) {
+    alert(<span class="str">"Umur tidak valid!"</span>);
+    <span class="kw">return</span>;
+  }
+
+  alert(<span class="str">"Form berhasil dikirim! 🎉"</span>);
+}</div>
+    </div>
+  </div>
+
+  <!-- Form Demo Interaktif -->
+  <div class="card card-glow-cyan scroll-reveal">
+    <div class="card-title">🎛️ Playground — Form Validasi Live</div>
+    <p class="card-desc">Coba isi form di bawah — validasi berjalan real-time saat kamu mengetik! Lihat pesan error dan sukses langsung muncul.</p>
+    <div class="form-demo">
+      <div class="form-field">
+        <label class="form-label">Nama Lengkap <span class="req">*</span></label>
+        <input type="text" class="form-input" id="fNama" placeholder="Minimal 3 karakter..." oninput="validasiNama()">
+        <div class="form-hint" id="hNama"></div>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Alamat Email <span class="req">*</span></label>
+        <input type="text" class="form-input" id="fEmail" placeholder="contoh@email.com" oninput="validasiEmail()">
+        <div class="form-hint" id="hEmail"></div>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Umur <span class="req">*</span></label>
+        <input type="number" class="form-input" id="fUmur" placeholder="Masukkan umur..." min="1" max="120" oninput="validasiUmur()">
+        <div class="form-hint" id="hUmur"></div>
+      </div>
+      <button class="form-submit" onclick="submitForm()">Kirim Formulir →</button>
+      <div class="form-result" id="formResult"></div>
+    </div>
+  </div>
+
+  <!-- Rangkuman validasi -->
+  <div class="card card-glow-purple scroll-reveal">
+    <div class="card-title">📋 Pola Validasi yang Sering Dipakai</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Yang Dicek</th><th>Cara Ceknya</th><th>Kondisinya</th></tr></thead>
+        <tbody>
+          <tr><td>Kosong atau tidak</td><td>nilai === "" atau nilai.trim() === ""</td><td>Jika kosong → tampilkan error</td></tr>
+          <tr><td>Panjang minimum</td><td>nilai.length >= 3</td><td>Jika kurang → tampilkan error</td></tr>
+          <tr><td>Ada karakter "@"</td><td>nilai.includes("@")</td><td>Jika tidak ada → email tidak valid</td></tr>
+          <tr><td>Hanya angka</td><td>!isNaN(nilai)</td><td>isNaN = "is Not a Number"</td></tr>
+          <tr><td>Rentang angka</td><td>nilai >= 1 && nilai <= 100</td><td>Gunakan operator && (AND)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===================== SECTION 6: QUIZ ===================== -->
+  <div class="section-header scroll-reveal" id="s-quiz">
+    <span class="section-badge">SECTION 06</span>
+    <span class="section-title">Quiz — Uji Pemahamanmu!</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card card-glow-orange scroll-reveal">
+    <div class="quiz-wrap">
+      <div class="score-dots" id="scoreDots"></div>
+      <div class="quiz-counter" id="quizCounter">1 / 10</div>
+      <div id="quizContent"></div>
+    </div>
+  </div>
+
+  <!-- ===================== SECTION 7: CHECKLIST ===================== -->
+  <div class="section-header scroll-reveal" id="s-checklist">
+    <span class="section-badge">SECTION 07</span>
+    <span class="section-title">Checklist Part 2 — Siap Submit!</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card card-glow-purple scroll-reveal">
+    <p class="card-desc" style="margin-bottom:16px;">Centang semua poin ini sebelum kamu menganggap materi Part 2 sudah dikuasai!</p>
+
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">Paham bahwa index array dimulai dari <strong>0</strong>, bukan 1
+        <div class="check-sub">Bisa mengakses item array dengan benar menggunakan teman[0], teman[1], dst.</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">Bisa menambah dan menghapus item array dengan <strong>.push()</strong> dan <strong>.pop()</strong>
+        <div class="check-sub">Sudah dicoba di playground dan hasilnya sesuai ekspektasi.</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">Berhasil memakai <strong>forEach</strong> untuk memproses setiap item dalam array
+        <div class="check-sub">Sudah membuat forEach yang berjalan dan menghasilkan output di console.</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">Paham minimal 4 string method: <strong>toUpperCase, trim, includes, replace</strong>
+        <div class="check-sub">Sudah mencoba di playground dan tahu kapan masing-masing digunakan.</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">Bisa mengambil nilai dari input form menggunakan <strong>.value</strong>
+        <div class="check-sub">Tidak bingung lagi antara .value (untuk input) dan .textContent (untuk elemen biasa).</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">Berhasil membuat validasi form sederhana dengan <strong>if/else</strong>
+        <div class="check-sub">Form tidak bisa di-submit jika ada field yang kosong atau tidak valid.</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">Bisa gabungkan Array + Loop + DOM untuk menampilkan daftar ke halaman
+        <div class="check-sub">Contoh: loop array lalu buat elemen HTML baru untuk setiap itemnya.</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">Mini project sudah menggunakan <strong>Form Handling + Validasi</strong> yang benar
+        <div class="check-sub">User mendapat feedback yang jelas saat input salah atau berhasil disubmit.</div>
+      </div>
+    </div>
+
+    <div class="progress-check"><div class="progress-check-fill" id="checkFill"></div></div>
+    <div class="check-counter" id="checkCount">0 / 8 selesai</div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-tags">
+      <span class="pill pill-o">Array</span>
+      <span class="pill pill-c">Looping</span>
+      <span class="pill pill-r">String Methods</span>
+      <span class="pill pill-g">Form Handling</span>
+      <span class="pill pill-p">Validasi</span>
+      <span class="pill pill-y">forEach</span>
+    </div>
+    <p class="footer-credit">⚡ JS Cheat Sheet Part 2 — Lanjutan dari Part 1 · Terus semangat, calon developer! 🚀</p>
+  </div>
+
+</div><!-- /wrapper -->
+
+<script>
+// ============================
+// 1. Progress bar
+// ============================
+window.addEventListener('scroll', () => {
+  const el = document.getElementById('progressBar');
+  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+  el.style.width = Math.min(pct, 100) + '%';
+});
+
+// ============================
+// 2. Scroll Reveal
+// ============================
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1, rootMargin: '0px 0px -20px 0px' });
+
+document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+
+function triggerVisibleElements() {
+  document.querySelectorAll('.scroll-reveal').forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) el.classList.add('visible');
+  });
+}
+triggerVisibleElements();
+setTimeout(triggerVisibleElements, 100);
+setTimeout(triggerVisibleElements, 400);
+
+// ============================
+// 3. Nav active
+// ============================
+const sectionIds = ['hero','s-array','s-looping','s-string','s-form','s-validasi','s-quiz'];
+window.addEventListener('scroll', () => {
+  let current = '';
+  sectionIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && window.scrollY >= el.offsetTop - 120) current = id;
+  });
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+});
+
+// ============================
+// 4. Copy code
+// ============================
+function copyCode(btn, id) {
+  const el = document.getElementById(id);
+  navigator.clipboard.writeText(el.innerText);
+  btn.textContent = '✓ copied';
+  btn.classList.add('copied');
+  setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 2000);
+}
+
+// ============================
+// 5. Array Playground
+// ============================
+let arrData = ['Andi','Budi','Citra'];
+
+function renderArr() {
+  const vis = document.getElementById('arrVisual');
+  const info = document.getElementById('arrInfo');
+  const code = document.getElementById('arrCode');
+
+  if (arrData.length === 0) {
+    vis.innerHTML = '<span style="font-size:13px;color:var(--muted);font-family:\'JetBrains Mono\',monospace;">[] — array kosong</span>';
+  } else {
+    vis.innerHTML = arrData.map((v, i) =>
+      `<div style="background:var(--card2);border:1px solid var(--border);border-radius:8px;overflow:hidden;">
+        <div style="background:var(--surface);font-family:\'JetBrains Mono\',monospace;font-size:10px;color:var(--muted);padding:3px 10px;border-bottom:1px solid var(--border);">[${i}]</div>
+        <div style="font-family:\'JetBrains Mono\',monospace;font-size:12.5px;color:var(--cyan);padding:7px 12px;font-weight:600;">"${v}"</div>
+      </div>`
+    ).join('');
+  }
+
+  info.textContent = `teman.length = ${arrData.length}`;
+  code.textContent = `const teman = ${JSON.stringify(arrData)};\nteman.length; // → ${arrData.length}`;
+}
+
+function arrPush() {
+  const val = document.getElementById('arrInput').value.trim();
+  if (!val) { document.getElementById('arrInput').style.borderColor = 'rgba(248,113,113,.5)'; setTimeout(()=>document.getElementById('arrInput').style.borderColor='',1000); return; }
+  arrData.push(val);
+  document.getElementById('arrInput').value = '';
+  renderArr();
+  const code = document.getElementById('arrCode');
+  code.textContent = `teman.push("${val}");\n// Array sekarang: ${JSON.stringify(arrData)}`;
+}
+
+function arrPop() {
+  if (arrData.length === 0) return;
+  const removed = arrData.pop();
+  renderArr();
+  const code = document.getElementById('arrCode');
+  code.textContent = `const dihapus = teman.pop();\n// Dihapus: "${removed}"\n// Array sekarang: ${JSON.stringify(arrData)}`;
+}
+
+renderArr();
+
+// ============================
+// 6. Loop Selectable
+// ============================
+const loopData = {
+  foreach: {
+    title: '.forEach() — Paling mudah untuk array!',
+    desc: 'forEach adalah cara paling simpel untuk memproses setiap item dalam array. Cocok untuk pemula dan dipakai di mana saja.',
+    code: `const buah = ["apel", "mangga", "jeruk"];\n\nbuah.forEach(function(item) {\n  console.log(item);\n});\n// → apel\n// → mangga\n// → jeruk`
+  },
+  for: {
+    title: 'for loop — Paling fleksibel!',
+    desc: 'for loop klasik memberi kontrol penuh — kamu tahu persis di index berapa dan bisa melompat-lompat. Cocok untuk kondisi yang lebih kompleks.',
+    code: `const buah = ["apel", "mangga", "jeruk"];\n\nfor (let i = 0; i < buah.length; i++) {\n  console.log(i, buah[i]);\n}\n// → 0 "apel"\n// → 1 "mangga"\n// → 2 "jeruk"`
+  },
+  forof: {
+    title: 'for...of — Bersih dan modern!',
+    desc: 'for...of adalah cara modern yang sangat bersih — mirip forEach tapi bisa pakai break untuk berhenti di tengah. Direkomendasikan untuk kode yang lebih rapi.',
+    code: `const buah = ["apel", "mangga", "jeruk"];\n\nfor (const item of buah) {\n  console.log(item);\n  if (item === "mangga") break; // bisa berhenti!\n}\n// → apel\n// → mangga`
+  }
+};
+
+function pilihLoop(type, el) {
+  document.querySelectorAll('#s-looping ~ .card .sel-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  const d = loopData[type];
+  document.getElementById('loopPreview').innerHTML =
+    `<div class="sp-title">${d.title}</div><p>${d.desc}</p>
+    <div style="margin-top:10px;background:#060910;border-radius:8px;padding:12px 16px;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.8;">${d.code.replace(/\n/g,'<br>').replace(/ /g,'&nbsp;')}</div>`;
+}
+
+// ============================
+// 7. forEach Animation
+// ============================
+const feItems = ['🍎 apel','🥭 mangga','🍊 jeruk','🍇 anggur','🍌 pisang'];
+let feTimer = null;
+let feRunning = false;
+
+function startForEach() {
+  if (feRunning) return;
+  feRunning = true;
+  document.getElementById('feOut').innerHTML = '';
+  document.getElementById('btnFE').textContent = '⏳ Berjalan...';
+  const cells = document.querySelectorAll('.fe-item');
+  let i = 0;
+
+  feTimer = setInterval(() => {
+    cells.forEach(c => c.classList.remove('active'));
+    if (i < cells.length) {
+      cells[i].classList.add('active');
+      const out = document.getElementById('feOut');
+      out.innerHTML += `<span style="color:var(--cyan)">forEach index [${i}]</span> → console.log(<span style="color:var(--str, var(--green));">"${feItems[i]}"</span>)\n`;
+      i++;
+    } else {
+      clearInterval(feTimer);
+      cells.forEach(c => c.classList.remove('active'));
+      document.getElementById('feOut').innerHTML += `\n<span style="color:var(--green);">✓ forEach selesai! Semua ${feItems.length} item sudah diproses.</span>`;
+      document.getElementById('btnFE').textContent = '✓ Selesai';
+      feRunning = false;
+    }
+  }, 700);
+}
+
+function resetForEach() {
+  clearInterval(feTimer);
+  feRunning = false;
+  document.querySelectorAll('.fe-item').forEach(c => c.classList.remove('active'));
+  document.getElementById('feOut').innerHTML = '<span class="cm">// Output forEach akan muncul di sini...</span>';
+  document.getElementById('btnFE').textContent = '▶ Jalankan forEach';
+}
+
+// ============================
+// 8. String Playground
+// ============================
+let currentStrMethod = 'toUpperCase';
+
+function applyStr(method, btn) {
+  document.querySelectorAll('#strBtnGroup .ctrl-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  currentStrMethod = method;
+  updateStrPlay();
+}
+
+function updateStrPlay() {
+  const raw = document.getElementById('strInput').value;
+  const prev = document.getElementById('strPreview');
+  const code = document.getElementById('strCode');
+  let result, codeStr;
+
+  switch(currentStrMethod) {
+    case 'toUpperCase':
+      result = raw.toUpperCase();
+      codeStr = `const teks = "${raw}";\nteks.toUpperCase();\n// → "${result}"`;
+      break;
+    case 'toLowerCase':
+      result = raw.toLowerCase();
+      codeStr = `const teks = "${raw}";\nteks.toLowerCase();\n// → "${result}"`;
+      break;
+    case 'trim':
+      result = raw.trim();
+      codeStr = `const teks = "${raw}";\nteks.trim();\n// → "${result}"\n// Spasi di awal dan akhir dihapus!`;
+      break;
+    case 'length':
+      result = `Panjang teks: ${raw.length} karakter`;
+      codeStr = `const teks = "${raw}";\nteks.length;\n// → ${raw.length}`;
+      break;
+    case 'reverse':
+      result = raw.split('').reverse().join('');
+      codeStr = `const teks = "${raw}";\nteks.split('').reverse().join('');\n// → "${result}"`;
+      break;
+    default:
+      result = raw;
+      codeStr = '';
+  }
+
+  prev.style.color = 'var(--cyan)';
+  prev.style.fontFamily = "'JetBrains Mono', monospace";
+  prev.style.fontSize = '13px';
+  prev.style.flexDirection = 'column';
+  prev.style.alignItems = 'flex-start';
+  prev.style.wordBreak = 'break-all';
+  prev.innerHTML = `<span style="color:var(--muted);font-size:11px;margin-bottom:6px;">Hasil:</span><span>${result}</span>`;
+  code.textContent = codeStr;
+}
+
+updateStrPlay();
+
+// ============================
+// 9. Form type selectable
+// ============================
+const formTypeData = {
+  text: {
+    title: 'Input Type: text',
+    desc: 'Paling umum digunakan. Untuk mengambil nilainya, gunakan .value yang mengembalikan string.',
+    code: `// HTML: <input type="text" id="nama">\nconst nilai = document.getElementById('nama').value;\nconsole.log(nilai); // → "Budi" (string)`
+  },
+  number: {
+    title: 'Input Type: number',
+    desc: 'Untuk angka. .value tetap mengembalikan string! Ubah ke number dengan parseInt() atau Number().',
+    code: `// HTML: <input type="number" id="umur">\nconst str = document.getElementById('umur').value;\nconst angka = parseInt(str); // ubah ke number!\nconsole.log(angka + 1); // → 18 (bukan "171")`
+  },
+  checkbox: {
+    title: 'Input Type: checkbox',
+    desc: 'Untuk kondisi ya/tidak. Gunakan .checked (bukan .value) untuk mengambil statusnya — mengembalikan true atau false.',
+    code: `// HTML: <input type="checkbox" id="setuju">\nconst status = document.getElementById('setuju').checked;\nconsole.log(status); // → true atau false`
+  },
+  select: {
+    title: 'Elemen Select (Dropdown)',
+    desc: 'Untuk pilihan dropdown. Gunakan .value untuk mengambil nilai opsi yang dipilih.',
+    code: `// HTML: <select id="kelas">\n//   <option value="10">Kelas 10</option>\n//   <option value="11">Kelas 11</option>\n// </select>\nconst kelas = document.getElementById('kelas').value;\nconsole.log(kelas); // → "10" atau "11"`
+  }
+};
+
+function pilihForm(type, el) {
+  document.querySelectorAll('#s-form ~ .card .sel-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  const d = formTypeData[type];
+  document.getElementById('formPreview').innerHTML =
+    `<div class="sp-title">${d.title}</div><p>${d.desc}</p>
+    <div style="margin-top:10px;background:#060910;border-radius:8px;padding:12px 16px;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.8;">${d.code.replace(/\n/g,'<br>').replace(/ /g,'&nbsp;')}</div>`;
+}
+
+// ============================
+// 10. Form Validasi Live
+// ============================
+function validasiNama() {
+  const val = document.getElementById('fNama').value.trim();
+  const hint = document.getElementById('hNama');
+  const input = document.getElementById('fNama');
+  if (val.length === 0) {
+    hint.textContent = ''; input.className = 'form-input';
+  } else if (val.length < 3) {
+    hint.textContent = '✗ Nama terlalu pendek (minimal 3 karakter)';
+    hint.className = 'form-hint err'; input.className = 'form-input invalid';
+  } else {
+    hint.textContent = '✓ Nama valid!';
+    hint.className = 'form-hint ok'; input.className = 'form-input valid';
+  }
+}
+
+function validasiEmail() {
+  const val = document.getElementById('fEmail').value.trim();
+  const hint = document.getElementById('hEmail');
+  const input = document.getElementById('fEmail');
+  if (val.length === 0) {
+    hint.textContent = ''; input.className = 'form-input';
+  } else if (!val.includes('@') || !val.includes('.')) {
+    hint.textContent = '✗ Format email tidak valid (harus ada @ dan titik)';
+    hint.className = 'form-hint err'; input.className = 'form-input invalid';
+  } else {
+    hint.textContent = '✓ Format email valid!';
+    hint.className = 'form-hint ok'; input.className = 'form-input valid';
+  }
+}
+
+function validasiUmur() {
+  const val = parseInt(document.getElementById('fUmur').value);
+  const hint = document.getElementById('hUmur');
+  const input = document.getElementById('fUmur');
+  if (!val && val !== 0) {
+    hint.textContent = ''; input.className = 'form-input';
+  } else if (val < 5 || val > 120) {
+    hint.textContent = '✗ Umur harus antara 5 - 120 tahun';
+    hint.className = 'form-hint err'; input.className = 'form-input invalid';
+  } else {
+    hint.textContent = '✓ Umur valid!';
+    hint.className = 'form-hint ok'; input.className = 'form-input valid';
+  }
+}
+
+function submitForm() {
+  const nama = document.getElementById('fNama').value.trim();
+  const email = document.getElementById('fEmail').value.trim();
+  const umur = parseInt(document.getElementById('fUmur').value);
+  const result = document.getElementById('formResult');
+
+  const errors = [];
+  if (nama.length < 3) errors.push('Nama minimal 3 karakter');
+  if (!email.includes('@') || !email.includes('.')) errors.push('Format email tidak valid');
+  if (!umur || umur < 5 || umur > 120) errors.push('Umur tidak valid (5-120)');
+
+  if (errors.length > 0) {
+    result.innerHTML = '✗ Gagal dikirim:<br>' + errors.map(e => `• ${e}`).join('<br>');
+    result.className = 'form-result show err';
+  } else {
+    result.innerHTML = `✓ Berhasil dikirim! 🎉<br>Nama: <strong>${nama}</strong> | Email: <strong>${email}</strong> | Umur: <strong>${umur} tahun</strong>`;
+    result.className = 'form-result show ok';
+  }
+}
+
+// ============================
+// 11. Quiz
+// ============================
+const questions = [
+  {
+    q: "Array bernama buah = ['apel', 'mangga', 'jeruk']. Apa hasil dari buah[1]?",
+    opts: ['"apel"', '"mangga"', '"jeruk"', 'undefined'],
+    ans: 1,
+    expl: "Index array dimulai dari 0. Jadi buah[0] = 'apel', buah[1] = 'mangga', buah[2] = 'jeruk'. Index 1 adalah item kedua!"
+  },
+  {
+    q: "Metode array mana yang digunakan untuk MENAMBAH item baru ke bagian akhir array?",
+    opts: ['.add()', '.push()', '.insert()', '.append()'],
+    ans: 1,
+    expl: ".push() menambahkan satu atau lebih item ke akhir array. Untuk menghapus item terakhir, gunakan .pop()."
+  },
+  {
+    q: "Apa yang dilakukan metode .forEach() pada array?",
+    opts: [
+      "Menghitung jumlah item",
+      "Menggabungkan semua item menjadi string",
+      "Menjalankan fungsi untuk setiap item satu per satu",
+      "Mencari item tertentu di array"
+    ],
+    ans: 2,
+    expl: ".forEach() mengiterasi (melakukan looping) array dan menjalankan fungsi untuk setiap itemnya. Sangat berguna untuk memproses atau menampilkan data."
+  },
+  {
+    q: "Kode apa yang benar untuk mengambil nilai dari input HTML dengan id='namaSiswa'?",
+    opts: [
+      "document.getElementById('namaSiswa').textContent",
+      "document.getElementById('namaSiswa').innerHTML",
+      "document.getElementById('namaSiswa').value",
+      "document.getElementById('namaSiswa').text"
+    ],
+    ans: 2,
+    expl: "Untuk elemen form (input, textarea, select), gunakan .value untuk mengambil nilainya. .textContent digunakan untuk elemen biasa seperti p, h1, div."
+  },
+  {
+    q: "Hasil dari kode berikut: '  Halo Dunia  '.trim() adalah...",
+    opts: ['"Halo Dunia"', '"  Halo Dunia  "', '"HALO DUNIA"', '"halo dunia"'],
+    ans: 0,
+    expl: ".trim() menghapus spasi kosong (whitespace) di awal dan akhir string. Spasi di TENGAH kata tidak dihapus."
+  },
+  {
+    q: "Array siswa = ['Andi', 'Budi', 'Citra']. Berapakah nilai siswa.length?",
+    opts: ['2', '3', '4', '0'],
+    ans: 1,
+    expl: ".length mengembalikan jumlah item dalam array. Array ini punya 3 item, jadi hasilnya 3. Ingat: index terakhir adalah length-1 = 2, bukan 3!"
+  },
+  {
+    q: "Validasi form yang benar untuk mengecek apakah input TIDAK kosong adalah...",
+    opts: [
+      "if (nama == null)",
+      "if (nama.isEmpty())",
+      "if (nama === '' || nama.trim() === '')",
+      "if (nama.length == 0 && nama > 0)"
+    ],
+    ans: 2,
+    expl: "Cek dengan nama === '' atau lebih aman pakai nama.trim() === '' agar spasi-spasi saja juga dianggap kosong. Ini pola validasi yang paling umum dipakai."
+  },
+  {
+    q: "Apa perbedaan .toUpperCase() dan .toLowerCase() ?",
+    opts: [
+      ".toUpperCase() menghapus spasi, .toLowerCase() menambah spasi",
+      ".toUpperCase() mengubah semua ke huruf besar, .toLowerCase() ke huruf kecil",
+      ".toUpperCase() untuk angka, .toLowerCase() untuk huruf",
+      "Tidak ada perbedaan, keduanya sama"
+    ],
+    ans: 1,
+    expl: ".toUpperCase() mengubah SEMUA karakter dalam string menjadi huruf kapital/besar. .toLowerCase() mengubah semua menjadi huruf kecil. Keduanya tidak mengubah string aslinya — hasilnya perlu disimpan ke variabel baru."
+  },
+  {
+    q: "Untuk input type='checkbox', properti apa yang digunakan untuk mengecek apakah kotak dicentang?",
+    opts: ['.value', '.checked', '.selected', '.active'],
+    ans: 1,
+    expl: "Untuk checkbox, gunakan .checked yang mengembalikan true (dicentang) atau false (tidak dicentang). .value pada checkbox hanya mengembalikan nilai atribut value-nya, bukan status centangnya."
+  },
+  {
+    q: "Metode string mana yang digunakan untuk MENCARI apakah suatu kata ada di dalam teks?",
+    opts: ['.find()', '.search()', '.includes()', '.contains()'],
+    ans: 2,
+    expl: ".includes() memeriksa apakah string mengandung substring tertentu dan mengembalikan true atau false. Contoh: 'Halo Dunia'.includes('Dunia') → true."
+  }
+];
+
+let qIdx = 0, scores = [], answered = false;
+
+function buildQuiz() {
+  const dotsEl = document.getElementById('scoreDots');
+  dotsEl.innerHTML = '';
+  for (let i = 0; i < 10; i++) {
+    const d = document.createElement('div');
+    d.className = 'score-dot' + (scores[i] === true ? ' correct' : scores[i] === false ? ' wrong' : '');
+    dotsEl.appendChild(d);
+  }
+
+  const content = document.getElementById('quizContent');
+  if (qIdx >= questions.length) {
+    const correct = scores.filter(s => s === true).length;
+    const emoji = correct >= 9 ? '🏆' : correct >= 7 ? '🎉' : correct >= 5 ? '💪' : '📚';
+    const title = correct >= 9 ? 'Luar Biasa Sekali!' : correct >= 7 ? 'Bagus Banget!' : correct >= 5 ? 'Lumayan, Terus Semangat!' : 'Yuk Baca Lagi Materinya!';
+    const sub = correct >= 7 ? 'Kamu sudah siap buat mini project yang lebih kompleks!' : 'Coba scroll ke atas dan ulangi bagian yang masih bingung.';
+    content.innerHTML = `<div class="quiz-result"><div class="big-emoji">${emoji}</div><div class="res-title">${title}</div><div class="res-score">${correct} / 10</div><div class="res-sub">${sub}</div><button class="quiz-restart" onclick="restartQuiz()">Ulangi Quiz ↺</button></div>`;
+    document.getElementById('quizCounter').textContent = '✓ Selesai!';
+    return;
+  }
+
+  document.getElementById('quizCounter').textContent = `${qIdx + 1} / 10`;
+  const q = questions[qIdx];
+  answered = false;
+
+  const optsHtml = q.opts.map((opt, i) => {
+    const labels = ['A','B','C','D'];
+    return `<div class="quiz-opt" onclick="answerQuiz(${i})"><span class="opt-label">${labels[i]}</span><span>${opt}</span></div>`;
+  }).join('');
+
+  content.innerHTML = `
+    <div class="quiz-q">${q.q}</div>
+    <div class="quiz-opts">${optsHtml}</div>
+    <div class="quiz-feedback" id="quizFb"></div>
+    <button class="quiz-next show" id="quizNext" onclick="nextQ()" style="display:none">Soal Berikutnya →</button>
+  `;
+}
+
+function answerQuiz(i) {
+  if (answered) return;
+  answered = true;
+  const q = questions[qIdx];
+  const opts = document.querySelectorAll('.quiz-opt');
+  opts.forEach(o => o.classList.add('disabled'));
+  const fb = document.getElementById('quizFb');
+  const next = document.getElementById('quizNext');
+
+  if (i === q.ans) {
+    scores[qIdx] = true;
+    opts[i].classList.add('correct-ans');
+    fb.textContent = '✓ Benar! ' + q.expl;
+    fb.className = 'quiz-feedback show ok';
+  } else {
+    scores[qIdx] = false;
+    opts[i].classList.add('wrong-ans');
+    opts[q.ans].classList.add('correct-ans');
+    fb.textContent = '✗ Salah. ' + q.expl;
+    fb.className = 'quiz-feedback show no';
+  }
+  next.style.display = 'inline-block';
+  document.querySelectorAll('.score-dot')[qIdx].className = 'score-dot ' + (scores[qIdx] ? 'correct' : 'wrong');
+}
+
+function nextQ() { qIdx++; buildQuiz(); }
+function restartQuiz() { qIdx = 0; scores = []; answered = false; buildQuiz(); }
+buildQuiz();
+
+// ============================
+// 12. Checklist
+// ============================
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+  el.querySelector('.check-box').textContent = el.classList.contains('checked') ? '✓' : '';
+  updateCheckProgress();
+}
+
+function updateCheckProgress() {
+  const total = document.querySelectorAll('.check-item').length;
+  const done = document.querySelectorAll('.check-item.checked').length;
+  document.getElementById('checkCount').textContent = `${done} / ${total} selesai`;
+  document.getElementById('checkFill').style.width = (done / total * 100) + '%';
+}
+</script>
+</body>
+</html>
