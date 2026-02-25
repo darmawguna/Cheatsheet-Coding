@@ -1,0 +1,1795 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JS Cheat Sheet — Panduan Interaktif</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080b14;
+  --surface: #0f1320;
+  --card: #131926;
+  --card2: #1a2133;
+  --border: #1e2d47;
+  --border2: #263650;
+  --yellow: #ffd95a;
+  --cyan: #38f5d4;
+  --pink: #ff6b9d;
+  --purple: #a78bfa;
+  --orange: #fb923c;
+  --green: #4ade80;
+  --blue: #60a5fa;
+  --red: #f87171;
+  --text: #e2e8f5;
+  --muted: #64748b;
+  --muted2: #94a3b8;
+  --glow-cyan: 0 0 30px rgba(56,245,212,.15);
+  --glow-purple: 0 0 30px rgba(167,139,250,.15);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 400;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
+
+/* Grid background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(30,45,71,.3) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30,45,71,.3) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Orbs */
+.orb {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+.orb-1 {
+  width: 500px; height: 500px;
+  top: -150px; left: -150px;
+  background: radial-gradient(circle, rgba(56,245,212,.12) 0%, transparent 70%);
+  filter: blur(60px);
+}
+.orb-2 {
+  width: 500px; height: 500px;
+  bottom: -150px; right: -150px;
+  background: radial-gradient(circle, rgba(167,139,250,.12) 0%, transparent 70%);
+  filter: blur(60px);
+}
+
+/* Progress bar */
+.progress-bar-outer {
+  position: fixed;
+  top: 60px;
+  left: 0; right: 0;
+  height: 2px;
+  background: transparent;
+  z-index: 1001;
+}
+.progress-bar-inner {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--cyan), var(--purple));
+  transition: width .1s;
+}
+
+/* Nav */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  backdrop-filter: blur(20px);
+  background: rgba(8,11,20,.85);
+  border-bottom: 1px solid var(--border);
+  z-index: 1000;
+}
+.nav-brand {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  background: linear-gradient(90deg, var(--cyan), var(--purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-decoration: none;
+}
+.nav-links {
+  display: flex;
+  gap: 4px;
+  list-style: none;
+}
+.nav-links a {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--muted2);
+  text-decoration: none;
+  padding: 5px 10px;
+  border-radius: 8px;
+  transition: all .2s;
+}
+.nav-links a:hover, .nav-links a.active {
+  color: var(--cyan);
+  background: rgba(56,245,212,.08);
+}
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+}
+
+/* Wrapper */
+.wrapper {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 100px 24px 80px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Hero */
+.hero {
+  text-align: center;
+  padding: 60px 0 80px;
+}
+.hero-badge {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--cyan);
+  border: 1px solid rgba(56,245,212,.35);
+  padding: 5px 14px;
+  border-radius: 99px;
+  margin-bottom: 24px;
+  animation: fadeUp .6s ease both;
+}
+.hero h1 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 900;
+  font-size: clamp(36px, 6vw, 68px);
+  line-height: 1.1;
+  background: linear-gradient(135deg, #fff 0%, var(--cyan) 50%, var(--purple) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: fadeUp .6s .1s ease both;
+  margin-bottom: 16px;
+}
+.hero-sub {
+  font-size: 16px;
+  color: var(--muted2);
+  max-width: 520px;
+  margin: 0 auto 40px;
+  font-weight: 400;
+  animation: fadeUp .6s .2s ease both;
+}
+.stats-row {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  animation: fadeUp .6s .3s ease both;
+}
+.stat-box {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 28px;
+  text-align: center;
+  min-width: 120px;
+}
+.stat-box .num {
+  font-family: 'Syne', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--cyan);
+}
+.stat-box .lbl {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Section header */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  margin-top: 72px;
+}
+.section-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--cyan);
+  border: 1px solid rgba(56,245,212,.3);
+  padding: 4px 10px;
+  border-radius: 99px;
+  white-space: nowrap;
+}
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: clamp(20px, 3vw, 28px);
+  color: var(--text);
+  white-space: nowrap;
+}
+.section-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--border), transparent);
+}
+
+/* Cards */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  transition: border-color .2s, box-shadow .2s;
+  margin-bottom: 20px;
+}
+.card:hover { border-color: var(--border2); }
+.card-glow-cyan:hover { box-shadow: var(--glow-cyan); border-color: rgba(56,245,212,.25); }
+.card-glow-purple:hover { box-shadow: var(--glow-purple); border-color: rgba(167,139,250,.25); }
+
+/* Grid */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+
+/* Pills */
+.pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 99px;
+  display: inline-block;
+}
+.pill-c { background: rgba(56,245,212,.12); color: var(--cyan); border: 1px solid rgba(56,245,212,.25); }
+.pill-y { background: rgba(255,217,90,.12); color: var(--yellow); border: 1px solid rgba(255,217,90,.25); }
+.pill-p { background: rgba(167,139,250,.12); color: var(--purple); border: 1px solid rgba(167,139,250,.25); }
+.pill-g { background: rgba(74,222,128,.12); color: var(--green); border: 1px solid rgba(74,222,128,.25); }
+.pill-o { background: rgba(251,146,60,.12); color: var(--orange); border: 1px solid rgba(251,146,60,.25); }
+.pill-r { background: rgba(255,107,157,.12); color: var(--pink); border: 1px solid rgba(255,107,157,.25); }
+
+/* Card heading */
+.card-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 17px;
+  color: var(--text);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.card-desc { font-size: 14px; color: var(--muted2); line-height: 1.7; margin-bottom: 16px; }
+.analogi {
+  background: rgba(167,139,250,.07);
+  border: 1px solid rgba(167,139,250,.2);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 13px;
+  color: var(--muted2);
+  margin-bottom: 16px;
+}
+.analogi strong { color: var(--purple); }
+
+/* Code block */
+.code-block {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  margin-top: 12px;
+}
+.code-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #0a0d18;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.mac-dots { display: flex; gap: 6px; }
+.mac-dots span {
+  width: 11px; height: 11px; border-radius: 50%;
+}
+.dot-r { background: #f87171; }
+.dot-y { background: var(--yellow); }
+.dot-g { background: var(--green); }
+.code-lang {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+}
+.copy-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--border);
+  color: var(--muted2);
+  border: none;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all .2s;
+}
+.copy-btn:hover { background: var(--border2); color: var(--text); }
+.copy-btn.copied { background: rgba(74,222,128,.15); color: var(--green); }
+.code-body {
+  background: #060910;
+  padding: 18px 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12.5px;
+  line-height: 1.8;
+  overflow-x: auto;
+  white-space: pre;
+}
+.kw { color: #c792ea; }
+.prop { color: var(--cyan); }
+.val { color: var(--orange); }
+.sel { color: var(--yellow); }
+.at { color: var(--pink); }
+.cm { color: #3d5070; font-style: italic; }
+.str { color: var(--green); }
+.fn { color: var(--blue); }
+.num2 { color: var(--orange); }
+
+/* Playground */
+.playground {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 16px;
+}
+.play-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.play-title::before {
+  content: '▶';
+  color: var(--cyan);
+  font-size: 9px;
+}
+.ctrl-group { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.ctrl-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 7px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--card2);
+  color: var(--muted2);
+  cursor: pointer;
+  transition: all .2s;
+}
+.ctrl-btn:hover { border-color: var(--border2); color: var(--text); }
+.ctrl-btn.on {
+  background: rgba(56,245,212,.1);
+  border-color: rgba(56,245,212,.4);
+  color: var(--cyan);
+}
+.play-preview {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 500;
+  transition: all .3s;
+}
+.play-code-out {
+  margin-top: 12px;
+  background: #060910;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--muted2);
+  border: 1px solid var(--border);
+  white-space: pre;
+  line-height: 1.7;
+  overflow-x: auto;
+}
+
+/* Selectable cards */
+.sel-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+@media (max-width: 600px) { .sel-cards { grid-template-columns: 1fr 1fr; } }
+.sel-card {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  cursor: pointer;
+  transition: all .2s;
+  text-align: center;
+}
+.sel-card:hover { border-color: var(--border2); }
+.sel-card.selected {
+  border-color: var(--cyan);
+  background: rgba(56,245,212,.07);
+}
+.sel-card .icon { font-size: 24px; margin-bottom: 6px; }
+.sel-card .sc-title { font-size: 12px; font-weight: 600; color: var(--text); }
+.sel-preview {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px;
+  min-height: 60px;
+  font-size: 13px;
+  color: var(--muted2);
+  line-height: 1.7;
+  transition: all .3s;
+}
+.sel-preview .sp-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px; color: var(--text); margin-bottom: 6px; }
+
+/* Slider */
+.slider-wrap { margin-top: 14px; }
+.slider-label { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; }
+.slider-label span { font-family: 'JetBrains Mono', monospace; color: var(--cyan); font-weight: 600; }
+input[type=range] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 99px;
+  background: var(--border2);
+  outline: none;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--cyan);
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(56,245,212,.4);
+}
+.slider-demo-box {
+  margin-top: 14px;
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+.demo-circle {
+  border-radius: 50%;
+  background: var(--cyan);
+  transition: all .2s;
+  flex-shrink: 0;
+}
+
+/* Table */
+.table-wrap { overflow-x: auto; margin-top: 8px; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+th {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-align: left;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--muted2);
+  font-weight: 400;
+  line-height: 1.5;
+}
+td:first-child { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--cyan); }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,255,255,.02); }
+
+/* Scroll reveal */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity .5s ease, transform .5s ease;
+}
+.scroll-reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Quiz */
+.quiz-wrap { padding: 4px 0; }
+.score-dots { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
+.score-dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--border2);
+  transition: background .3s;
+}
+.score-dot.correct { background: var(--green); }
+.score-dot.wrong { background: var(--red); }
+.quiz-counter { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); margin-bottom: 14px; }
+.quiz-q { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 20px; line-height: 1.5; }
+.quiz-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+@media (max-width: 500px) { .quiz-opts { grid-template-columns: 1fr; } }
+.quiz-opt {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  cursor: pointer;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 13.5px;
+  font-weight: 500;
+  transition: all .2s;
+  text-align: left;
+}
+.quiz-opt:hover:not(.disabled) { border-color: var(--border2); background: rgba(255,255,255,.03); }
+.quiz-opt.correct-ans { background: rgba(74,222,128,.1); border-color: rgba(74,222,128,.4); color: var(--green); }
+.quiz-opt.wrong-ans { background: rgba(248,113,113,.1); border-color: rgba(248,113,113,.4); color: var(--red); }
+.quiz-opt.disabled { pointer-events: none; }
+.opt-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--cyan);
+  min-width: 18px;
+}
+.quiz-feedback {
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 13.5px;
+  font-weight: 500;
+  display: none;
+  margin-bottom: 14px;
+  line-height: 1.6;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.ok { background: rgba(74,222,128,.08); border: 1px solid rgba(74,222,128,.25); color: var(--green); }
+.quiz-feedback.no { background: rgba(248,113,113,.08); border: 1px solid rgba(248,113,113,.25); color: var(--red); }
+.quiz-next {
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  background: rgba(56,245,212,.1);
+  border: 1px solid rgba(56,245,212,.3);
+  color: var(--cyan);
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all .2s;
+  display: none;
+}
+.quiz-next.show { display: inline-block; }
+.quiz-next:hover { background: rgba(56,245,212,.18); }
+.quiz-result { text-align: center; padding: 30px 0; }
+.quiz-result .big-emoji { font-size: 52px; margin-bottom: 12px; }
+.quiz-result .res-title { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+.quiz-result .res-score { font-family: 'JetBrains Mono', monospace; font-size: 32px; font-weight: 700; color: var(--cyan); margin-bottom: 8px; }
+.quiz-result .res-sub { font-size: 14px; color: var(--muted2); margin-bottom: 24px; }
+.quiz-restart {
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  background: var(--card2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 24px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all .2s;
+}
+.quiz-restart:hover { border-color: var(--cyan); color: var(--cyan); }
+
+/* Checklist */
+.check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all .2s;
+  border: 1px solid transparent;
+  margin-bottom: 8px;
+  user-select: none;
+}
+.check-item:hover { background: rgba(255,255,255,.02); border-color: var(--border); }
+.check-item.checked { background: rgba(74,222,128,.05); border-color: rgba(74,222,128,.2); }
+.check-box {
+  width: 20px; height: 20px;
+  border-radius: 6px;
+  border: 2px solid var(--border2);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--green);
+  transition: all .2s;
+  margin-top: 1px;
+}
+.check-item.checked .check-box { background: rgba(74,222,128,.2); border-color: var(--green); }
+.check-text { font-size: 14px; font-weight: 500; color: var(--muted2); line-height: 1.5; }
+.check-item.checked .check-text { color: var(--text); }
+.check-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.progress-check {
+  margin-top: 20px;
+  background: var(--border);
+  border-radius: 99px;
+  height: 6px;
+  overflow: hidden;
+}
+.progress-check-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--green), var(--cyan));
+  border-radius: 99px;
+  transition: width .3s ease;
+}
+.check-counter {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--muted2);
+  margin-top: 10px;
+  text-align: right;
+}
+
+/* Footer */
+.footer {
+  margin-top: 80px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+.footer-tags { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 16px; }
+.footer-credit { font-size: 13px; color: var(--muted); }
+
+/* debug/operator list */
+.debug-list { list-style: none; padding: 0; margin: 0; }
+.debug-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13.5px;
+  color: var(--muted2);
+}
+.debug-list li:last-child { border-bottom: none; }
+.debug-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--orange);
+  min-width: 22px;
+}
+.hl { color: var(--cyan); font-family: 'JetBrains Mono', monospace; font-size: 12.5px; }
+
+/* Input simulator */
+.input-sim {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+.input-sim input {
+  flex: 1;
+  min-width: 160px;
+  background: var(--card2);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color .2s;
+}
+.input-sim input:focus { border-color: rgba(56,245,212,.4); }
+.sim-btn {
+  background: rgba(56,245,212,.1);
+  border: 1px solid rgba(56,245,212,.3);
+  color: var(--cyan);
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+}
+.sim-btn:hover { background: rgba(56,245,212,.18); }
+.sim-output {
+  margin-top: 12px;
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted2);
+  transition: all .3s;
+}
+</style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="progress-bar-outer"><div class="progress-bar-inner" id="progressBar"></div></div>
+
+<nav class="nav">
+  <a href="#hero" class="nav-brand">⚡ JS Cheat Sheet</a>
+  <ul class="nav-links">
+    <li><a href="#s-variabel">Variabel</a></li>
+    <li><a href="#s-logika">Logika</a></li>
+    <li><a href="#s-fungsi">Fungsi</a></li>
+    <li><a href="#s-dom">DOM</a></li>
+    <li><a href="#s-event">Event</a></li>
+    <li><a href="#s-debug">Debug</a></li>
+    <li><a href="#s-quiz">Quiz</a></li>
+  </ul>
+</nav>
+
+<div class="wrapper">
+
+  <!-- HERO -->
+  <div class="hero" id="hero">
+    <div class="hero-badge">Panduan Cepat Web Developer — Week 3 & 4</div>
+    <h1>JavaScript<br>Cheat Sheet</h1>
+    <p class="hero-sub">Dari variabel hingga DOM manipulation — semua yang kamu butuhkan untuk mini project, dikemas dalam satu halaman interaktif.</p>
+    <div class="stats-row">
+      <div class="stat-box"><div class="num">6</div><div class="lbl">Topik Utama</div></div>
+      <div class="stat-box"><div class="num">5</div><div class="lbl">Demo Interaktif</div></div>
+      <div class="stat-box"><div class="num">10</div><div class="lbl">Soal Quiz</div></div>
+    </div>
+  </div>
+
+  <!-- SECTION 1: VARIABEL -->
+  <div class="section-header scroll-reveal" id="s-variabel">
+    <span class="section-badge">SECTION 01</span>
+    <span class="section-title">Variabel & Tipe Data</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card card-glow-cyan scroll-reveal">
+      <div class="card-title">📦 const — Kotak Terlakban</div>
+      <p class="card-desc">Dipakai untuk nilai yang <strong>tidak akan pernah berubah</strong> sepanjang program berjalan.</p>
+      <div class="analogi"><strong>Analogi:</strong> Seperti nomor KTP kamu — sekali ditetapkan, tidak bisa diganti-ganti lagi!</div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="mac-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <span class="code-lang">JavaScript</span>
+          <button class="copy-btn" onclick="copyCode(this,'c1')">copy</button>
+        </div>
+        <div class="code-body" id="c1"><span class="kw">const</span> namaSiswa = <span class="str">"Budi"</span>;     <span class="cm">// String (Teks)</span>
+<span class="kw">const</span> sekolah  = <span class="str">"SMA Negeri 1"</span>;
+<span class="cm">// namaSiswa = "Ani"; ← ERROR! tidak bisa diubah</span></div>
+      </div>
+    </div>
+
+    <div class="card card-glow-purple scroll-reveal">
+      <div class="card-title">🔄 let — Kotak Buka-Tutup</div>
+      <p class="card-desc">Dipakai untuk nilai yang <strong>bisa berubah</strong> selama program berjalan.</p>
+      <div class="analogi"><strong>Analogi:</strong> Seperti nilai ulangan kamu — bisa naik, bisa turun setiap semester!</div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="mac-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <span class="code-lang">JavaScript</span>
+          <button class="copy-btn" onclick="copyCode(this,'c2')">copy</button>
+        </div>
+        <div class="code-body" id="c2"><span class="kw">let</span> umur       = <span class="num2">17</span>;           <span class="cm">// Number (Angka)</span>
+<span class="kw">let</span> sudahMakan  = <span class="kw">true</span>;        <span class="cm">// Boolean (true/false)</span>
+<span class="kw">let</span> nilai       = <span class="num2">85</span>;
+
+umur = <span class="num2">18</span>;  <span class="cm">// ✓ boleh diubah!</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tipe data table -->
+  <div class="card card-glow-cyan scroll-reveal">
+    <div class="card-title">🗂️ Jenis-Jenis Tipe Data</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Tipe</th><th>Contoh Nilai</th><th>Keterangan</th><th>Kapan Dipakai?</th></tr></thead>
+        <tbody>
+          <tr><td>String</td><td><span class="pill pill-g">"Halo Dunia"</span></td><td>Selalu pakai tanda kutip</td><td>Nama, alamat, pesan</td></tr>
+          <tr><td>Number</td><td><span class="pill pill-o">42  /  3.14</span></td><td>Bisa desimal, bisa negatif</td><td>Angka, harga, skor</td></tr>
+          <tr><td>Boolean</td><td><span class="pill pill-c">true  /  false</span></td><td>Hanya dua kemungkinan</td><td>Status, kondisi</td></tr>
+          <tr><td>Array</td><td><span class="pill pill-p">[1, 2, 3]</span></td><td>Daftar nilai dalam satu variabel</td><td>List item, daftar siswa</td></tr>
+          <tr><td>Object</td><td><span class="pill pill-r">{nama:"Budi"}</span></td><td>Kumpulan property & value</td><td>Data kompleks satu entitas</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Playground 1: Variabel -->
+  <div class="card card-glow-purple scroll-reveal">
+    <div class="card-title">🎛️ Playground — Uji Tipe Data</div>
+    <p class="card-desc">Pilih tipe data dan lihat bagaimana JavaScript menyimpannya secara real-time!</p>
+    <div class="playground">
+      <div class="play-title">Pilih tipe data untuk dieksplorasi</div>
+      <div class="ctrl-group">
+        <button class="ctrl-btn on" onclick="setTipeData('string', this)">String</button>
+        <button class="ctrl-btn" onclick="setTipeData('number', this)">Number</button>
+        <button class="ctrl-btn" onclick="setTipeData('boolean', this)">Boolean</button>
+        <button class="ctrl-btn" onclick="setTipeData('array', this)">Array</button>
+        <button class="ctrl-btn" onclick="setTipeData('object', this)">Object</button>
+      </div>
+      <div class="play-preview" id="tipePreview" style="font-family:'JetBrains Mono',monospace; font-size:13px; flex-direction:column; align-items:flex-start; gap:6px; color:var(--cyan)">
+        <span>📌 <span class="kw">const</span> contoh = <span class="str">"Budi Santoso"</span>;</span>
+        <span style="color:var(--muted2); font-size:12px;">typeof contoh → <span style="color:var(--orange)">"string"</span></span>
+      </div>
+      <div class="play-code-out" id="tipeCode"><span class="cm">// Penjelasan akan muncul di sini</span>
+<span class="cm">// String = deretan karakter teks</span>
+<span class="cm">// Selalu diapit tanda kutip ("" atau '')</span></div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: LOGIKA -->
+  <div class="section-header scroll-reveal" id="s-logika">
+    <span class="section-badge">SECTION 02</span>
+    <span class="section-title">Logika & Kondisi</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card card-glow-cyan scroll-reveal">
+    <div class="card-title">🧠 if / else — Cara Website "Berpikir"</div>
+    <p class="card-desc">Digunakan untuk membuat keputusan berdasarkan kondisi. Seperti seorang penjaga gerbang yang mengecek syarat masuk!</p>
+    <div class="analogi"><strong>Analogi:</strong> Bayangkan seperti lampu lalu lintas — <em>JIKA</em> lampu hijau, kamu jalan; <em>JIKA TIDAK</em>, kamu berhenti.</div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="mac-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        <span class="code-lang">JavaScript</span>
+        <button class="copy-btn" onclick="copyCode(this,'c3')">copy</button>
+      </div>
+      <div class="code-body" id="c3"><span class="kw">let</span> nilai = <span class="num2">80</span>;
+
+<span class="kw">if</span> (nilai >= <span class="num2">75</span>) {
+    console.<span class="fn">log</span>(<span class="str">"Lulus! 🎉"</span>);
+} <span class="kw">else if</span> (nilai >= <span class="num2">60</span>) {
+    console.<span class="fn">log</span>(<span class="str">"Hampir, coba lagi! 💪"</span>);
+} <span class="kw">else</span> {
+    console.<span class="fn">log</span>(<span class="str">"Perlu belajar lebih keras! 📚"</span>);
+}</div>
+    </div>
+  </div>
+
+  <!-- Operator table -->
+  <div class="card card-glow-purple scroll-reveal">
+    <div class="card-title">⚖️ Operator Perbandingan</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Operator</th><th>Artinya</th><th>Contoh</th><th>Hasil</th></tr></thead>
+        <tbody>
+          <tr><td>==</td><td>Sama nilainya</td><td>5 == "5"</td><td><span class="pill pill-g">true</span></td></tr>
+          <tr><td>===</td><td>Sama nilai & tipe data</td><td>5 === "5"</td><td><span class="pill pill-r">false</span></td></tr>
+          <tr><td>!=</td><td>Tidak sama</td><td>5 != 3</td><td><span class="pill pill-g">true</span></td></tr>
+          <tr><td>&gt;=</td><td>Lebih besar atau sama</td><td>5 >= 5</td><td><span class="pill pill-g">true</span></td></tr>
+          <tr><td>&lt;</td><td>Lebih kecil dari</td><td>3 &lt; 7</td><td><span class="pill pill-g">true</span></td></tr>
+          <tr><td>&&</td><td>AND (kedua harus true)</td><td>true && false</td><td><span class="pill pill-r">false</span></td></tr>
+          <tr><td>||</td><td>OR (salah satu cukup)</td><td>true || false</td><td><span class="pill pill-g">true</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Playground 2: Logic simulator -->
+  <div class="card card-glow-cyan scroll-reveal">
+    <div class="card-title">🎛️ Playground — Simulator Nilai</div>
+    <p class="card-desc">Geser slider untuk mengubah nilai, lalu lihat hasil kondisi if/else secara real-time!</p>
+    <div class="slider-wrap">
+      <div class="slider-label">
+        <span>Nilai Siswa</span>
+        <span id="nilaiVal">80</span>
+      </div>
+      <input type="range" min="0" max="100" value="80" id="nilaiSlider" oninput="updateNilai(this.value)">
+    </div>
+    <div class="slider-demo-box" id="nilaiResult">
+      <span style="font-size:28px">🎉</span>
+      <div>
+        <div id="nilaiKet" style="font-size:15px; font-weight:600; color:var(--green)">Lulus — Nilai 80 ≥ 75</div>
+        <div style="font-size:12px; color:var(--muted); margin-top:4px; font-family:'JetBrains Mono',monospace">if (nilai >= 75) → true</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: FUNGSI -->
+  <div class="section-header scroll-reveal" id="s-fungsi">
+    <span class="section-badge">SECTION 03</span>
+    <span class="section-title">Function (Fungsi)</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card card-glow-purple scroll-reveal">
+    <div class="card-title">📋 Apa Itu Fungsi?</div>
+    <p class="card-desc">Fungsi adalah <strong>resep</strong> — sekali ditulis, bisa dipakai berkali-kali. Tanpa fungsi, kamu harus nulis kode yang sama berulang-ulang!</p>
+    <div class="analogi"><strong>Analogi:</strong> Fungsi seperti <em>resep nasi goreng</em>. Kamu tulis sekali, terus kapanpun mau masak, tinggal panggil resepnya — tidak perlu nulis ulang semua langkahnya!</div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="mac-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        <span class="code-lang">JavaScript</span>
+        <button class="copy-btn" onclick="copyCode(this,'c4')">copy</button>
+      </div>
+      <div class="code-body" id="c4"><span class="cm">// Membuat resep (Function Definition)</span>
+<span class="kw">function</span> <span class="fn">sapa</span>(nama) {
+    <span class="kw">return</span> <span class="str">"Halo "</span> + nama + <span class="str">", selamat belajar coding!"</span>;
+}
+
+<span class="cm">// Memasak (Calling Function)</span>
+console.<span class="fn">log</span>(<span class="fn">sapa</span>(<span class="str">"Andi"</span>));   <span class="cm">// → "Halo Andi, selamat belajar coding!"</span>
+console.<span class="fn">log</span>(<span class="fn">sapa</span>(<span class="str">"Budi"</span>));   <span class="cm">// → "Halo Budi, selamat belajar coding!"</span></div>
+    </div>
+  </div>
+
+  <!-- Selectable cards: jenis fungsi -->
+  <div class="card card-glow-cyan scroll-reveal">
+    <div class="card-title">🃏 Jenis-Jenis Penulisan Fungsi</div>
+    <p class="card-desc">Klik kartu untuk melihat penjelasan dan contoh masing-masing!</p>
+    <div class="sel-cards">
+      <div class="sel-card selected" onclick="pilihFungsi('regular', this)">
+        <div class="icon">📝</div>
+        <div class="sc-title">Regular Function</div>
+      </div>
+      <div class="sel-card" onclick="pilihFungsi('arrow', this)">
+        <div class="icon">➡️</div>
+        <div class="sc-title">Arrow Function</div>
+      </div>
+      <div class="sel-card" onclick="pilihFungsi('anon', this)">
+        <div class="icon">🎭</div>
+        <div class="sc-title">Anonymous Fn</div>
+      </div>
+    </div>
+    <div class="sel-preview" id="fungsiPreview">
+      <div class="sp-title">Regular Function</div>
+      <p>Cara paling klasik dan paling mudah dibaca oleh pemula. Punya nama, bisa dipanggil kapanpun, bahkan sebelum ditulis (hoisting).</p>
+      <div style="margin-top:10px; background:#060910; border-radius:8px; padding:12px 16px; font-family:'JetBrains Mono',monospace; font-size:12.5px; line-height:1.8;"><span class="kw">function</span> <span class="fn">hitung</span>(a, b) {<br>  <span class="kw">return</span> a + b;<br>}<br><span class="fn">hitung</span>(<span class="num2">3</span>, <span class="num2">4</span>); <span class="cm">// → 7</span></div>
+    </div>
+  </div>
+
+  <!-- Playground 3: Function builder -->
+  <div class="card card-glow-purple scroll-reveal">
+    <div class="card-title">🎛️ Playground — Sapaan Otomatis</div>
+    <p class="card-desc">Ketik nama dan klik tombol untuk melihat fungsi JavaScript bekerja!</p>
+    <div class="input-sim">
+      <input type="text" id="namaInput" placeholder="Ketik nama kamu..." maxlength="30">
+      <button class="sim-btn" onclick="jalankanSapa()">Panggil Fungsi →</button>
+    </div>
+    <div class="sim-output" id="sapaOutput">
+      <span>💡 Ketik nama, lalu klik tombol di atas!</span>
+    </div>
+    <div class="play-code-out" id="sapaCode"><span class="cm">// Hasil kode akan tampil di sini</span></div>
+  </div>
+
+  <!-- SECTION 4: DOM -->
+  <div class="section-header scroll-reveal" id="s-dom">
+    <span class="section-badge">SECTION 04</span>
+    <span class="section-title">DOM Manipulation</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card card-glow-cyan scroll-reveal">
+    <div class="card-title">🌐 Apa itu DOM?</div>
+    <p class="card-desc">DOM (Document Object Model) adalah cara JavaScript <strong>"melihat"</strong> dan <strong>"menyentuh"</strong> elemen HTML. Bayangkan HTML sebagai sebuah pohon — setiap tag adalah rantingnya, dan JS bisa mengambil serta mengubah ranting mana saja!</p>
+    <div class="analogi"><strong>Analogi:</strong> HTML = buku teks. DOM = jari kamu yang bisa membuka halaman berapa saja, mencoret tulisan, atau menambah catatan di pinggir halaman secara langsung!</div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card card-glow-purple scroll-reveal">
+      <div class="card-title">🎯 Menangkap Elemen</div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="mac-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <span class="code-lang">JavaScript</span>
+          <button class="copy-btn" onclick="copyCode(this,'c5')">copy</button>
+        </div>
+        <div class="code-body" id="c5"><span class="cm">// Berdasarkan ID (#title)</span>
+<span class="kw">const</span> judul = document.<span class="fn">getElementById</span>(<span class="str">'title'</span>);
+
+<span class="cm">// Berdasarkan Class / CSS Selector</span>
+<span class="kw">const</span> tombol = document.<span class="fn">querySelector</span>(<span class="str">'.btn-submit'</span>);
+
+<span class="cm">// Ambil SEMUA elemen dengan class itu</span>
+<span class="kw">const</span> semuaBtn = document.<span class="fn">querySelectorAll</span>(<span class="str">'.btn'</span>);</div>
+      </div>
+    </div>
+    <div class="card card-glow-cyan scroll-reveal">
+      <div class="card-title">✏️ Mengubah Elemen</div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="mac-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <span class="code-lang">JavaScript</span>
+          <button class="copy-btn" onclick="copyCode(this,'c6')">copy</button>
+        </div>
+        <div class="code-body" id="c6"><span class="cm">// Ganti isi teks</span>
+judul.<span class="prop">textContent</span> = <span class="str">"Halo Dunia!"</span>;
+
+<span class="cm">// Ubah style CSS langsung</span>
+judul.<span class="prop">style</span>.<span class="prop">color</span> = <span class="str">"blue"</span>;
+
+<span class="cm">// Tambah/hapus class CSS</span>
+judul.<span class="prop">classList</span>.<span class="fn">add</span>(<span class="str">'active'</span>);
+judul.<span class="prop">classList</span>.<span class="fn">remove</span>(<span class="str">'hidden'</span>);
+judul.<span class="prop">classList</span>.<span class="fn">toggle</span>(<span class="str">'dark'</span>);</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Playground DOM -->
+  <div class="card card-glow-purple scroll-reveal">
+    <div class="card-title">🎛️ Playground — DOM Live Editor</div>
+    <p class="card-desc">Klik tombol-tombol di bawah untuk melihat DOM manipulation bekerja secara nyata!</p>
+    <div class="playground">
+      <div class="play-title">Manipulasi elemen "kotak demo" di bawah ini</div>
+      <div class="ctrl-group">
+        <button class="ctrl-btn" onclick="domUbahTeks(this)">Ubah Teks</button>
+        <button class="ctrl-btn" onclick="domUbahWarna(this)">Ubah Warna</button>
+        <button class="ctrl-btn" onclick="domTambahClass(this)">Toggle Class</button>
+        <button class="ctrl-btn" onclick="domUbahUkuran(this)">Ubah Ukuran</button>
+        <button class="ctrl-btn" onclick="domReset()">Reset ↺</button>
+      </div>
+      <div class="play-preview" id="domBox" style="min-height:90px; flex-direction:column; gap:6px;">
+        <span id="domText" style="font-family:'Syne',sans-serif; font-weight:700; font-size:18px;">Kotak Demo DOM</span>
+        <span style="font-size:12px; color:var(--muted); font-family:'JetBrains Mono',monospace;" id="domStatus">Belum ada manipulasi</span>
+      </div>
+      <div class="play-code-out" id="domCode"><span class="cm">// Klik tombol di atas untuk melihat kode yang dijalankan</span></div>
+    </div>
+  </div>
+
+  <!-- SECTION 5: EVENT LISTENER -->
+  <div class="section-header scroll-reveal" id="s-event">
+    <span class="section-badge">SECTION 05</span>
+    <span class="section-title">Event Listener</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card card-glow-cyan scroll-reveal">
+    <div class="card-title">👂 Menunggu Perintah User</div>
+    <p class="card-desc">Event Listener adalah cara website <strong>"mendengar"</strong> apa yang dilakukan user — klik, ketik, scroll, hover. Tanpa ini, website hanya diam dan tidak bisa bereaksi!</p>
+    <div class="analogi"><strong>Analogi:</strong> Seperti pelayan restoran yang standby. Mereka tidak melakukan apa-apa sampai kamu memanggil atau memesan — itulah event listener!</div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="mac-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        <span class="code-lang">JavaScript</span>
+        <button class="copy-btn" onclick="copyCode(this,'c7')">copy</button>
+      </div>
+      <div class="code-body" id="c7"><span class="kw">const</span> tombol = document.<span class="fn">querySelector</span>(<span class="str">'#myButton'</span>);
+
+<span class="cm">// Saat tombol diklik, jalankan fungsi ini</span>
+tombol.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, <span class="kw">function</span>() {
+    alert(<span class="str">"Tombol sudah diklik!"</span>);
+    document.<span class="prop">body</span>.<span class="prop">style</span>.<span class="prop">backgroundColor</span> = <span class="str">"yellow"</span>;
+});
+
+<span class="cm">// Event lainnya yang sering dipakai:</span>
+<span class="cm">// 'mouseover' → saat cursor di atas elemen</span>
+<span class="cm">// 'keydown'   → saat tombol keyboard ditekan</span>
+<span class="cm">// 'input'     → saat user mengetik di input</span></div>
+    </div>
+  </div>
+
+  <!-- Selectable cards event types -->
+  <div class="card card-glow-purple scroll-reveal">
+    <div class="card-title">🃏 Jenis-Jenis Event</div>
+    <p class="card-desc">Pilih kartu untuk melihat contoh event yang sering dipakai di mini project!</p>
+    <div class="sel-cards" style="grid-template-columns: repeat(3,1fr);">
+      <div class="sel-card selected" onclick="pilihEvent('click', this)">
+        <div class="icon">🖱️</div>
+        <div class="sc-title">click</div>
+      </div>
+      <div class="sel-card" onclick="pilihEvent('input', this)">
+        <div class="icon">⌨️</div>
+        <div class="sc-title">input</div>
+      </div>
+      <div class="sel-card" onclick="pilihEvent('mouseover', this)">
+        <div class="icon">🖐️</div>
+        <div class="sc-title">mouseover</div>
+      </div>
+    </div>
+    <div class="sel-preview" id="eventPreview">
+      <div class="sp-title">Event: click</div>
+      <p>Dipicu saat user mengklik elemen. Paling sering dipakai untuk tombol, link, atau card yang interaktif.</p>
+      <div style="margin-top:10px; background:#060910; border-radius:8px; padding:12px 16px; font-family:'JetBrains Mono',monospace; font-size:12.5px; line-height:1.8;"><span class="fn">btn</span>.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, () => {<br>  <span class="cm">// jalankan sesuatu...</span><br>});</div>
+    </div>
+  </div>
+
+  <!-- Playground event -->
+  <div class="card card-glow-cyan scroll-reveal">
+    <div class="card-title">🎛️ Playground — Event Simulator</div>
+    <p class="card-desc">Coba berbagai interaksi di bawah — semuanya menggunakan Event Listener!</p>
+    <div class="playground">
+      <div class="play-title">Interaksi langsung dengan berbagai event</div>
+      <div style="display:flex; gap:14px; flex-wrap:wrap; align-items:flex-start;">
+        <div style="flex:1; min-width:200px;">
+          <button class="sim-btn" style="width:100%; margin-bottom:8px;" onclick="evSim('click')">Klik Saya!</button>
+          <input type="text" placeholder="Ketik sesuatu..." id="evInput" oninput="evSim('input')" style="width:100%; background:var(--card2); border:1px solid var(--border2); color:var(--text); padding:10px 14px; border-radius:10px; font-family:'Outfit',sans-serif; font-size:14px; outline:none;">
+        </div>
+        <div id="evFeedback" style="flex:1; min-width:200px; background:var(--card2); border:1px solid var(--border); border-radius:12px; padding:16px; font-size:13.5px; color:var(--muted2); font-family:'JetBrains Mono',monospace; min-height:80px;">
+          Belum ada event...
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 6: DEBUGGING -->
+  <div class="section-header scroll-reveal" id="s-debug">
+    <span class="section-badge">SECTION 06</span>
+    <span class="section-title">Common Debugging</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card card-glow-purple scroll-reveal">
+    <div class="card-title">🐛 Jangan Panik Saat Error!</div>
+    <p class="card-desc">Error adalah bagian normal dari coding. Semua developer — bahkan yang senior — masih menghadapi error setiap hari. Yang penting: tahu cara membacanya!</p>
+    <div class="analogi"><strong>Analogi:</strong> Error bukan berarti kamu gagal — itu seperti dokter yang mendiagnosis penyakit. Tanpa tahu sakitnya apa, kamu tidak bisa menyembuhkannya!</div>
+    <ul class="debug-list">
+      <li><div class="debug-num">01</div><div><strong style="color:var(--text);">console.log()</strong> — Senjata utama debugging. Taruh di mana saja untuk melihat isi variabel saat program berjalan. Tekan <span class="hl">F12</span> → tab Console.</div></li>
+      <li><div class="debug-num">02</div><div><strong style="color:var(--text);">Tanda Kurung</strong> — Setiap <span class="hl">{</span> punya pasangan <span class="hl">}</span>, setiap <span class="hl">(</span> punya <span class="hl">)</span>. Lupa menutup = error!</div></li>
+      <li><div class="debug-num">03</div><div><strong style="color:var(--text);">Typo & Case-Sensitive</strong> — JS membedakan huruf besar dan kecil. <span class="hl">Nama</span> ≠ <span class="hl">nama</span> ≠ <span class="hl">NAMA</span>. Baca error-nya baik-baik!</div></li>
+      <li><div class="debug-num">04</div><div><strong style="color:var(--text);">camelCase</strong> — Konvensi penamaan variabel profesional: <span class="hl">namaLengkap</span>, <span class="hl">tombolKirim</span>, <span class="hl">nilaiAkhir</span>. Mudah dibaca!</div></li>
+    </ul>
+  </div>
+
+  <div class="grid-2">
+    <div class="card card-glow-cyan scroll-reveal">
+      <div class="card-title">❌ Error Umum & Solusinya</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Pesan Error</th><th>Penyebab</th></tr></thead>
+          <tbody>
+            <tr><td>ReferenceError</td><td>Variabel belum dideklarasi</td></tr>
+            <tr><td>TypeError</td><td>Operasi pada tipe data yang salah</td></tr>
+            <tr><td>SyntaxError</td><td>Penulisan kode yang salah (typo)</td></tr>
+            <tr><td>Cannot read null</td><td>querySelector tidak menemukan elemen</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card card-glow-purple scroll-reveal">
+      <div class="card-title">✅ Tips Pro</div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="mac-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <span class="code-lang">JavaScript</span>
+          <button class="copy-btn" onclick="copyCode(this,'c8')">copy</button>
+        </div>
+        <div class="code-body" id="c8"><span class="cm">// 1. Cek isi variabel</span>
+<span class="kw">let</span> nilai = <span class="num2">85</span>;
+console.<span class="fn">log</span>(<span class="str">"nilai:"</span>, nilai);
+
+<span class="cm">// 2. Cek apakah elemen ditemukan</span>
+<span class="kw">const</span> el = document.<span class="fn">querySelector</span>(<span class="str">'#id'</span>);
+console.<span class="fn">log</span>(el); <span class="cm">// null = tidak ditemukan</span>
+
+<span class="cm">// 3. CamelCase yang benar:</span>
+<span class="cm">// ✓ namaLengkap, tombolKirim</span>
+<span class="cm">// ✗ NamaLengkap, tombol_kirim</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 7: QUIZ -->
+  <div class="section-header scroll-reveal" id="s-quiz">
+    <span class="section-badge">SECTION 07</span>
+    <span class="section-title">Quiz — Uji Pemahamanmu!</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card card-glow-cyan scroll-reveal">
+    <div class="quiz-wrap">
+      <div class="score-dots" id="scoreDots"></div>
+      <div class="quiz-counter" id="quizCounter">1 / 10</div>
+      <div id="quizContent"></div>
+    </div>
+  </div>
+
+  <!-- SECTION 8: CHECKLIST -->
+  <div class="section-header scroll-reveal" id="s-checklist">
+    <span class="section-badge">SECTION 08</span>
+    <span class="section-title">Checklist Sebelum Submit!</span>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card card-glow-purple scroll-reveal">
+    <p class="card-desc" style="margin-bottom:16px;">Centang satu per satu setelah kamu yakin sudah memahami dan mengimplementasikannya di mini project kamu!</p>
+
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">Sudah menggunakan <strong>const</strong> untuk nilai tetap dan <strong>let</strong> untuk nilai yang bisa berubah
+        <div class="check-sub">Tidak ada lagi var! Pakai const/let sesuai kebutuhan.</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">Logika kondisi <strong>if/else</strong> berfungsi dengan benar di project
+        <div class="check-sub">Sudah diuji dengan berbagai skenario kondisi.</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">Kode yang berulang sudah dibungkus dalam <strong>function</strong>
+        <div class="check-sub">Tidak ada copy-paste kode yang sama lebih dari 2x.</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">Berhasil mengambil elemen HTML dengan <strong>getElementById</strong> atau <strong>querySelector</strong>
+        <div class="check-sub">Tidak ada querySelector yang hasilnya null saat dipakai.</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">Berhasil mengubah teks, warna, atau class dengan <strong>DOM Manipulation</strong>
+        <div class="check-sub">textContent, style, dan classList sudah dicoba.</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">Minimal satu <strong>addEventListener</strong> sudah terpasang dan berfungsi
+        <div class="check-sub">Tombol atau elemen interaktif merespons saat diklik.</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">Sudah pakai <strong>console.log()</strong> untuk debug dan tidak ada error di Console
+        <div class="check-sub">Buka F12 → Console dan pastikan bersih dari error merah.</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div class="check-text">Semua nama variabel pakai format <strong>camelCase</strong>
+        <div class="check-sub">namaLengkap ✓ | nama_lengkap ✗ | NamaLengkap ✗</div>
+      </div>
+    </div>
+
+    <div class="progress-check"><div class="progress-check-fill" id="checkFill"></div></div>
+    <div class="check-counter" id="checkCount">0 / 8 selesai</div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-tags">
+      <span class="pill pill-c">JavaScript</span>
+      <span class="pill pill-p">DOM Manipulation</span>
+      <span class="pill pill-y">Event Listener</span>
+      <span class="pill pill-g">Functions</span>
+      <span class="pill pill-o">Variables</span>
+      <span class="pill pill-r">Debugging</span>
+    </div>
+    <p class="footer-credit">⚡ JS Cheat Sheet — Dibuat untuk siswa SMA Week 3 & 4 · Semangat coding! 🚀</p>
+  </div>
+
+</div>
+
+<script>
+// ============================
+// 1. Progress bar scroll
+// ============================
+window.addEventListener('scroll', () => {
+  const el = document.getElementById('progressBar');
+  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+  el.style.width = Math.min(pct, 100) + '%';
+});
+
+// ============================
+// 2. Scroll Reveal
+// ============================
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+}, { threshold: 0.1, rootMargin: '0px 0px -20px 0px' });
+
+document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+
+function triggerVisibleElements() {
+  document.querySelectorAll('.scroll-reveal').forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      el.classList.add('visible');
+    }
+  });
+}
+triggerVisibleElements();
+setTimeout(triggerVisibleElements, 100);
+setTimeout(triggerVisibleElements, 400);
+
+// ============================
+// 3. Copy code
+// ============================
+function copyCode(btn, id) {
+  const el = document.getElementById(id);
+  navigator.clipboard.writeText(el.innerText);
+  btn.textContent = '✓ copied';
+  btn.classList.add('copied');
+  setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 2000);
+}
+
+// ============================
+// 4. Nav active link
+// ============================
+const sectionIds = ['hero','s-variabel','s-logika','s-fungsi','s-dom','s-event','s-debug','s-quiz'];
+window.addEventListener('scroll', () => {
+  let current = '';
+  sectionIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && window.scrollY >= el.offsetTop - 120) current = id;
+  });
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+});
+
+// ============================
+// 5. Playground: Tipe Data
+// ============================
+const tipeData = {
+  string: {
+    preview: `<span>📌 <span class="kw">const</span> contoh = <span class="str">"Budi Santoso"</span>;</span><span style="color:var(--muted2); font-size:12px;">typeof contoh → <span style="color:var(--orange)">"string"</span></span>`,
+    code: `// String = deretan karakter teks\n// Selalu diapit tanda kutip ("" atau '')\nconst nama = "Budi Santoso";\nconst kota = 'Jakarta';\nconsole.log(typeof nama); // → "string"`
+  },
+  number: {
+    preview: `<span>📌 <span class="kw">const</span> umur = <span class="num2">17</span>;</span><span style="color:var(--muted2); font-size:12px;">typeof umur → <span style="color:var(--orange)">"number"</span></span>`,
+    code: `// Number = angka (bulat atau desimal)\n// Tidak pakai tanda kutip!\nconst umur = 17;\nconst nilai = 98.5;\nconst suhu = -3;\nconsole.log(typeof umur); // → "number"`
+  },
+  boolean: {
+    preview: `<span>📌 <span class="kw">let</span> sudahMakan = <span class="kw">true</span>;</span><span style="color:var(--muted2); font-size:12px;">typeof sudahMakan → <span style="color:var(--orange)">"boolean"</span></span>`,
+    code: `// Boolean = hanya dua nilai: true atau false\n// Tidak pakai tanda kutip!\nlet sudahMakan = true;\nlet sedangHujan = false;\nconsole.log(typeof sudahMakan); // → "boolean"`
+  },
+  array: {
+    preview: `<span>📌 <span class="kw">const</span> buah = [<span class="str">"apel"</span>, <span class="str">"mangga"</span>, <span class="str">"jeruk"</span>];</span><span style="color:var(--muted2); font-size:12px;">buah[0] → <span style="color:var(--orange)">"apel"</span></span>`,
+    code: `// Array = daftar nilai dalam satu variabel\n// Index mulai dari 0, bukan 1!\nconst buah = ["apel", "mangga", "jeruk"];\nconsole.log(buah[0]); // → "apel"\nconsole.log(buah.length); // → 3`
+  },
+  object: {
+    preview: `<span>📌 <span class="kw">const</span> siswa = {nama: <span class="str">"Budi"</span>, umur: <span class="num2">17</span>};</span><span style="color:var(--muted2); font-size:12px;">siswa.nama → <span style="color:var(--orange)">"Budi"</span></span>`,
+    code: `// Object = kumpulan property & value\n// Seperti kartu identitas dalam kode!\nconst siswa = {\n  nama: "Budi",\n  umur: 17,\n  lulus: true\n};\nconsole.log(siswa.nama); // → "Budi"`
+  }
+};
+
+function setTipeData(type, btn) {
+  document.querySelectorAll('.ctrl-group .ctrl-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  const d = tipeData[type];
+  const prev = document.getElementById('tipePreview');
+  prev.innerHTML = d.preview;
+  prev.style.flexDirection = 'column';
+  prev.style.alignItems = 'flex-start';
+  prev.style.gap = '6px';
+  document.getElementById('tipeCode').textContent = d.code;
+}
+
+// ============================
+// 6. Slider: Nilai
+// ============================
+function updateNilai(v) {
+  document.getElementById('nilaiVal').textContent = v;
+  const el = document.getElementById('nilaiKet');
+  const box = document.getElementById('nilaiResult');
+  v = parseInt(v);
+  if (v >= 75) {
+    el.textContent = `Lulus — Nilai ${v} ≥ 75`;
+    el.style.color = 'var(--green)';
+    box.querySelector('span').textContent = '🎉';
+  } else if (v >= 60) {
+    el.textContent = `Hampir Lulus — Nilai ${v} ≥ 60`;
+    el.style.color = 'var(--yellow)';
+    box.querySelector('span').textContent = '💪';
+  } else {
+    el.textContent = `Belum Lulus — Nilai ${v} < 60`;
+    el.style.color = 'var(--red)';
+    box.querySelector('span').textContent = '📚';
+  }
+  box.children[1].children[1].textContent = v >= 75 ? `if (nilai >= 75) → true` : v >= 60 ? `else if (nilai >= 60) → true` : `else → kode di sini dijalankan`;
+}
+
+// ============================
+// 7. Selectable: Fungsi
+// ============================
+const fungsiData = {
+  regular: {
+    title: 'Regular Function',
+    desc: 'Cara paling klasik dan paling mudah dibaca oleh pemula. Punya nama, bisa dipanggil kapanpun, bahkan sebelum ditulis (hoisting).',
+    code: `function hitung(a, b) {\n  return a + b;\n}\nhitung(3, 4); // → 7`
+  },
+  arrow: {
+    title: 'Arrow Function',
+    desc: 'Penulisan fungsi yang lebih singkat, populer di JavaScript modern (ES6+). Tidak bisa dipakai sebelum ditulis (tidak ada hoisting).',
+    code: `const hitung = (a, b) => a + b;\nhitung(3, 4); // → 7\n\n// Jika lebih dari satu baris:\nconst sapa = (nama) => {\n  return "Halo " + nama;\n};`
+  },
+  anon: {
+    title: 'Anonymous Function',
+    desc: 'Fungsi tanpa nama yang biasanya langsung dipakai, sering digunakan di dalam event listener atau sebagai callback.',
+    code: `// Langsung dalam event listener:\nbtn.addEventListener('click', function() {\n  console.log("diklik!");\n});\n\n// Atau disimpan ke variabel:\nconst sapa = function(nama) {\n  return "Halo " + nama;\n};`
+  }
+};
+
+function pilihFungsi(type, el) {
+  document.querySelectorAll('.sel-cards .sel-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  const d = fungsiData[type];
+  document.getElementById('fungsiPreview').innerHTML = `<div class="sp-title">${d.title}</div><p>${d.desc}</p><div style="margin-top:10px; background:#060910; border-radius:8px; padding:12px 16px; font-family:'JetBrains Mono',monospace; font-size:12.5px; line-height:1.8;">${d.code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>').replace(/ /g,'&nbsp;')}</div>`;
+}
+
+// ============================
+// 8. Sapa Playground
+// ============================
+function jalankanSapa() {
+  const nama = document.getElementById('namaInput').value.trim();
+  const out = document.getElementById('sapaOutput');
+  const code = document.getElementById('sapaCode');
+  if (!nama) {
+    out.innerHTML = '<span style="color:var(--orange);">⚠️ Masukkan nama dulu ya!</span>';
+    return;
+  }
+  const hasil = `Halo ${nama}, selamat belajar coding! 🎉`;
+  out.innerHTML = `<span style="font-size:18px;">🎉</span> <span style="color:var(--text); font-weight:600;">${hasil}</span>`;
+  code.textContent = `function sapa(nama) {\n    return "Halo " + nama + ", selamat belajar coding!";\n}\n\nconsole.log(sapa("${nama}"));\n// → "${hasil}"`;
+}
+
+// ============================
+// 9. DOM Playground
+// ============================
+let domState = { teks: 0, warna: 0, kelas: false, ukuran: 0 };
+const warnaList = ['var(--cyan)', 'var(--pink)', 'var(--yellow)', 'var(--green)', 'var(--orange)', 'var(--text)'];
+const tekstList = ['Kotak Demo DOM', 'textContent Diubah! ✏️', 'JavaScript Mantap!', 'DOM itu Gampang!'];
+
+function domUbahTeks(btn) {
+  domState.teks = (domState.teks + 1) % tekstList.length;
+  const t = tekstList[domState.teks];
+  document.getElementById('domText').textContent = t;
+  document.getElementById('domStatus').textContent = `.textContent = "${t}"`;
+  document.getElementById('domCode').textContent = `const el = document.getElementById('domText');\nel.textContent = "${t}";`;
+  btn.classList.toggle('on');
+}
+
+function domUbahWarna(btn) {
+  domState.warna = (domState.warna + 1) % warnaList.length;
+  const w = warnaList[domState.warna];
+  document.getElementById('domBox').style.background = `rgba(${w === 'var(--cyan)' ? '56,245,212' : w === 'var(--pink)' ? '255,107,157' : w === 'var(--yellow)' ? '255,217,90' : w === 'var(--green)' ? '74,222,128' : w === 'var(--orange)' ? '251,146,60' : '255,255,255'},.07)`;
+  document.getElementById('domText').style.color = w;
+  document.getElementById('domStatus').textContent = `.style.color = "${w}"`;
+  document.getElementById('domCode').textContent = `const el = document.getElementById('domBox');\nel.style.color = "${w}";`;
+  btn.classList.toggle('on');
+}
+
+function domTambahClass(btn) {
+  domState.kelas = !domState.kelas;
+  const box = document.getElementById('domBox');
+  if (domState.kelas) {
+    box.style.borderColor = 'var(--cyan)';
+    box.style.boxShadow = 'var(--glow-cyan)';
+    document.getElementById('domStatus').textContent = `.classList.add('active') → glow cyan!`;
+    btn.classList.add('on');
+  } else {
+    box.style.borderColor = '';
+    box.style.boxShadow = '';
+    document.getElementById('domStatus').textContent = `.classList.remove('active')`;
+    btn.classList.remove('on');
+  }
+  document.getElementById('domCode').textContent = `const el = document.getElementById('domBox');\nel.classList.${domState.kelas ? 'add' : 'remove'}('active');`;
+}
+
+function domUbahUkuran(btn) {
+  const sizeList = ['18px', '24px', '14px', '30px'];
+  domState.ukuran = (domState.ukuran + 1) % sizeList.length;
+  const s = sizeList[domState.ukuran];
+  document.getElementById('domText').style.fontSize = s;
+  document.getElementById('domStatus').textContent = `.style.fontSize = "${s}"`;
+  document.getElementById('domCode').textContent = `const el = document.getElementById('domText');\nel.style.fontSize = "${s}";`;
+  btn.classList.toggle('on');
+}
+
+function domReset() {
+  document.getElementById('domText').textContent = 'Kotak Demo DOM';
+  document.getElementById('domText').style.color = '';
+  document.getElementById('domText').style.fontSize = '18px';
+  document.getElementById('domBox').style.background = '';
+  document.getElementById('domBox').style.borderColor = '';
+  document.getElementById('domBox').style.boxShadow = '';
+  document.getElementById('domStatus').textContent = 'Belum ada manipulasi';
+  document.getElementById('domCode').textContent = '// Klik tombol di atas untuk melihat kode yang dijalankan';
+  document.querySelectorAll('.ctrl-group .ctrl-btn').forEach(b => b.classList.remove('on'));
+  domState = { teks: 0, warna: 0, kelas: false, ukuran: 0 };
+}
+
+// ============================
+// 10. Event type selectable
+// ============================
+const eventData = {
+  click: {
+    title: 'Event: click',
+    desc: 'Dipicu saat user mengklik elemen. Paling sering dipakai untuk tombol, link, atau card yang interaktif.',
+    code: `btn.addEventListener('click', () => {\n  // jalankan sesuatu...\n});`
+  },
+  input: {
+    title: 'Event: input',
+    desc: 'Dipicu setiap kali isi input berubah (saat user mengetik). Berguna untuk search real-time, validasi form, dan preview langsung.',
+    code: `inputEl.addEventListener('input', (e) => {\n  console.log(e.target.value);\n  // tampilkan preview...\n});`
+  },
+  mouseover: {
+    title: 'Event: mouseover',
+    desc: 'Dipicu saat cursor melewati elemen. Berguna untuk efek hover yang lebih kompleks dari CSS, seperti menampilkan tooltip.',
+    code: `el.addEventListener('mouseover', () => {\n  el.style.background = '#38f5d4';\n});\nel.addEventListener('mouseout', () => {\n  el.style.background = '';\n});`
+  }
+};
+
+function pilihEvent(type, el) {
+  document.querySelectorAll('#s-event ~ .card .sel-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  const d = eventData[type];
+  document.getElementById('eventPreview').innerHTML = `<div class="sp-title">${d.title}</div><p>${d.desc}</p><div style="margin-top:10px; background:#060910; border-radius:8px; padding:12px 16px; font-family:'JetBrains Mono',monospace; font-size:12.5px; line-height:1.8;">${d.code.replace(/\n/g,'<br>').replace(/ /g,'&nbsp;')}</div>`;
+}
+
+// ============================
+// 11. Event Simulator
+// ============================
+let evClickCount = 0;
+function evSim(type) {
+  const fb = document.getElementById('evFeedback');
+  if (type === 'click') {
+    evClickCount++;
+    fb.innerHTML = `<span style="color:var(--cyan);">event: 'click'</span>\nTarget: &lt;button&gt;\nKlik ke-${evClickCount}\n\n→ addEventListener('click', fn) terpicu!`;
+    fb.style.color = 'var(--cyan)';
+  } else if (type === 'input') {
+    const val = document.getElementById('evInput').value;
+    fb.innerHTML = `<span style="color:var(--yellow);">event: 'input'</span>\ne.target.value = "${val}"\npanjang: ${val.length} karakter\n\n→ addEventListener('input', fn) terpicu!`;
+    fb.style.color = 'var(--yellow)';
+  }
+}
+
+// ============================
+// 12. Quiz
+// ============================
+const questions = [
+  {
+    q: "Apa keyword yang digunakan untuk mendeklarasikan variabel yang TIDAK bisa diubah nilainya?",
+    opts: ["var", "let", "const", "static"],
+    ans: 2,
+    expl: "const digunakan untuk nilai yang tetap (konstan). Jika kamu coba mengubahnya, JavaScript akan melempar error."
+  },
+  {
+    q: "Apa output dari kode berikut? let x = 5; if (x > 3) { console.log('Besar'); } else { console.log('Kecil'); }",
+    opts: ["Kecil", "Besar", "Error", "undefined"],
+    ans: 1,
+    expl: "Karena nilai x (5) lebih besar dari 3, kondisi if (x > 3) bernilai true, sehingga 'Besar' yang dicetak."
+  },
+  {
+    q: "Apa perbedaan utama antara == dan === di JavaScript?",
+    opts: [
+      "Tidak ada perbedaan",
+      "=== membandingkan nilai saja, == membandingkan nilai dan tipe",
+      "== membandingkan nilai saja, === membandingkan nilai dan tipe data",
+      "=== dipakai untuk angka saja"
+    ],
+    ans: 2,
+    expl: "=== adalah strict equality: memeriksa nilai DAN tipe data. == hanya memeriksa nilai, contoh: 5 == '5' hasilnya true, tapi 5 === '5' hasilnya false."
+  },
+  {
+    q: "Apa fungsi dari kata kunci 'return' di dalam sebuah function?",
+    opts: [
+      "Menghentikan program",
+      "Mengembalikan nilai dari function agar bisa dipakai di luar",
+      "Mencetak nilai ke console",
+      "Mengulang function dari awal"
+    ],
+    ans: 1,
+    expl: "return mengembalikan nilai dari function. Tanpa return, function akan mengembalikan undefined secara otomatis."
+  },
+  {
+    q: "Cara yang BENAR untuk mengambil elemen HTML berdasarkan ID menggunakan JavaScript adalah...",
+    opts: [
+      "document.getElement('#myId')",
+      "document.find('myId')",
+      "document.getElementById('myId')",
+      "document.select('#myId')"
+    ],
+    ans: 2,
+    expl: "document.getElementById('myId') adalah cara yang benar. Perhatikan: tanpa tanda # di dalam string, berbeda dengan querySelector."
+  },
+  {
+    q: "Apa yang dilakukan oleh perintah 'element.classList.add('active')' ?",
+    opts: [
+      "Membuat elemen baru dengan class active",
+      "Menghapus semua class dari elemen",
+      "Menambahkan class 'active' ke elemen tersebut",
+      "Memilih elemen yang punya class active"
+    ],
+    ans: 2,
+    expl: "classList.add() menambahkan class CSS ke elemen tanpa menghapus class yang sudah ada sebelumnya."
+  },
+  {
+    q: "Pada perintah berikut, apa artinya 'click'? → btn.addEventListener('click', function() { ... })",
+    opts: [
+      "Nama variabel",
+      "Nama function yang dipanggil",
+      "Jenis event yang didengarkan",
+      "Nama elemen HTML"
+    ],
+    ans: 2,
+    expl: "'click' adalah nama event yang didengarkan. Event Listener akan menjalankan function setiap kali event 'click' terjadi pada elemen btn."
+  },
+  {
+    q: "Penamaan variabel mana yang mengikuti konvensi camelCase yang benar?",
+    opts: ["nama_lengkap_siswa", "NamaLengkapSiswa", "namaLengkapSiswa", "NAMALENGKAPSISWA"],
+    ans: 2,
+    expl: "camelCase dimulai dengan huruf kecil, dan setiap kata berikutnya diawali huruf kapital: namaLengkapSiswa. Ini konvensi standar di JavaScript."
+  },
+  {
+    q: "Apa tipe data dari nilai berikut? → const cek = true;",
+    opts: ["String", "Number", "Boolean", "Object"],
+    ans: 2,
+    expl: "true dan false adalah nilai Boolean. Tipe data ini hanya punya dua kemungkinan nilai dan sangat berguna untuk kondisi if/else."
+  },
+  {
+    q: "Tool apa yang digunakan untuk mengecek isi variabel dan mendeteksi error saat debugging?",
+    opts: [
+      "document.print()",
+      "console.log()",
+      "alert.check()",
+      "window.debug()"
+    ],
+    ans: 1,
+    expl: "console.log() adalah teman terbaik developer! Hasilnya muncul di tab Console browser (tekan F12). Ini cara paling umum untuk debugging JavaScript."
+  }
+];
+
+let qIdx = 0, scores = [], answered = false;
+
+function buildQuiz() {
+  // Build score dots
+  const dotsEl = document.getElementById('scoreDots');
+  dotsEl.innerHTML = '';
+  for (let i = 0; i < 10; i++) {
+    const d = document.createElement('div');
+    d.className = 'score-dot' + (scores[i] === true ? ' correct' : scores[i] === false ? ' wrong' : '');
+    dotsEl.appendChild(d);
+  }
+
+  const content = document.getElementById('quizContent');
+
+  if (qIdx >= questions.length) {
+    // Result
+    const correct = scores.filter(s => s === true).length;
+    let emoji = correct >= 9 ? '🏆' : correct >= 7 ? '🎉' : correct >= 5 ? '💪' : '📚';
+    let title = correct >= 9 ? 'Luar Biasa!' : correct >= 7 ? 'Bagus Banget!' : correct >= 5 ? 'Lumayan, Terus Belajar!' : 'Ayo Baca Lagi!';
+    let sub = correct >= 7 ? 'Kamu sudah menguasai materi dengan baik!' : 'Coba baca ulang materi di atas, ya!';
+    content.innerHTML = `<div class="quiz-result"><div class="big-emoji">${emoji}</div><div class="res-title">${title}</div><div class="res-score">${correct} / 10</div><div class="res-sub">${sub}</div><button class="quiz-restart" onclick="restartQuiz()">Ulangi Quiz ↺</button></div>`;
+    document.getElementById('quizCounter').textContent = '✓ Selesai!';
+    return;
+  }
+
+  document.getElementById('quizCounter').textContent = `${qIdx + 1} / 10`;
+  const q = questions[qIdx];
+  answered = false;
+
+  const optsHtml = q.opts.map((opt, i) => {
+    const labels = ['A','B','C','D'];
+    return `<div class="quiz-opt" onclick="answerQuiz(${i})"><span class="opt-label">${labels[i]}</span><span>${opt}</span></div>`;
+  }).join('');
+
+  content.innerHTML = `
+    <div class="quiz-q">${q.q}</div>
+    <div class="quiz-opts" id="quizOpts">${optsHtml}</div>
+    <div class="quiz-feedback" id="quizFb"></div>
+    <button class="quiz-next" id="quizNext" onclick="nextQ()">Soal Berikutnya →</button>
+  `;
+}
+
+function answerQuiz(i) {
+  if (answered) return;
+  answered = true;
+  const q = questions[qIdx];
+  const opts = document.querySelectorAll('.quiz-opt');
+  opts.forEach(o => o.classList.add('disabled'));
+  const fb = document.getElementById('quizFb');
+  const next = document.getElementById('quizNext');
+
+  if (i === q.ans) {
+    scores[qIdx] = true;
+    opts[i].classList.add('correct-ans');
+    fb.textContent = '✓ Benar! ' + q.expl;
+    fb.className = 'quiz-feedback show ok';
+  } else {
+    scores[qIdx] = false;
+    opts[i].classList.add('wrong-ans');
+    opts[q.ans].classList.add('correct-ans');
+    fb.textContent = '✗ Salah. ' + q.expl;
+    fb.className = 'quiz-feedback show no';
+  }
+
+  next.className = 'quiz-next show';
+
+  // Update dots
+  const dots = document.querySelectorAll('.score-dot');
+  dots[qIdx].className = 'score-dot ' + (scores[qIdx] ? 'correct' : 'wrong');
+}
+
+function nextQ() {
+  qIdx++;
+  buildQuiz();
+}
+
+function restartQuiz() {
+  qIdx = 0;
+  scores = [];
+  answered = false;
+  buildQuiz();
+}
+
+buildQuiz();
+
+// ============================
+// 13. Checklist
+// ============================
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+  el.querySelector('.check-box').textContent = el.classList.contains('checked') ? '✓' : '';
+  updateCheckProgress();
+}
+
+function updateCheckProgress() {
+  const total = document.querySelectorAll('.check-item').length;
+  const done = document.querySelectorAll('.check-item.checked').length;
+  document.getElementById('checkCount').textContent = `${done} / ${total} selesai`;
+  document.getElementById('checkFill').style.width = (done / total * 100) + '%';
+}
+</script>
+</body>
+</html>
