@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cheatsheet: The 60-Minute Build Challenge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080b14;
+  --surface: #0f1320;
+  --card: #131926;
+  --card2: #1a2133;
+  --border: #1e2d47;
+  --border2: #263650;
+  --yellow: #ffd95a;
+  --cyan: #38f5d4;
+  --pink: #ff6b9d;
+  --purple: #a78bfa;
+  --orange: #fb923c;
+  --green: #4ade80;
+  --blue: #60a5fa;
+  --red: #f87171;
+  --text: #e2e8f5;
+  --muted: #64748b;
+  --muted2: #94a3b8;
+  --glow-cyan: 0 0 30px rgba(56,245,212,.15);
+  --glow-purple: 0 0 30px rgba(167,139,250,.15);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
+
+html{scroll-behavior:smooth}
+
+body{
+  font-family:'Outfit',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* GRID BG */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+  background-size:40px 40px;
+  opacity:.3;
+  pointer-events:none;z-index:0;
+}
+
+/* ORBs */
+.orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0}
+.orb-1{width:500px;height:500px;background:radial-gradient(circle,rgba(56,245,212,.12),transparent 70%);top:-150px;right:-100px;filter:blur(60px)}
+.orb-2{width:500px;height:500px;background:radial-gradient(circle,rgba(167,139,250,.12),transparent 70%);bottom:-150px;left:-100px;filter:blur(60px)}
+
+/* PROGRESS BAR */
+.progress-bar-outer{position:fixed;top:60px;left:0;right:0;height:2px;background:var(--border);z-index:1000}
+.progress-bar-inner{height:100%;width:0%;background:linear-gradient(90deg,var(--cyan),var(--purple));transition:width .1s}
+
+/* NAV */
+.nav{
+  position:fixed;top:0;left:0;right:0;height:60px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;
+  background:rgba(8,11,20,.85);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  z-index:999;
+}
+.nav-brand{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:17px;
+  background:linear-gradient(90deg,var(--cyan),var(--purple));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  white-space:nowrap;
+}
+.nav-links{display:flex;gap:4px;align-items:center}
+.nav-links a{
+  font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;
+  color:var(--muted2);text-decoration:none;
+  padding:5px 12px;border-radius:8px;
+  transition:all .2s;
+}
+.nav-links a:hover,.nav-links a.active{color:var(--cyan);background:rgba(56,245,212,.08)}
+
+/* WRAPPER */
+.wrapper{
+  max-width:1100px;margin:0 auto;
+  padding:100px 24px 80px;
+  position:relative;z-index:1;
+}
+
+/* HERO */
+.hero{text-align:center;padding:60px 0 80px}
+.hero-badge{
+  display:inline-block;
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;
+  color:var(--cyan);border:1px solid rgba(56,245,212,.3);
+  padding:5px 14px;border-radius:99px;
+  margin-bottom:24px;
+  animation:fadeUp .6s ease both;
+}
+.hero h1{
+  font-family:'Syne',sans-serif;font-weight:900;
+  font-size:clamp(36px,6vw,72px);
+  line-height:1.1;
+  background:linear-gradient(135deg,#fff 30%,var(--cyan) 60%,var(--purple));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  animation:fadeUp .6s .1s ease both;margin-bottom:16px;
+}
+.hero p{
+  color:var(--muted2);font-size:18px;font-weight:400;
+  max-width:600px;margin:0 auto 40px;
+  animation:fadeUp .6s .2s ease both;
+}
+.hero-stats{
+  display:flex;justify-content:center;gap:20px;flex-wrap:wrap;
+  animation:fadeUp .6s .3s ease both;
+}
+.stat-box{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:16px 28px;text-align:center;
+}
+.stat-box .stat-num{font-family:'Syne',sans-serif;font-weight:800;font-size:28px;color:var(--cyan)}
+.stat-box .stat-label{font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:2px}
+
+/* SECTION HEADER */
+.section-header{display:flex;align-items:center;gap:16px;margin-bottom:28px}
+.section-badge{
+  font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;
+  color:var(--cyan);border:1px solid rgba(56,245,212,.3);
+  padding:4px 10px;border-radius:99px;white-space:nowrap;
+}
+.section-header h2{font-family:'Syne',sans-serif;font-weight:800;font-size:26px;white-space:nowrap}
+.section-line{flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent)}
+.section-wrap{margin-bottom:64px}
+
+/* CARDS */
+.card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:28px;
+  transition:border-color .2s,box-shadow .2s;
+}
+.card:hover{border-color:var(--border2)}
+.card-glow-cyan:hover{box-shadow:var(--glow-cyan);border-color:rgba(56,245,212,.25)}
+.card-glow-purple:hover{box-shadow:var(--glow-purple);border-color:rgba(167,139,250,.25)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+
+/* PILLS */
+.pill{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;padding:3px 9px;border-radius:99px;display:inline-block}
+.pill-c{background:rgba(56,245,212,.12);color:var(--cyan);border:1px solid rgba(56,245,212,.25)}
+.pill-y{background:rgba(255,217,90,.12);color:var(--yellow);border:1px solid rgba(255,217,90,.25)}
+.pill-p{background:rgba(167,139,250,.12);color:var(--purple);border:1px solid rgba(167,139,250,.25)}
+.pill-g{background:rgba(74,222,128,.12);color:var(--green);border:1px solid rgba(74,222,128,.25)}
+.pill-o{background:rgba(251,146,60,.12);color:var(--orange);border:1px solid rgba(251,146,60,.25)}
+.pill-r{background:rgba(255,107,157,.12);color:var(--pink);border:1px solid rgba(255,107,157,.25)}
+
+/* CODE BLOCK */
+.code-block{border-radius:12px;overflow:hidden;border:1px solid var(--border);margin-top:16px}
+.code-header{
+  display:flex;align-items:center;gap:10px;
+  background:#0a0d16;padding:10px 16px;
+  border-bottom:1px solid var(--border);
+}
+.mac-dots{display:flex;gap:6px}
+.mac-dot{width:12px;height:12px;border-radius:50%}
+.mac-dot.r{background:#f87171}.mac-dot.y{background:var(--yellow)}.mac-dot.g{background:var(--green)}
+.code-lang{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-left:4px;flex:1}
+.copy-btn{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  background:var(--border);color:var(--muted2);
+  border:none;padding:3px 10px;border-radius:6px;cursor:pointer;
+  transition:all .2s;
+}
+.copy-btn:hover{background:var(--border2);color:var(--text)}
+.copy-btn.copied{background:rgba(74,222,128,.15);color:var(--green)}
+.code-body{
+  background:#060910;padding:18px 20px;
+  font-family:'JetBrains Mono',monospace;font-size:12.5px;
+  line-height:1.7;overflow-x:auto;white-space:pre;
+}
+.kw{color:#c792ea}.prop{color:var(--cyan)}.val{color:var(--orange)}
+.sel{color:var(--yellow)}.at{color:var(--pink)}.cm{color:#3d5070;font-style:italic}
+.str{color:var(--green)}.fn{color:var(--blue)}.num{color:var(--orange)}
+
+/* SCROLL REVEAL */
+.scroll-reveal{opacity:0;transform:translateY(20px);transition:opacity .5s,transform .5s}
+.scroll-reveal.visible{opacity:1;transform:none}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+
+/* PLAYGROUND */
+.playground-wrap{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.ctrl-panel{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.ctrl-btn{
+  font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;
+  background:var(--card2);border:1px solid var(--border);color:var(--muted2);
+  padding:7px 14px;border-radius:8px;cursor:pointer;transition:all .2s;
+}
+.ctrl-btn:hover{border-color:var(--border2);color:var(--text)}
+.ctrl-btn.on{background:rgba(56,245,212,.1);border-color:rgba(56,245,212,.4);color:var(--cyan)}
+.preview-box{
+  background:#060910;border:1px solid var(--border);border-radius:12px;
+  overflow:hidden;min-height:220px;display:flex;align-items:center;justify-content:center;
+  position:relative;
+}
+.preview-label{
+  position:absolute;top:10px;left:12px;
+  font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);
+}
+.gen-code-wrap{margin-top:12px}
+
+/* CARD SELECTABLE */
+.select-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px}
+.sel-card{
+  background:var(--card2);border:1px solid var(--border);border-radius:12px;
+  padding:16px;cursor:pointer;transition:all .2s;text-align:center;
+}
+.sel-card:hover{border-color:var(--border2)}
+.sel-card.selected{border-color:var(--cyan);background:rgba(56,245,212,.07)}
+.sel-card .sel-icon{font-size:28px;margin-bottom:8px}
+.sel-card .sel-title{font-weight:600;font-size:14px;margin-bottom:4px}
+.sel-card .sel-sub{font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+.sel-preview{
+  background:var(--card2);border:1px solid var(--border);border-radius:12px;
+  padding:20px;min-height:100px;
+}
+
+/* SLIDER */
+.slider-wrap{display:flex;flex-direction:column;gap:12px}
+.slider-row{display:flex;align-items:center;gap:14px}
+.slider-label{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted2);min-width:100px}
+input[type=range]{
+  -webkit-appearance:none;flex:1;height:4px;
+  background:var(--border2);border-radius:99px;outline:none;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:16px;height:16px;border-radius:50%;
+  background:var(--cyan);cursor:pointer;box-shadow:0 0 8px rgba(56,245,212,.4);
+  transition:transform .15s;
+}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2)}
+.slider-val{
+  font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cyan);
+  min-width:50px;text-align:right;
+}
+#card-demo-preview{
+  background:#060910;border:1px solid var(--border);border-radius:12px;
+  overflow:hidden;display:flex;align-items:center;justify-content:center;
+  padding:24px;
+}
+#card-demo-inner{
+  background:#1a2133;
+  border-radius:16px;padding:24px;
+  display:flex;flex-direction:column;align-items:center;gap:12px;
+  width:100%;max-width:220px;transition:all .3s;
+  text-align:center;
+}
+#demo-avatar{
+  border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--purple));
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;color:#fff;font-weight:700;transition:all .3s;
+}
+#demo-name{font-family:'Syne',sans-serif;font-weight:800;font-size:16px;transition:all .3s}
+#demo-role{font-size:12px;color:var(--muted);transition:all .3s}
+#demo-btn{
+  background:var(--cyan);color:var(--bg);
+  border:none;border-radius:8px;padding:7px 18px;
+  font-family:'Outfit',sans-serif;font-weight:600;font-size:13px;
+  cursor:pointer;transition:all .3s;
+}
+
+/* QUIZ */
+.quiz-wrap{max-width:720px;margin:0 auto}
+.score-dots{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px}
+.score-dot{
+  width:24px;height:24px;border-radius:50%;
+  background:var(--border);border:1px solid var(--border2);
+  transition:all .3s;
+}
+.score-dot.correct{background:rgba(74,222,128,.3);border-color:var(--green)}
+.score-dot.wrong{background:rgba(248,113,113,.3);border-color:var(--red)}
+.quiz-counter{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);margin-bottom:12px}
+.quiz-question{font-size:18px;font-weight:600;margin-bottom:20px;line-height:1.5}
+.quiz-options{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.quiz-opt{
+  display:flex;align-items:center;gap:12px;
+  background:var(--card2);border:1px solid var(--border);border-radius:10px;
+  padding:14px 18px;cursor:pointer;transition:all .2s;
+  font-size:15px;
+}
+.quiz-opt:hover{border-color:var(--border2)}
+.quiz-opt.correct-ans{background:rgba(74,222,128,.1);border-color:var(--green);color:var(--green)}
+.quiz-opt.wrong-ans{background:rgba(248,113,113,.1);border-color:var(--red);color:var(--red)}
+.opt-label{
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;
+  background:var(--border);padding:3px 8px;border-radius:6px;min-width:26px;text-align:center;
+}
+.quiz-feedback{
+  padding:14px 18px;border-radius:10px;font-size:14px;line-height:1.6;
+  margin-bottom:16px;display:none;
+}
+.quiz-feedback.show{display:block}
+.quiz-feedback.ok{background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.25);color:var(--green)}
+.quiz-feedback.bad{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.25);color:var(--red)}
+.quiz-next-btn{
+  background:linear-gradient(90deg,var(--cyan),var(--purple));color:var(--bg);
+  border:none;border-radius:10px;padding:12px 28px;
+  font-family:'Outfit',sans-serif;font-weight:700;font-size:14px;
+  cursor:pointer;display:none;transition:opacity .2s;
+}
+.quiz-next-btn:hover{opacity:.85}
+.quiz-result{
+  text-align:center;padding:40px 20px;display:none;
+}
+.quiz-result.show{display:block}
+.quiz-result-emoji{font-size:60px;margin-bottom:16px}
+.quiz-result-title{font-family:'Syne',sans-serif;font-weight:900;font-size:32px;margin-bottom:8px}
+.quiz-result-score{font-family:'JetBrains Mono',monospace;font-size:18px;color:var(--cyan);margin-bottom:24px}
+.restart-btn{
+  background:var(--card2);border:1px solid var(--border);color:var(--text);
+  border-radius:10px;padding:12px 28px;font-family:'Outfit',sans-serif;
+  font-weight:600;font-size:14px;cursor:pointer;transition:all .2s;
+}
+.restart-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+
+/* CHECKLIST */
+.checklist-wrap{display:flex;flex-direction:column;gap:10px}
+.check-progress-bar{
+  background:var(--border);border-radius:99px;height:8px;margin-bottom:6px;overflow:hidden;
+}
+.check-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--cyan));border-radius:99px;width:0%;transition:width .4s cubic-bezier(.4,0,.2,1)}
+.check-counter{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted2);margin-bottom:16px}
+.check-item{
+  display:flex;align-items:flex-start;gap:14px;
+  background:var(--card2);border:1px solid var(--border);border-radius:10px;
+  padding:14px 18px;cursor:pointer;transition:all .2s;
+}
+.check-item:hover{border-color:var(--border2)}
+.check-item.checked{border-color:rgba(74,222,128,.25);background:rgba(74,222,128,.05)}
+.check-box{
+  width:22px;height:22px;min-width:22px;border-radius:6px;
+  border:2px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;transition:all .2s;
+  color:var(--green);
+}
+.check-item.checked .check-box{background:rgba(74,222,128,.15);border-color:var(--green)}
+.check-body{flex:1}
+.check-title{font-weight:600;font-size:14px;margin-bottom:3px}
+.check-desc{font-size:12px;color:var(--muted2)}
+.check-cat{font-family:'JetBrains Mono',monospace;font-size:10px}
+
+/* FOOTER */
+.footer{
+  text-align:center;padding:40px 20px;
+  border-top:1px solid var(--border);margin-top:40px;
+}
+.footer-tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:16px}
+.footer p{font-size:13px;color:var(--muted)}
+
+/* INFO BOX */
+.info-box{
+  padding:14px 18px;border-radius:10px;font-size:13px;line-height:1.7;
+  margin:12px 0;
+}
+.info-cyan{background:rgba(56,245,212,.07);border:1px solid rgba(56,245,212,.2);border-left:3px solid var(--cyan)}
+.info-yellow{background:rgba(255,217,90,.07);border:1px solid rgba(255,217,90,.2);border-left:3px solid var(--yellow)}
+.info-purple{background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.2);border-left:3px solid var(--purple)}
+.info-orange{background:rgba(251,146,60,.07);border:1px solid rgba(251,146,60,.2);border-left:3px solid var(--orange)}
+.info-green{background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2);border-left:3px solid var(--green)}
+.info-pink{background:rgba(255,107,157,.07);border:1px solid rgba(255,107,157,.2);border-left:3px solid var(--pink)}
+
+/* CARD TITLE */
+.card-title{font-family:'Syne',sans-serif;font-weight:700;font-size:18px;margin-bottom:6px}
+.card-desc{color:var(--muted2);font-size:14px;margin-bottom:18px;line-height:1.6}
+.tag-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+
+/* ANALOGY BOX */
+.analogy{
+  display:flex;align-items:flex-start;gap:14px;
+  background:rgba(255,217,90,.05);border:1px solid rgba(255,217,90,.15);
+  border-radius:12px;padding:16px;margin:14px 0;
+}
+.analogy-icon{font-size:28px}
+.analogy-text{font-size:14px;line-height:1.7;color:var(--muted2)}
+.analogy-text strong{color:var(--yellow)}
+
+/* GELAR CARDS */
+.gelar-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.gelar-card{
+  background:var(--card2);border:1px solid var(--border);border-radius:12px;
+  padding:20px;text-align:center;transition:all .3s;
+}
+.gelar-card:hover{transform:translateY(-4px)}
+.gelar-icon{font-size:36px;margin-bottom:10px}
+.gelar-name{font-family:'Syne',sans-serif;font-weight:800;font-size:14px;margin-bottom:6px}
+.gelar-desc{font-size:12px;color:var(--muted2);line-height:1.5}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .nav-links{display:none}
+  .grid-2,.grid-3,.playground-wrap,.select-cards,.gelar-grid{grid-template-columns:1fr}
+  .hero h1{font-size:36px}
+  .hero p{font-size:15px}
+}
+</style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<div class="progress-bar-outer">
+  <div class="progress-bar-inner" id="progressBar"></div>
+</div>
+
+<nav class="nav">
+  <div class="nav-brand">💻 Build Challenge</div>
+  <div class="nav-links">
+    <a href="#brief">Brief</a>
+    <a href="#struktur">Struktur</a>
+    <a href="#style">CSS Style</a>
+    <a href="#logic">JS Logic</a>
+    <a href="#bonus">Bonus</a>
+    <a href="#checklist">Checklist</a>
+    <a href="#quiz">Quiz</a>
+  </div>
+</nav>
+
+<div class="wrapper">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">🏆 60-MINUTE BUILD CHALLENGE</div>
+    <h1>Digital Business Card</h1>
+    <p>Cheatsheet lengkap untuk membuat kartu nama digital interaktif — gabungan HTML, CSS Flexbox, dan JavaScript DOM.</p>
+    <div class="hero-stats">
+      <div class="stat-box">
+        <div class="stat-num">5</div>
+        <div class="stat-label">TOPIK UTAMA</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">3</div>
+        <div class="stat-label">LIVE DEMO</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">10</div>
+        <div class="stat-label">SOAL QUIZ</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SECTION 1: BRIEF ====== -->
+  <div class="section-wrap" id="brief">
+    <div class="section-header scroll-reveal">
+      <span class="section-badge">SECTION 1</span>
+      <h2>📋 Brief Challenge</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="card card-glow-cyan scroll-reveal">
+      <div class="card-title">Misi Kamu Hari Ini</div>
+      <div class="card-desc">Buat sebuah kartu nama digital yang bisa ditaruh di Linktree atau Bio Instagram. Selesaikan dalam <strong style="color:var(--yellow)">60 menit</strong>!</div>
+
+      <div class="info-box info-cyan" style="margin-bottom:16px">
+        🎯 <strong>Kartu harus punya:</strong> Foto profil bulat + Nama + Role + Tombol sosmed yang hover-able + Fitur Like dengan counter JS
+      </div>
+
+      <div class="grid-3" style="margin-top:12px">
+        <div style="background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:16px">
+          <div style="font-size:24px;margin-bottom:8px">🏗️</div>
+          <div style="font-weight:600;margin-bottom:4px;font-size:14px">HTML</div>
+          <div style="font-size:12px;color:var(--muted2)">Semantic tags: &lt;main&gt;, &lt;section&gt;, &lt;footer&gt;</div>
+        </div>
+        <div style="background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:16px">
+          <div style="font-size:24px;margin-bottom:8px">🎨</div>
+          <div style="font-weight:600;margin-bottom:4px;font-size:14px">CSS</div>
+          <div style="font-size:12px;color:var(--muted2)">Flexbox center + border-radius foto</div>
+        </div>
+        <div style="background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:16px">
+          <div style="font-size:24px;margin-bottom:8px">🧠</div>
+          <div style="font-weight:600;margin-bottom:4px;font-size:14px">JavaScript</div>
+          <div style="font-size:12px;color:var(--muted2)">Counter Like + Alert kunjungan</div>
+        </div>
+      </div>
+
+      <div class="analogy">
+        <div class="analogy-icon">💡</div>
+        <div class="analogy-text">Bayangkan kartu nama fisik yang bisa berkedip, ditekan, dan menghitung berapa orang yang menyukainya. <strong>Itulah yang kamu buat hari ini!</strong> HTML = kertas kartunya, CSS = desain & warnanya, JS = magic interaktifnya.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SECTION 2: STRUKTUR HTML ====== -->
+  <div class="section-wrap" id="struktur">
+    <div class="section-header scroll-reveal">
+      <span class="section-badge">SECTION 2</span>
+      <h2>🏗️ Struktur HTML</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:20px">
+      <div class="card card-glow-cyan scroll-reveal">
+        <div class="tag-row"><span class="pill pill-c">HTML</span><span class="pill pill-y">Semantic</span></div>
+        <div class="card-title">Skeleton Dasar</div>
+        <div class="card-desc">Ini adalah tulang punggung kartu kamu. Copy ini sebagai titik awal!</div>
+        <div class="code-block">
+          <div class="code-header">
+            <div class="mac-dots"><div class="mac-dot r"></div><div class="mac-dot y"></div><div class="mac-dot g"></div></div>
+            <div class="code-lang">index.html</div>
+            <button class="copy-btn" onclick="copyCode(this,'html-skeleton')">copy</button>
+          </div>
+          <div class="code-body" id="html-skeleton"><span class="cm">&lt;!-- Wadah utama halaman --&gt;</span>
+<span class="sel">&lt;main</span> <span class="prop">class</span>=<span class="str">"card-container"</span><span class="sel">&gt;</span>
+  <span class="sel">&lt;div</span> <span class="prop">class</span>=<span class="str">"card"</span><span class="sel">&gt;</span>
+    <span class="cm">&lt;!-- Foto Profil --&gt;</span>
+    <span class="sel">&lt;img</span> <span class="prop">src</span>=<span class="str">"foto.jpg"</span> <span class="prop">alt</span>=<span class="str">"Profile"</span><span class="sel">&gt;</span>
+    
+    <span class="cm">&lt;!-- Identitas --&gt;</span>
+    <span class="sel">&lt;h1</span> <span class="prop">id</span>=<span class="str">"name"</span><span class="sel">&gt;</span>Nama Kamu<span class="sel">&lt;/h1&gt;</span>
+    <span class="sel">&lt;p&gt;</span>Junior Web Developer<span class="sel">&lt;/p&gt;</span>
+    
+    <span class="cm">&lt;!-- Tombol Aksi --&gt;</span>
+    <span class="sel">&lt;div</span> <span class="prop">class</span>=<span class="str">"actions"</span><span class="sel">&gt;</span>
+      <span class="sel">&lt;button</span> <span class="prop">id</span>=<span class="str">"btn-like"</span><span class="sel">&gt;</span>
+        ❤️ Like: <span class="sel">&lt;span</span> <span class="prop">id</span>=<span class="str">"count"</span><span class="sel">&gt;</span>0<span class="sel">&lt;/span&gt;</span>
+      <span class="sel">&lt;/button&gt;</span>
+    <span class="sel">&lt;/div&gt;</span>
+  <span class="sel">&lt;/div&gt;</span>
+<span class="sel">&lt;/main&gt;</span></div>
+        </div>
+      </div>
+
+      <div class="card card-glow-purple scroll-reveal">
+        <div class="tag-row"><span class="pill pill-p">Semantic Tags</span></div>
+        <div class="card-title">Kenapa Semantic?</div>
+        <div class="card-desc">Tag semantic memberi makna pada konten. Browser dan mesin pencari jadi lebih paham!</div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
+          <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;display:flex;align-items:center;gap:12px">
+            <span class="pill pill-c">&lt;main&gt;</span>
+            <span style="font-size:13px;color:var(--muted2)">Konten utama halaman (hanya 1!)</span>
+          </div>
+          <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;display:flex;align-items:center;gap:12px">
+            <span class="pill pill-y">&lt;section&gt;</span>
+            <span style="font-size:13px;color:var(--muted2)">Kelompok konten bertema sama</span>
+          </div>
+          <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;display:flex;align-items:center;gap:12px">
+            <span class="pill pill-p">&lt;footer&gt;</span>
+            <span style="font-size:13px;color:var(--muted2)">Info bawah halaman / kredit</span>
+          </div>
+          <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;display:flex;align-items:center;gap:12px">
+            <span class="pill pill-g">&lt;header&gt;</span>
+            <span style="font-size:13px;color:var(--muted2)">Bagian atas / judul area</span>
+          </div>
+        </div>
+        <div class="analogy" style="margin-top:14px">
+          <div class="analogy-icon">📦</div>
+          <div class="analogy-text">Ibarat ruangan di rumah: <strong>&lt;main&gt;</strong> = ruang tamu, <strong>&lt;section&gt;</strong> = kamar tidur, <strong>&lt;footer&gt;</strong> = dapur. Setiap tag punya fungsinya!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Selectable Cards: Pilih Komponen -->
+    <div class="card card-glow-cyan scroll-reveal">
+      <div class="card-title">Pilih Komponen untuk Lihat Penjelasan</div>
+      <div class="card-desc">Klik salah satu komponen di bawah untuk melihat kode dan penjelasannya.</div>
+      <div class="select-cards" id="comp-select">
+        <div class="sel-card selected" data-comp="img" onclick="selectComp(this,'img')">
+          <div class="sel-icon">🖼️</div>
+          <div class="sel-title">Foto Profil</div>
+          <div class="sel-sub">img + border-radius</div>
+        </div>
+        <div class="sel-card" data-comp="name" onclick="selectComp(this,'name')">
+          <div class="sel-icon">✍️</div>
+          <div class="sel-title">Nama & Role</div>
+          <div class="sel-sub">h1 + p tag</div>
+        </div>
+        <div class="sel-card" data-comp="btn" onclick="selectComp(this,'btn')">
+          <div class="sel-icon">🔗</div>
+          <div class="sel-title">Tombol Sosmed</div>
+          <div class="sel-sub">a + button</div>
+        </div>
+      </div>
+      <div class="sel-preview" id="comp-preview">
+        <div id="comp-preview-content"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SECTION 3: CSS STYLE ====== -->
+  <div class="section-wrap" id="style">
+    <div class="section-header scroll-reveal">
+      <span class="section-badge">SECTION 3</span>
+      <h2>🎨 CSS Style & Flexbox</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <!-- PLAYGROUND: Card Builder -->
+    <div class="card card-glow-purple scroll-reveal" style="margin-bottom:20px">
+      <div class="tag-row"><span class="pill pill-p">PLAYGROUND</span><span class="pill pill-y">Live Demo</span></div>
+      <div class="card-title">🎛️ Card Style Builder</div>
+      <div class="card-desc">Klik tombol-tombol di bawah untuk mengubah style kartu secara real-time!</div>
+      <div class="playground-wrap">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:10px">// BORDER RADIUS FOTO</div>
+          <div class="ctrl-panel">
+            <button class="ctrl-btn on" id="br-50" onclick="setRadius('50%')">50% (bulat)</button>
+            <button class="ctrl-btn" id="br-20" onclick="setRadius('20px')">20px</button>
+            <button class="ctrl-btn" id="br-0" onclick="setRadius('0px')">0px (kotak)</button>
+          </div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:10px;margin-top:14px">// TEMA WARNA</div>
+          <div class="ctrl-panel">
+            <button class="ctrl-btn on" id="theme-dark" onclick="setTheme('dark')">🌑 Dark</button>
+            <button class="ctrl-btn" id="theme-light" onclick="setTheme('light')">☀️ Light</button>
+            <button class="ctrl-btn" id="theme-grad" onclick="setTheme('gradient')">🌈 Gradient</button>
+          </div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:10px;margin-top:14px">// UKURAN FONT</div>
+          <div class="slider-wrap">
+            <div class="slider-row">
+              <div class="slider-label">Nama</div>
+              <input type="range" min="14" max="32" value="20" oninput="setFontSize(this.value)" id="font-range">
+              <div class="slider-val" id="font-val">20px</div>
+            </div>
+          </div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:10px;margin-top:14px">// UKURAN AVATAR</div>
+          <div class="slider-wrap">
+            <div class="slider-row">
+              <div class="slider-label">Avatar</div>
+              <input type="range" min="50" max="120" value="80" oninput="setAvatarSize(this.value)" id="avatar-range">
+              <div class="slider-val" id="avatar-val">80px</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div id="card-demo-preview">
+            <div id="card-demo-inner">
+              <div id="demo-avatar" style="width:80px;height:80px;border-radius:50%;font-size:28px">👤</div>
+              <div id="demo-name" style="font-size:20px">Nama Kamu</div>
+              <div id="demo-role">Junior Web Developer</div>
+              <button id="demo-btn" onclick="demoLike()">❤️ Like: <span id="demo-count">0</span></button>
+            </div>
+          </div>
+          <div class="code-block" style="margin-top:12px">
+            <div class="code-header">
+              <div class="mac-dots"><div class="mac-dot r"></div><div class="mac-dot y"></div><div class="mac-dot g"></div></div>
+              <div class="code-lang">CSS yang ter-generate</div>
+            </div>
+            <div class="code-body" id="gen-css-output" style="font-size:11.5px">/* Ubah kontrol di kiri untuk generate CSS */</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card card-glow-cyan scroll-reveal">
+        <div class="tag-row"><span class="pill pill-c">Flexbox</span><span class="pill pill-g">Layout</span></div>
+        <div class="card-title">Centering dengan Flexbox</div>
+        <div class="card-desc">Trik paling populer untuk menaruh kartu tepat di tengah layar!</div>
+        <div class="code-block">
+          <div class="code-header">
+            <div class="mac-dots"><div class="mac-dot r"></div><div class="mac-dot y"></div><div class="mac-dot g"></div></div>
+            <div class="code-lang">CSS — Centering</div>
+            <button class="copy-btn" onclick="copyCode(this,'css-flex')">copy</button>
+          </div>
+          <div class="code-body" id="css-flex"><span class="sel">.card-container</span> {
+  <span class="prop">display</span>: <span class="val">flex</span>;
+  <span class="prop">justify-content</span>: <span class="val">center</span>;
+  <span class="prop">align-items</span>: <span class="val">center</span>;
+  <span class="prop">min-height</span>: <span class="val">100vh</span>;
+  <span class="cm">/* Ini yang bikin kartu di tengah! */</span>
+}
+
+<span class="sel">.card</span> {
+  <span class="prop">background</span>: <span class="val">#fff</span>;
+  <span class="prop">border-radius</span>: <span class="val">20px</span>;
+  <span class="prop">padding</span>: <span class="val">40px</span>;
+  <span class="prop">width</span>: <span class="val">320px</span>;
+  <span class="prop">text-align</span>: <span class="val">center</span>;
+  <span class="prop">box-shadow</span>: <span class="val">0 20px 60px rgba(0,0,0,.1)</span>;
+}</div>
+        </div>
+        <div class="analogy">
+          <div class="analogy-icon">🏀</div>
+          <div class="analogy-text"><strong>justify-content: center</strong> = lempar bola ke tengah lapangan (horizontal). <strong>align-items: center</strong> = lempar ke tengah tinggi lapangan (vertikal). Keduanya = bola persis di tengah!</div>
+        </div>
+      </div>
+
+      <div class="card card-glow-purple scroll-reveal">
+        <div class="tag-row"><span class="pill pill-r">CSS</span><span class="pill pill-y">Hover Effects</span></div>
+        <div class="card-title">Tombol Hover Interaktif</div>
+        <div class="card-desc">Tombol sosmed yang berubah warna saat di-hover menggunakan transition.</div>
+        <div class="code-block">
+          <div class="code-header">
+            <div class="mac-dots"><div class="mac-dot r"></div><div class="mac-dot y"></div><div class="mac-dot g"></div></div>
+            <div class="code-lang">CSS — Button Hover</div>
+            <button class="copy-btn" onclick="copyCode(this,'css-hover')">copy</button>
+          </div>
+          <div class="code-body" id="css-hover"><span class="sel">.btn-sosmed</span> {
+  <span class="prop">background</span>: <span class="val">#007bff</span>;
+  <span class="prop">color</span>: <span class="val">white</span>;
+  <span class="prop">padding</span>: <span class="val">10px 24px</span>;
+  <span class="prop">border-radius</span>: <span class="val">99px</span>;
+  <span class="prop">border</span>: <span class="val">none</span>;
+  <span class="prop">cursor</span>: <span class="val">pointer</span>;
+  <span class="prop">transition</span>: <span class="val">all 0.3s ease</span>;
+  <span class="cm">/* transition = animasi smooth */</span>
+}
+
+<span class="sel">.btn-sosmed:hover</span> {
+  <span class="prop">background</span>: <span class="val">#0056cc</span>;
+  <span class="prop">transform</span>: <span class="val">translateY(-3px)</span>;
+  <span class="cm">/* naik 3px = efek "terangkat" */</span>
+}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SECTION 4: JAVASCRIPT ====== -->
+  <div class="section-wrap" id="logic">
+    <div class="section-header scroll-reveal">
+      <span class="section-badge">SECTION 4</span>
+      <h2>🧠 JavaScript Logic</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:20px">
+      <div class="card card-glow-cyan scroll-reveal">
+        <div class="tag-row"><span class="pill pill-c">JavaScript</span><span class="pill pill-o">Counter</span></div>
+        <div class="card-title">Fungsi Counter Like</div>
+        <div class="card-desc">Ini adalah inti dari fitur interaktif — tombol Like yang angkanya bertambah!</div>
+        <div class="code-block">
+          <div class="code-header">
+            <div class="mac-dots"><div class="mac-dot r"></div><div class="mac-dot y"></div><div class="mac-dot g"></div></div>
+            <div class="code-lang">JavaScript — Counter</div>
+            <button class="copy-btn" onclick="copyCode(this,'js-counter')">copy</button>
+          </div>
+          <div class="code-body" id="js-counter"><span class="cm">// Langkah 1: Buat variabel penghitung</span>
+<span class="kw">let</span> <span class="prop">angkaLike</span> = <span class="num">0</span>;
+
+<span class="cm">// Langkah 2: Ambil elemen dari HTML</span>
+<span class="kw">const</span> <span class="prop">tombolLike</span> = <span class="fn">document</span>.<span class="fn">querySelector</span>(<span class="str">'#btn-like'</span>);
+<span class="kw">const</span> <span class="prop">tampilanAngka</span> = <span class="fn">document</span>.<span class="fn">querySelector</span>(<span class="str">'#count'</span>);
+
+<span class="cm">// Langkah 3: Dengarkan event "klik"</span>
+<span class="prop">tombolLike</span>.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, () => {
+    <span class="prop">angkaLike</span>++; <span class="cm">// Tambah 1 setiap klik</span>
+    <span class="prop">tampilanAngka</span>.textContent = <span class="prop">angkaLike</span>;
+});</div>
+        </div>
+        <div class="analogy" style="margin-top:12px">
+          <div class="analogy-icon">🎮</div>
+          <div class="analogy-text">Bayangkan game dengan score counter. <strong>angkaLike</strong> = score di memori, <strong>tampilanAngka.textContent</strong> = layar score yang kamu lihat. Setiap klik = score +1!</div>
+        </div>
+      </div>
+
+      <div class="card card-glow-purple scroll-reveal">
+        <div class="tag-row"><span class="pill pill-p">JavaScript</span><span class="pill pill-y">Alert</span></div>
+        <div class="card-title">Alert Saat Link Diklik</div>
+        <div class="card-desc">Tampilkan pesan sambutan setiap kali tombol link sosmed diklik.</div>
+        <div class="code-block">
+          <div class="code-header">
+            <div class="mac-dots"><div class="mac-dot r"></div><div class="mac-dot y"></div><div class="mac-dot g"></div></div>
+            <div class="code-lang">JavaScript — Alert</div>
+            <button class="copy-btn" onclick="copyCode(this,'js-alert')">copy</button>
+          </div>
+          <div class="code-body" id="js-alert"><span class="cm">// Ambil semua link sosmed</span>
+<span class="kw">const</span> <span class="prop">semuaLink</span> = <span class="fn">document</span>.<span class="fn">querySelectorAll</span>(<span class="str">'.btn-sosmed'</span>);
+
+<span class="cm">// Loop semua link, tambah event klik</span>
+<span class="prop">semuaLink</span>.<span class="fn">forEach</span>(<span class="prop">link</span> => {
+    <span class="prop">link</span>.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, () => {
+        <span class="fn">alert</span>(<span class="str">"Terima kasih sudah berkunjung! 🎉"</span>);
+    });
+});
+
+<span class="cm">// Atau cara singkat untuk 1 tombol:</span>
+<span class="fn">document</span>.<span class="fn">querySelector</span>(<span class="str">'#btn-ig'</span>)
+  .<span class="fn">addEventListener</span>(<span class="str">'click'</span>, () => {
+    <span class="fn">alert</span>(<span class="str">"Kamu diarahkan ke Instagram!"</span>);
+});</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DOM 3 Langkah -->
+    <div class="card card-glow-cyan scroll-reveal">
+      <div class="tag-row"><span class="pill pill-c">Konsep DOM</span><span class="pill pill-g">3 Langkah</span></div>
+      <div class="card-title">Rumus 3 Langkah Manipulasi DOM</div>
+      <div class="card-desc">Setiap kali kamu mau JS berinteraksi dengan HTML, selalu ikuti 3 langkah ini.</div>
+      <div class="grid-3" style="margin-top:4px">
+        <div style="background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:16px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:var(--cyan);font-weight:700;margin-bottom:8px">01</div>
+          <div style="font-weight:600;margin-bottom:6px">Siapkan Variabel</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted2);background:#060910;padding:8px;border-radius:6px">let counter = 0;</div>
+          <div style="font-size:12px;color:var(--muted2);margin-top:8px">Variabel = wadah untuk menyimpan data/nilai</div>
+        </div>
+        <div style="background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:16px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:var(--purple);font-weight:700;margin-bottom:8px">02</div>
+          <div style="font-weight:600;margin-bottom:6px">Ambil Elemen HTML</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted2);background:#060910;padding:8px;border-radius:6px">querySelector('#id')</div>
+          <div style="font-size:12px;color:var(--muted2);margin-top:8px">querySelector = jembatan JS ke HTML</div>
+        </div>
+        <div style="background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:16px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:28px;color:var(--yellow);font-weight:700;margin-bottom:8px">03</div>
+          <div style="font-weight:600;margin-bottom:6px">Tambah Event Listener</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted2);background:#060910;padding:8px;border-radius:6px">.addEventListener()</div>
+          <div style="font-size:12px;color:var(--muted2);margin-top:8px">Event = reaksi terhadap aksi pengguna</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SECTION 5: BONUS CHALLENGE ====== -->
+  <div class="section-wrap" id="bonus">
+    <div class="section-header scroll-reveal">
+      <span class="section-badge">SECTION 5</span>
+      <h2>🚀 Bonus Challenge</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:20px">
+      <div class="card card-glow-purple scroll-reveal">
+        <div class="tag-row"><span class="pill pill-r">BONUS</span><span class="pill pill-o">Dynamic Theme</span></div>
+        <div class="card-title">🎨 Dynamic Theme</div>
+        <div class="card-desc">Background berubah warna setiap Like mencapai kelipatan 5. Pakai modulo operator!</div>
+        <div class="code-block">
+          <div class="code-header">
+            <div class="mac-dots"><div class="mac-dot r"></div><div class="mac-dot y"></div><div class="mac-dot g"></div></div>
+            <div class="code-lang">JavaScript — Dynamic Theme</div>
+            <button class="copy-btn" onclick="copyCode(this,'js-theme')">copy</button>
+          </div>
+          <div class="code-body" id="js-theme"><span class="kw">const</span> <span class="prop">colors</span> = [
+  <span class="str">'#ff6b6b'</span>, <span class="str">'#ffd93d'</span>, <span class="str">'#6bcb77'</span>,
+  <span class="str">'#4d96ff'</span>, <span class="str">'#ff6bb5'</span>
+];
+<span class="kw">let</span> <span class="prop">colorIdx</span> = <span class="num">0</span>;
+
+<span class="prop">tombolLike</span>.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, () => {
+  <span class="prop">angkaLike</span>++;
+  <span class="prop">tampilanAngka</span>.textContent = <span class="prop">angkaLike</span>;
+  
+  <span class="cm">// % = sisa bagi (modulo)</span>
+  <span class="cm">// 5 % 5 = 0, 10 % 5 = 0, dll</span>
+  <span class="kw">if</span> (<span class="prop">angkaLike</span> % <span class="num">5</span> === <span class="num">0</span>) {
+    <span class="fn">document</span>.body.style.background 
+      = <span class="prop">colors</span>[<span class="prop">colorIdx</span> % <span class="prop">colors</span>.length];
+    <span class="prop">colorIdx</span>++;
+  }
+});</div>
+        </div>
+        <div class="info-box info-purple" style="margin-top:12px">
+          💡 <strong>Operator Modulo (%)</strong> = sisa bagi. Contoh: 10 % 3 = 1, karena 10 = 3×3 + sisa 1. Berguna untuk membuat sesuatu terjadi setiap N langkah!
+        </div>
+      </div>
+
+      <div class="card card-glow-cyan scroll-reveal">
+        <div class="tag-row"><span class="pill pill-c">BONUS</span><span class="pill pill-g">Input Event</span></div>
+        <div class="card-title">✍️ Real-time Name Input</div>
+        <div class="card-desc">Teks nama di kartu berubah secara langsung saat user mengetik! Pakai event 'input'.</div>
+        <div class="code-block">
+          <div class="code-header">
+            <div class="mac-dots"><div class="mac-dot r"></div><div class="mac-dot y"></div><div class="mac-dot g"></div></div>
+            <div class="code-lang">HTML + JavaScript — Input Real-time</div>
+            <button class="copy-btn" onclick="copyCode(this,'js-input')">copy</button>
+          </div>
+          <div class="code-body" id="js-input"><span class="cm">&lt;!-- HTML: tambahkan input box --&gt;</span>
+<span class="sel">&lt;input</span> <span class="prop">type</span>=<span class="str">"text"</span> <span class="prop">id</span>=<span class="str">"input-nama"</span>
+  <span class="prop">placeholder</span>=<span class="str">"Ketik namamu..."</span><span class="sel">&gt;</span>
+
+<span class="cm">// JavaScript: event 'input' = langsung saat ketik</span>
+<span class="kw">const</span> <span class="prop">inputNama</span> = <span class="fn">document</span>.<span class="fn">querySelector</span>(<span class="str">'#input-nama'</span>);
+<span class="kw">const</span> <span class="prop">displayNama</span> = <span class="fn">document</span>.<span class="fn">querySelector</span>(<span class="str">'#name'</span>);
+
+<span class="prop">inputNama</span>.<span class="fn">addEventListener</span>(<span class="str">'input'</span>, () => {
+  <span class="cm">// .value = teks yang diketik user</span>
+  <span class="prop">displayNama</span>.textContent = <span class="prop">inputNama</span>.value;
+});
+
+<span class="cm">// Bedanya 'input' vs 'change':</span>
+<span class="cm">// 'input' → langsung saat ketik (real-time)</span>
+<span class="cm">// 'change' → saat focus pindah (setelah selesai)</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GELAR SECTION -->
+    <div class="card card-glow-cyan scroll-reveal">
+      <div class="tag-row"><span class="pill pill-y">🏆 Gamifikasi</span></div>
+      <div class="card-title">Gelar Akhir Sesi</div>
+      <div class="card-desc">Ada 3 gelar yang bisa kamu raih hari ini. Yang mana targetmu?</div>
+      <div class="gelar-grid">
+        <div class="gelar-card" style="border-color:rgba(56,245,212,.2)">
+          <div class="gelar-icon">✨</div>
+          <div class="gelar-name" style="color:var(--cyan)">The Pixel Perfect</div>
+          <div class="gelar-desc">CSS paling rapi, desain paling cantik, dan kartu paling eye-catching se-kelas!</div>
+          <div class="tag-row" style="justify-content:center;margin-top:8px"><span class="pill pill-c">CSS Master</span></div>
+        </div>
+        <div class="gelar-card" style="border-color:rgba(167,139,250,.2)">
+          <div class="gelar-icon">🧠</div>
+          <div class="gelar-name" style="color:var(--purple)">The Logic Master</div>
+          <div class="gelar-desc">Berhasil selesaikan bonus challenge JS: Dynamic Theme + Input Real-time!</div>
+          <div class="tag-row" style="justify-content:center;margin-top:8px"><span class="pill pill-p">JS Expert</span></div>
+        </div>
+        <div class="gelar-card" style="border-color:rgba(255,217,90,.2)">
+          <div class="gelar-icon">⚡</div>
+          <div class="gelar-name" style="color:var(--yellow)">The Speed Runner</div>
+          <div class="gelar-desc">Selesai pertama dengan nol error dan semua requirement terpenuhi!</div>
+          <div class="tag-row" style="justify-content:center;margin-top:8px"><span class="pill pill-y">Fastest Finisher</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SECTION 6: CHECKLIST ====== -->
+  <div class="section-wrap" id="checklist">
+    <div class="section-header scroll-reveal">
+      <span class="section-badge">SECTION 6</span>
+      <h2>✅ Checklist "Lulus" Challenge</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="card card-glow-purple scroll-reveal">
+      <div class="card-title">Cek semua ini sebelum submit!</div>
+      <div class="card-desc">Klik setiap item setelah kamu selesaikan. Progress bar akan bertambah.</div>
+      <div class="check-progress-bar"><div class="check-fill" id="checkFill"></div></div>
+      <div class="check-counter" id="checkCount">0 / 9 selesai</div>
+      <div class="checklist-wrap">
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-box"></div>
+          <div class="check-body">
+            <div class="check-title">Pakai tag <code style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cyan)">&lt;main&gt;</code> sebagai wadah utama</div>
+            <div class="check-desc">Semantic HTML — elemen main hanya boleh ada 1 di halaman</div>
+          </div>
+          <span class="pill pill-y check-cat">HTML</span>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-box"></div>
+          <div class="check-body">
+            <div class="check-title">Foto profil menggunakan <code style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cyan)">border-radius: 50%</code></div>
+            <div class="check-desc">Foto harus tampak bulat sempurna, bukan persegi</div>
+          </div>
+          <span class="pill pill-c check-cat">CSS</span>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-box"></div>
+          <div class="check-body">
+            <div class="check-title">Kartu posisinya di tengah layar menggunakan Flexbox</div>
+            <div class="check-desc">display: flex + justify-content: center + align-items: center + min-height: 100vh</div>
+          </div>
+          <span class="pill pill-c check-cat">CSS</span>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-box"></div>
+          <div class="check-body">
+            <div class="check-title">Tombol sosmed berubah tampilan saat di-hover</div>
+            <div class="check-desc">Wajib pakai property transition untuk animasi smooth</div>
+          </div>
+          <span class="pill pill-c check-cat">CSS</span>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-box"></div>
+          <div class="check-body">
+            <div class="check-title">Tombol Like berfungsi — angka bertambah setiap diklik</div>
+            <div class="check-desc">Gunakan addEventListener('click') + variabel counter</div>
+          </div>
+          <span class="pill pill-p check-cat">JS</span>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-box"></div>
+          <div class="check-body">
+            <div class="check-title">Alert "Terima kasih sudah berkunjung!" muncul saat link diklik</div>
+            <div class="check-desc">Gunakan window.alert() atau confirm() di dalam event listener</div>
+          </div>
+          <span class="pill pill-p check-cat">JS</span>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-box"></div>
+          <div class="check-body">
+            <div class="check-title">Nama dan Role terisi dengan identitas kamu sendiri</div>
+            <div class="check-desc">Bukan placeholder "Nama Kamu" — isi dengan namamu yang sebenarnya!</div>
+          </div>
+          <span class="pill pill-g check-cat">Konten</span>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-box"></div>
+          <div class="check-body">
+            <div class="check-title">Kode sudah di-commit dan di-push ke GitHub</div>
+            <div class="check-desc">git add . → git commit -m "feat: digital business card" → git push</div>
+          </div>
+          <span class="pill pill-o check-cat">Deploy</span>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)">
+          <div class="check-box"></div>
+          <div class="check-body">
+            <div class="check-title">(BONUS) Selesaikan Dynamic Theme atau Input Real-time</div>
+            <div class="check-desc">Untuk mendapatkan gelar "The Logic Master"!</div>
+          </div>
+          <span class="pill pill-r check-cat">Bonus</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SECTION 7: QUIZ ====== -->
+  <div class="section-wrap" id="quiz">
+    <div class="section-header scroll-reveal">
+      <span class="section-badge">SECTION 7</span>
+      <h2>🧠 Quiz — Uji Pemahamanmu!</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="card card-glow-cyan scroll-reveal">
+      <div class="quiz-wrap">
+        <div class="score-dots" id="scoreDots"></div>
+        <div id="quizMain">
+          <div class="quiz-counter" id="quizCounter"></div>
+          <div class="quiz-question" id="quizQ"></div>
+          <div class="quiz-options" id="quizOpts"></div>
+          <div class="quiz-feedback" id="quizFeedback"></div>
+          <button class="quiz-next-btn" id="quizNext" onclick="nextQ()"></button>
+        </div>
+        <div class="quiz-result" id="quizResult">
+          <div class="quiz-result-emoji" id="resultEmoji"></div>
+          <div class="quiz-result-title" id="resultTitle"></div>
+          <div class="quiz-result-score" id="resultScore"></div>
+          <button class="restart-btn" onclick="restartQuiz()">🔁 Ulangi Quiz</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-tags">
+      <span class="pill pill-c">HTML</span>
+      <span class="pill pill-p">CSS Flexbox</span>
+      <span class="pill pill-y">JavaScript DOM</span>
+      <span class="pill pill-g">Semantic Tags</span>
+      <span class="pill pill-o">Event Listener</span>
+      <span class="pill pill-r">60-Min Challenge</span>
+    </div>
+    <p>Cheatsheet — The Digital Business Card Challenge · Semangat ngoding! 🚀</p>
+  </div>
+
+</div>
+
+<script>
+// ========================
+// 1. PROGRESS BAR SCROLL
+// ========================
+window.addEventListener('scroll', () => {
+  const el = document.getElementById('progressBar');
+  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+  el.style.width = Math.min(pct, 100) + '%';
+});
+
+// ========================
+// 2. SCROLL REVEAL
+// ========================
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+}, { threshold: 0.1, rootMargin: '0px 0px -20px 0px' });
+
+document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+
+function triggerVisibleElements() {
+  document.querySelectorAll('.scroll-reveal').forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      el.classList.add('visible');
+    }
+  });
+}
+triggerVisibleElements();
+setTimeout(triggerVisibleElements, 100);
+setTimeout(triggerVisibleElements, 400);
+
+// ========================
+// 3. COPY CODE
+// ========================
+function copyCode(btn, id) {
+  const el = document.getElementById(id);
+  navigator.clipboard.writeText(el.innerText);
+  btn.textContent = '✓ copied';
+  btn.classList.add('copied');
+  setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 2000);
+}
+
+// ========================
+// 4. NAV ACTIVE
+// ========================
+const sections = ['brief','struktur','style','logic','bonus','checklist','quiz'];
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && window.scrollY >= el.offsetTop - 120) current = id;
+  });
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+});
+
+// ========================
+// 5. PLAYGROUND: Card Builder
+// ========================
+let currentRadius = '50%';
+let currentTheme = 'dark';
+let currentFontSize = 20;
+let currentAvatarSize = 80;
+let demoLikeCount = 0;
+
+const themeConfigs = {
+  dark: { bg: '#1a2133', namec: '#e2e8f5', rolec: '#64748b', btnbg: '#38f5d4', btnc: '#080b14' },
+  light: { bg: '#f8fafc', namec: '#1e293b', rolec: '#64748b', btnbg: '#3b82f6', btnc: '#ffffff' },
+  gradient: { bg: 'linear-gradient(135deg,#667eea,#764ba2)', namec: '#ffffff', rolec: 'rgba(255,255,255,.7)', btnbg: '#ffd95a', btnc: '#1e293b' }
+};
+
+function updateCardDemo() {
+  const demo = document.getElementById('card-demo-inner');
+  const avatar = document.getElementById('demo-avatar');
+  const nameEl = document.getElementById('demo-name');
+  const roleEl = document.getElementById('demo-role');
+  const btnEl = document.getElementById('demo-btn');
+  const t = themeConfigs[currentTheme];
+  demo.style.background = t.bg;
+  avatar.style.width = currentAvatarSize + 'px';
+  avatar.style.height = currentAvatarSize + 'px';
+  avatar.style.borderRadius = currentRadius;
+  nameEl.style.color = t.namec;
+  nameEl.style.fontSize = currentFontSize + 'px';
+  roleEl.style.color = t.rolec;
+  btnEl.style.background = t.btnbg;
+  btnEl.style.color = t.btnc;
+
+  const themeStr = currentTheme === 'gradient'
+    ? `linear-gradient(135deg,#667eea,#764ba2)` : t.bg;
+  document.getElementById('gen-css-output').innerHTML =
+`<span class="sel">.card</span> {
+  <span class="prop">background</span>: <span class="val">${themeStr}</span>;
+}
+<span class="sel">img.profile</span> {
+  <span class="prop">width</span>: <span class="val">${currentAvatarSize}px</span>;
+  <span class="prop">height</span>: <span class="val">${currentAvatarSize}px</span>;
+  <span class="prop">border-radius</span>: <span class="val">${currentRadius}</span>;
+}
+<span class="sel">h1</span> {
+  <span class="prop">font-size</span>: <span class="val">${currentFontSize}px</span>;
+  <span class="prop">color</span>: <span class="val">${t.namec}</span>;
+}`;
+}
+
+function setRadius(v) {
+  currentRadius = v;
+  document.querySelectorAll('[id^=br-]').forEach(b => b.classList.remove('on'));
+  document.getElementById('br-' + (v === '50%' ? '50' : v === '20px' ? '20' : '0')).classList.add('on');
+  updateCardDemo();
+}
+
+function setTheme(v) {
+  currentTheme = v;
+  document.querySelectorAll('[id^=theme-]').forEach(b => b.classList.remove('on'));
+  document.getElementById('theme-' + v).classList.add('on');
+  updateCardDemo();
+}
+
+function setFontSize(v) {
+  currentFontSize = parseInt(v);
+  document.getElementById('font-val').textContent = v + 'px';
+  updateCardDemo();
+}
+
+function setAvatarSize(v) {
+  currentAvatarSize = parseInt(v);
+  document.getElementById('avatar-val').textContent = v + 'px';
+  updateCardDemo();
+}
+
+function demoLike() {
+  demoLikeCount++;
+  document.getElementById('demo-count').textContent = demoLikeCount;
+  const btn = document.getElementById('demo-btn');
+  btn.style.transform = 'scale(1.15)';
+  setTimeout(() => { btn.style.transform = 'scale(1)'; }, 150);
+}
+
+updateCardDemo();
+
+// ========================
+// 5b. SELECTABLE CARDS — Komponen
+// ========================
+const compData = {
+  img: {
+    title: '🖼️ Foto Profil Bulat',
+    html: `<span class="cm">&lt;!-- HTML --&gt;</span>
+<span class="sel">&lt;img</span> <span class="prop">src</span>=<span class="str">"foto.jpg"</span>
+  <span class="prop">alt</span>=<span class="str">"Profile Photo"</span>
+  <span class="prop">class</span>=<span class="str">"profile-pic"</span><span class="sel">&gt;</span>
+
+<span class="cm">/* CSS */</span>
+<span class="sel">.profile-pic</span> {
+  <span class="prop">width</span>: <span class="val">120px</span>;
+  <span class="prop">height</span>: <span class="val">120px</span>;
+  <span class="prop">border-radius</span>: <span class="val">50%</span>; <span class="cm">/* KUNCI! */</span>
+  <span class="prop">object-fit</span>: <span class="val">cover</span>; <span class="cm">/* Foto tidak menyobek */</span>
+  <span class="prop">border</span>: <span class="val">3px solid #007bff</span>;
+}`,
+    tip: '💡 object-fit: cover sangat penting agar foto tidak terlihat terdistorsi/menyobek ketika dibuat persegi.'
+  },
+  name: {
+    title: '✍️ Nama & Role',
+    html: `<span class="cm">&lt;!-- HTML --&gt;</span>
+<span class="sel">&lt;h1</span> <span class="prop">id</span>=<span class="str">"name"</span><span class="sel">&gt;</span>Nama Kamu<span class="sel">&lt;/h1&gt;</span>
+<span class="sel">&lt;p</span> <span class="prop">class</span>=<span class="str">"role"</span><span class="sel">&gt;</span>Junior Web Developer<span class="sel">&lt;/p&gt;</span>
+
+<span class="cm">/* CSS */</span>
+<span class="sel">h1</span> {
+  <span class="prop">font-size</span>: <span class="val">1.8rem</span>;
+  <span class="prop">font-weight</span>: <span class="val">700</span>;
+  <span class="prop">margin</span>: <span class="val">12px 0 4px</span>;
+}
+<span class="sel">.role</span> {
+  <span class="prop">color</span>: <span class="val">#888</span>;
+  <span class="prop">font-size</span>: <span class="val">0.9rem</span>;
+}`,
+    tip: '💡 Gunakan unit rem (relatif terhadap root) agar teks responsif di semua ukuran layar.'
+  },
+  btn: {
+    title: '🔗 Tombol Sosial Media',
+    html: `<span class="cm">&lt;!-- HTML --&gt;</span>
+<span class="sel">&lt;div</span> <span class="prop">class</span>=<span class="str">"social-links"</span><span class="sel">&gt;</span>
+  <span class="sel">&lt;a</span> <span class="prop">href</span>=<span class="str">"#"</span> <span class="prop">class</span>=<span class="str">"btn-sosmed"</span><span class="sel">&gt;</span>Instagram<span class="sel">&lt;/a&gt;</span>
+  <span class="sel">&lt;a</span> <span class="prop">href</span>=<span class="str">"#"</span> <span class="prop">class</span>=<span class="str">"btn-sosmed"</span><span class="sel">&gt;</span>GitHub<span class="sel">&lt;/a&gt;</span>
+<span class="sel">&lt;/div&gt;</span>
+
+<span class="cm">/* CSS */</span>
+<span class="sel">.btn-sosmed</span> {
+  <span class="prop">padding</span>: <span class="val">8px 20px</span>;
+  <span class="prop">border-radius</span>: <span class="val">99px</span>;
+  <span class="prop">background</span>: <span class="val">#007bff</span>;
+  <span class="prop">color</span>: <span class="val">white</span>;
+  <span class="prop">text-decoration</span>: <span class="val">none</span>;
+  <span class="prop">transition</span>: <span class="val">all 0.3s</span>;
+}
+<span class="sel">.btn-sosmed:hover</span> {
+  <span class="prop">transform</span>: <span class="val">translateY(-3px)</span>;
+  <span class="prop">box-shadow</span>: <span class="val">0 8px 20px rgba(0,123,255,.3)</span>;
+}`,
+    tip: '💡 text-decoration: none menghilangkan garis bawah default dari tag &lt;a&gt;.'
+  }
+};
+
+function selectComp(el, key) {
+  document.querySelectorAll('#comp-select .sel-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  const d = compData[key];
+  document.getElementById('comp-preview-content').innerHTML = `
+    <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:16px;margin-bottom:12px">${d.title}</div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="mac-dots"><div class="mac-dot r"></div><div class="mac-dot y"></div><div class="mac-dot g"></div></div>
+        <div class="code-lang">HTML + CSS</div>
+      </div>
+      <div class="code-body" style="font-size:11.5px">${d.html}</div>
+    </div>
+    <div class="info-box info-cyan" style="margin-top:12px">${d.tip}</div>
+  `;
+}
+selectComp(document.querySelector('#comp-select .sel-card'), 'img');
+
+// ========================
+// 6. QUIZ ENGINE
+// ========================
+const questions = [
+  {
+    q: "Tag HTML mana yang paling tepat digunakan sebagai wadah utama halaman?",
+    opts: ["div", "main", "section", "body"],
+    ans: 1,
+    exp: "Tag &lt;main&gt; adalah elemen semantic yang menandai konten utama halaman. Hanya boleh ada 1 &lt;main&gt; per halaman."
+  },
+  {
+    q: "Property CSS apa yang membuat foto profil menjadi berbentuk bulat?",
+    opts: ["border-radius: 50%", "border-circle: yes", "shape: circle", "clip-path: 50%"],
+    ans: 0,
+    exp: "border-radius: 50% mengubah sudut elemen sehingga terlihat seperti lingkaran sempurna. Ini bekerja paling baik pada elemen dengan width dan height yang sama."
+  },
+  {
+    q: "Kombinasi CSS apa yang digunakan untuk menaruh kartu tepat di tengah layar secara horizontal DAN vertikal?",
+    opts: ["text-align: center + margin: auto", "display: flex + justify-content: center + align-items: center + min-height: 100vh", "position: absolute + top: 50% + left: 50%", "float: center"],
+    ans: 1,
+    exp: "Flexbox centering adalah cara paling modern dan reliable. display: flex mengaktifkan flexbox, justify-content mengatur sumbu utama (horizontal), align-items mengatur sumbu silang (vertikal)."
+  },
+  {
+    q: "Di JavaScript, cara paling tepat untuk menambahkan angka 1 ke variabel 'counter' adalah?",
+    opts: ["counter = counter + 1 atau counter++", "counter += counter", "counter = +1", "addOne(counter)"],
+    ans: 0,
+    exp: "counter++ adalah shorthand dari counter = counter + 1. Keduanya valid! operator ++ disebut 'increment operator'."
+  },
+  {
+    q: "Method JavaScript apa yang digunakan untuk mengambil elemen HTML berdasarkan ID-nya?",
+    opts: ["document.getTag()", "document.querySelector('#id') atau getElementById('id')", "document.findElement()", "html.getById()"],
+    ans: 1,
+    exp: "document.querySelector('#id') menggunakan CSS selector (tambahkan #), sedangkan getElementById('id') tidak perlu tanda #. Keduanya bekerja!"
+  },
+  {
+    q: "Property CSS apa yang WAJIB dipasang agar hover effect pada tombol terlihat smooth/tidak langsung?",
+    opts: ["animation", "transition", "transform", "effect"],
+    ans: 1,
+    exp: "property 'transition' menentukan seberapa lambat/cepat perubahan CSS terjadi. Contoh: transition: all 0.3s ease; artinya semua perubahan CSS berlangsung selama 0.3 detik."
+  },
+  {
+    q: "Event apa yang harus digunakan agar teks di kartu berubah REAL-TIME saat user mengetik di input box?",
+    opts: ["'click'", "'keydown'", "'input'", "'change'"],
+    ans: 2,
+    exp: "Event 'input' terpicu setiap kali nilai input berubah (langsung saat mengetik). Event 'change' hanya terpicu setelah fokus pindah dari elemen, jadi tidak real-time."
+  },
+  {
+    q: "Operator JavaScript apa yang digunakan untuk mengecek apakah angka adalah kelipatan 5? (mis: 10, 15, 20...)",
+    opts: ["/ 5", "* 5", "% 5 === 0", "^ 5"],
+    ans: 2,
+    exp: "Operator % (modulo) menghasilkan sisa bagi. Jika angka % 5 === 0, berarti angka tersebut habis dibagi 5, alias kelipatan 5. Contoh: 10 % 5 = 0, 15 % 5 = 0."
+  },
+  {
+    q: "Apa fungsi property 'object-fit: cover' pada tag img foto profil?",
+    opts: [
+      "Membuat foto menjadi hitam putih",
+      "Membuat foto memenuhi area tanpa terdistorsi/terpotong aneh",
+      "Menambahkan border pada foto",
+      "Membuat foto menjadi transparan"
+    ],
+    ans: 1,
+    exp: "object-fit: cover memastikan gambar memenuhi seluruh area container dengan mempertahankan aspect ratio. Bagian yang melebihi area akan dipotong secara proporsional."
+  },
+  {
+    q: "Setelah menyelesaikan challenge, langkah apa yang harus dilakukan untuk menyimpan hasil ke GitHub?",
+    opts: [
+      "Hanya save file di komputer",
+      "git add . → git commit -m 'pesan' → git push",
+      "Copy-paste ke GitHub website secara manual",
+      "Kirim via email ke guru"
+    ],
+    ans: 1,
+    exp: "Workflow Git standar: 'git add .' untuk staging semua perubahan, 'git commit -m ...' untuk menyimpan snapshot, dan 'git push' untuk upload ke repository GitHub."
+  }
+];
+
+let qIdx = 0, scores = [], answered = false;
+
+function buildQuiz() {
+  const dots = document.getElementById('scoreDots');
+  dots.innerHTML = '';
+  for (let i = 0; i < questions.length; i++) {
+    const d = document.createElement('div');
+    d.className = 'score-dot';
+    if (scores[i] === true) d.classList.add('correct');
+    else if (scores[i] === false) d.classList.add('wrong');
+    dots.appendChild(d);
+  }
+
+  if (qIdx >= questions.length) {
+    showResult(); return;
+  }
+
+  const q = questions[qIdx];
+  document.getElementById('quizCounter').textContent = `Soal ${qIdx + 1} / ${questions.length}`;
+  document.getElementById('quizQ').textContent = q.q;
+
+  const opts = document.getElementById('quizOpts');
+  opts.innerHTML = '';
+  const labels = ['A', 'B', 'C', 'D'];
+  q.opts.forEach((opt, i) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-opt';
+    div.innerHTML = `<span class="opt-label">${labels[i]}</span> ${opt}`;
+    div.onclick = () => answerQuiz(i);
+    opts.appendChild(div);
+  });
+
+  const fb = document.getElementById('quizFeedback');
+  fb.className = 'quiz-feedback';
+  fb.textContent = '';
+
+  const nextBtn = document.getElementById('quizNext');
+  nextBtn.style.display = 'none';
+  nextBtn.textContent = qIdx === questions.length - 1 ? 'Lihat Hasil 🏆' : 'Soal Berikutnya →';
+  answered = false;
+}
+
+function answerQuiz(i) {
+  if (answered) return;
+  answered = true;
+  const q = questions[qIdx];
+  const opts = document.querySelectorAll('.quiz-opt');
+  const fb = document.getElementById('quizFeedback');
+  const isCorrect = i === q.ans;
+  scores[qIdx] = isCorrect;
+
+  opts[i].classList.add(isCorrect ? 'correct-ans' : 'wrong-ans');
+  if (!isCorrect) opts[q.ans].classList.add('correct-ans');
+  opts.forEach(o => o.style.pointerEvents = 'none');
+
+  fb.className = 'quiz-feedback show ' + (isCorrect ? 'ok' : 'bad');
+  fb.innerHTML = (isCorrect ? '✅ Benar! ' : '❌ Salah. ') + q.exp;
+
+  document.getElementById('quizNext').style.display = 'inline-block';
+
+  // update dot
+  const dots = document.querySelectorAll('.score-dot');
+  dots[qIdx].classList.add(isCorrect ? 'correct' : 'wrong');
+}
+
+function nextQ() {
+  qIdx++;
+  buildQuiz();
+}
+
+function showResult() {
+  document.getElementById('quizMain').style.display = 'none';
+  const res = document.getElementById('quizResult');
+  res.classList.add('show');
+  const correct = scores.filter(s => s === true).length;
+  const pct = Math.round(correct / questions.length * 100);
+  let emoji, title;
+  if (pct === 100) { emoji = '🏆'; title = 'SEMPURNA! The Logic Master sejati!'; }
+  else if (pct >= 80) { emoji = '🔥'; title = 'Luar Biasa! Hampir sempurna!'; }
+  else if (pct >= 60) { emoji = '👍'; title = 'Bagus! Masih ada ruang untuk berkembang.'; }
+  else if (pct >= 40) { emoji = '📚'; title = 'Perlu belajar lebih. Semangat!'; }
+  else { emoji = '💪'; title = 'Jangan menyerah! Coba lagi!'; }
+  document.getElementById('resultEmoji').textContent = emoji;
+  document.getElementById('resultTitle').textContent = title;
+  document.getElementById('resultScore').textContent = `${correct} / ${questions.length} benar (${pct}%)`;
+}
+
+function restartQuiz() {
+  qIdx = 0; scores = []; answered = false;
+  document.getElementById('quizMain').style.display = 'block';
+  document.getElementById('quizResult').classList.remove('show');
+  buildQuiz();
+}
+
+// ========================
+// 7. CHECKLIST
+// ========================
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+  el.querySelector('.check-box').textContent = el.classList.contains('checked') ? '✓' : '';
+  updateCheckProgress();
+}
+
+function updateCheckProgress() {
+  const total = document.querySelectorAll('.check-item').length;
+  const done = document.querySelectorAll('.check-item.checked').length;
+  document.getElementById('checkCount').textContent = `${done} / ${total} selesai`;
+  document.getElementById('checkFill').style.width = (done / total * 100) + '%';
+}
+
+// Init
+buildQuiz();
+</script>
+</body>
+</html>
