@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auto Slider Cheatsheet — HTML CSS JS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080b14;
+  --surface: #0f1320;
+  --card: #131926;
+  --card2: #1a2133;
+  --border: #1e2d47;
+  --border2: #263650;
+  --yellow: #ffd95a;
+  --cyan: #38f5d4;
+  --pink: #ff6b9d;
+  --purple: #a78bfa;
+  --orange: #fb923c;
+  --green: #4ade80;
+  --blue: #60a5fa;
+  --red: #f87171;
+  --text: #e2e8f5;
+  --muted: #64748b;
+  --muted2: #94a3b8;
+  --glow-cyan: 0 0 30px rgba(56,245,212,.15);
+  --glow-purple: 0 0 30px rgba(167,139,250,.15);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+html{scroll-behavior:smooth}
+
+body{
+  font-family:'Outfit',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  font-size:15px;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
+
+/* Grid BG */
+.grid-bg{
+  position:fixed;inset:0;z-index:0;
+  background-image:
+    linear-gradient(rgba(30,45,71,.3) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30,45,71,.3) 1px, transparent 1px);
+  background-size:40px 40px;
+  pointer-events:none;
+}
+
+/* Orbs */
+.orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0}
+.orb-1{width:500px;height:500px;background:rgba(56,245,212,.07);filter:blur(100px);top:-150px;left:-150px}
+.orb-2{width:500px;height:500px;background:rgba(167,139,250,.07);filter:blur(100px);bottom:-150px;right:-150px}
+
+/* Progress bar */
+.progress-bar-outer{position:fixed;top:0;left:0;width:100%;height:2px;z-index:1000;background:rgba(255,255,255,.04)}
+.progress-bar-inner{height:100%;width:0%;background:linear-gradient(90deg,var(--cyan),var(--purple));transition:width .1s}
+
+/* Nav */
+.nav{
+  position:fixed;top:2px;left:0;right:0;z-index:999;
+  display:flex;align-items:center;gap:24px;
+  padding:0 32px;height:58px;
+  background:rgba(8,11,20,.85);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.nav-brand{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:17px;
+  background:linear-gradient(90deg,var(--cyan),var(--purple));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  white-space:nowrap;
+}
+.nav-links{display:flex;gap:4px;margin-left:auto;flex-wrap:wrap}
+.nav-links a{
+  font-size:12px;font-weight:500;color:var(--muted2);
+  text-decoration:none;padding:5px 11px;border-radius:8px;
+  transition:all .2s;
+}
+.nav-links a:hover,.nav-links a.active{color:var(--cyan);background:rgba(56,245,212,.08)}
+
+/* Wrapper */
+.wrapper{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:100px 24px 80px}
+
+/* Hero */
+.hero{text-align:center;padding:40px 0 60px;animation:fadeUp .8s ease both}
+.hero-badge{
+  display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;
+  border:1px solid rgba(56,245,212,.4);color:var(--cyan);
+  padding:5px 14px;border-radius:99px;margin-bottom:20px;
+  background:rgba(56,245,212,.05);letter-spacing:.05em;
+}
+.hero h1{
+  font-family:'Syne',sans-serif;font-weight:900;font-size:clamp(36px,6vw,64px);
+  line-height:1.1;margin-bottom:16px;
+  background:linear-gradient(135deg,#fff 0%,var(--cyan) 50%,var(--purple) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hero-sub{color:var(--muted2);font-size:16px;max-width:520px;margin:0 auto 36px;font-weight:400}
+.stats-row{display:flex;justify-content:center;gap:16px;flex-wrap:wrap}
+.stat-box{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:16px 28px;text-align:center;min-width:130px;
+}
+.stat-num{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--cyan)}
+.stat-label{font-size:11px;color:var(--muted2);font-weight:500;margin-top:2px}
+
+/* Section header */
+.section-header{display:flex;align-items:center;gap:16px;margin:56px 0 24px}
+.sec-badge{
+  font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;
+  border:1px solid rgba(56,245,212,.35);color:var(--cyan);
+  padding:4px 10px;border-radius:99px;white-space:nowrap;
+  background:rgba(56,245,212,.05);letter-spacing:.08em;
+}
+.sec-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;white-space:nowrap}
+.sec-line{flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);margin-left:8px}
+
+/* Card */
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;transition:border-color .2s,box-shadow .2s;margin-bottom:20px}
+.card:hover{border-color:var(--border2)}
+.card-glow-cyan:hover{box-shadow:var(--glow-cyan);border-color:rgba(56,245,212,.25)}
+.card-glow-purple:hover{box-shadow:var(--glow-purple);border-color:rgba(167,139,250,.25)}
+
+.card-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;margin-bottom:10px}
+.card-desc{color:var(--muted2);font-size:14px;line-height:1.7}
+
+/* Grid layout */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+/* Pills */
+.pill{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;padding:3px 9px;border-radius:99px;display:inline-block}
+.pill-c{background:rgba(56,245,212,.12);color:var(--cyan);border:1px solid rgba(56,245,212,.2)}
+.pill-y{background:rgba(255,217,90,.12);color:var(--yellow);border:1px solid rgba(255,217,90,.2)}
+.pill-p{background:rgba(167,139,250,.12);color:var(--purple);border:1px solid rgba(167,139,250,.2)}
+.pill-g{background:rgba(74,222,128,.12);color:var(--green);border:1px solid rgba(74,222,128,.2)}
+.pill-o{background:rgba(251,146,60,.12);color:var(--orange);border:1px solid rgba(251,146,60,.2)}
+.pill-r{background:rgba(255,107,157,.12);color:var(--pink);border:1px solid rgba(255,107,157,.2)}
+
+/* Code block */
+.code-block{background:#060910;border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:16px}
+.code-header{display:flex;align-items:center;gap:10px;padding:10px 16px;background:#0a0d18;border-bottom:1px solid var(--border)}
+.mac-dots{display:flex;gap:6px}
+.mac-dot{width:10px;height:10px;border-radius:50%}
+.mac-dot-r{background:#f87171}.mac-dot-y{background:#ffd95a}.mac-dot-g{background:#4ade80}
+.code-lang{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);margin-left:4px}
+.copy-btn{
+  margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;
+  background:rgba(56,245,212,.08);border:1px solid rgba(56,245,212,.2);
+  color:var(--cyan);padding:3px 10px;border-radius:6px;cursor:pointer;transition:all .2s;
+}
+.copy-btn:hover{background:rgba(56,245,212,.15)}.copy-btn.copied{color:var(--green);border-color:rgba(74,222,128,.3)}
+.code-body{padding:18px 20px;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.75;overflow-x:auto;white-space:pre}
+.kw{color:#c792ea}.prop{color:var(--cyan)}.val{color:var(--orange)}.sel{color:var(--yellow)}
+.at{color:var(--pink)}.cm{color:#3d5070;font-style:italic}.str{color:var(--green)}.fn{color:var(--blue)}
+
+/* Analogy box */
+.analogy-box{
+  background:rgba(255,217,90,.05);border:1px solid rgba(255,217,90,.15);
+  border-radius:12px;padding:16px 20px;margin-top:14px;
+  display:flex;gap:12px;align-items:flex-start;
+}
+.analogy-icon{font-size:22px;flex-shrink:0;margin-top:2px}
+.analogy-text{font-size:13.5px;color:var(--muted2);font-style:italic;line-height:1.65}
+
+/* Concept tag row */
+.tag-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+
+/* ========================
+   PLAYGROUND / DEMO
+======================== */
+.demo-box{
+  background:var(--card2);border:1px solid var(--border);border-radius:12px;
+  padding:20px;margin-top:16px;
+}
+.demo-label{font-size:11px;font-weight:600;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:12px;text-transform:uppercase;letter-spacing:.08em}
+.ctrl-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.ctrl-btn{
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;
+  background:rgba(255,255,255,.04);border:1px solid var(--border2);
+  color:var(--muted2);padding:6px 14px;border-radius:8px;cursor:pointer;transition:all .2s;
+}
+.ctrl-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.ctrl-btn.on{background:rgba(56,245,212,.1);border-color:rgba(56,245,212,.35);color:var(--cyan)}
+
+/* Mini slider preview */
+.mini-slider-wrap{position:relative;width:100%;max-width:440px;margin:0 auto;border-radius:12px;overflow:hidden;background:#000;aspect-ratio:16/7}
+.mini-slides{display:flex;transition:transform .6s cubic-bezier(.4,0,.2,1);height:100%;will-change:transform}
+.mini-slide{min-width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:22px;font-weight:800}
+.ms1{background:linear-gradient(135deg,#1a2a4a,#0d3d5c);color:var(--cyan)}
+.ms2{background:linear-gradient(135deg,#2a1a4a,#3d0d5c);color:var(--purple)}
+.ms3{background:linear-gradient(135deg,#1a4a2a,#0d5c3d);color:var(--green)}
+.ms4{background:linear-gradient(135deg,#4a2a1a,#5c3d0d);color:var(--orange)}
+
+.mini-prev,.mini-next{
+  position:absolute;top:50%;transform:translateY(-50%);
+  background:rgba(255,255,255,.15);backdrop-filter:blur(4px);
+  border:none;color:#fff;width:30px;height:30px;border-radius:50%;
+  cursor:pointer;font-size:14px;transition:all .2s;z-index:5;
+  display:flex;align-items:center;justify-content:center;
+}
+.mini-prev:hover,.mini-next:hover{background:rgba(255,255,255,.3)}
+.mini-prev{left:10px}.mini-next{right:10px}
+.mini-dots{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:6px}
+.mini-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.35);cursor:pointer;transition:all .2s}
+.mini-dot.active{background:#fff;transform:scale(1.3)}
+.mini-timer-bar{position:absolute;bottom:0;left:0;height:2px;background:var(--cyan);transition:width linear}
+
+/* Generated CSS display */
+.gen-css{background:#060910;border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:11.5px;line-height:1.7;color:var(--muted2)}
+
+/* ========================
+   SELECTABLE CARDS
+======================== */
+.select-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-top:16px}
+.sel-card{
+  background:var(--card2);border:1px solid var(--border);border-radius:12px;
+  padding:16px;cursor:pointer;transition:all .2s;text-align:center;
+}
+.sel-card:hover{border-color:var(--border2)}
+.sel-card.selected{border-color:var(--cyan);background:rgba(56,245,212,.07)}
+.sel-card-icon{font-size:26px;margin-bottom:8px}
+.sel-card-label{font-size:13px;font-weight:600;color:var(--text)}
+.sel-card-sub{font-size:11px;color:var(--muted);margin-top:3px}
+.sel-preview{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:20px;margin-top:12px;display:none;animation:fadeUp .3s ease both}
+.sel-preview.show{display:block}
+
+/* ========================
+   SLIDER SPEED SLIDER
+======================== */
+.range-wrap{padding:16px 0}
+.range-label-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.range-label{font-size:13px;color:var(--muted2)}
+.range-val{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--cyan)}
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:99px;background:var(--border2);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--cyan);cursor:pointer;box-shadow:0 0 8px rgba(56,245,212,.4)}
+
+/* ========================
+   QUIZ
+======================== */
+.quiz-wrap{padding:4px}
+.score-dots{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
+.score-dot{width:22px;height:22px;border-radius:50%;background:var(--border2);transition:all .3s;display:flex;align-items:center;justify-content:center;font-size:10px}
+.score-dot.correct{background:var(--green)}
+.score-dot.wrong{background:var(--red)}
+.quiz-counter{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:12px}
+.quiz-q{font-family:'Outfit',sans-serif;font-size:16px;font-weight:600;margin-bottom:18px;line-height:1.5}
+.quiz-opts{display:flex;flex-direction:column;gap:10px}
+.quiz-opt{
+  display:flex;align-items:center;gap:12px;
+  background:var(--card2);border:1px solid var(--border);border-radius:10px;
+  padding:12px 16px;cursor:pointer;transition:all .2s;
+}
+.quiz-opt:hover:not(.disabled){border-color:var(--border2);background:rgba(255,255,255,.04)}
+.quiz-opt.correct-opt{border-color:var(--green)!important;background:rgba(74,222,128,.08)!important}
+.quiz-opt.wrong-opt{border-color:var(--red)!important;background:rgba(248,113,113,.08)!important}
+.quiz-opt.disabled{cursor:default;pointer-events:none}
+.opt-label{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--cyan);min-width:22px}
+.opt-text{font-size:13.5px;font-weight:500}
+.quiz-feedback{border-radius:10px;padding:12px 16px;margin-top:14px;font-size:13.5px;line-height:1.6;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.ok{background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);color:var(--green)}
+.quiz-feedback.no{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.2);color:var(--red)}
+.quiz-next-btn{
+  margin-top:16px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;
+  background:rgba(56,245,212,.1);border:1px solid rgba(56,245,212,.25);
+  color:var(--cyan);padding:9px 20px;border-radius:8px;cursor:pointer;
+  transition:all .2s;display:none;
+}
+.quiz-next-btn.show{display:inline-block}
+.quiz-next-btn:hover{background:rgba(56,245,212,.18)}
+.quiz-result{text-align:center;padding:20px 0;display:none}
+.quiz-result.show{display:block}
+.result-emoji{font-size:56px;margin-bottom:12px}
+.result-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:8px}
+.result-score{font-size:40px;font-weight:700;color:var(--cyan);font-family:'JetBrains Mono',monospace}
+.result-sub{color:var(--muted2);font-size:13px;margin:8px 0 20px}
+.restart-btn{
+  font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;
+  background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.25);
+  color:var(--purple);padding:10px 24px;border-radius:8px;cursor:pointer;transition:all .2s;
+}
+.restart-btn:hover{background:rgba(167,139,250,.18)}
+
+/* ========================
+   CHECKLIST
+======================== */
+.check-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.check-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted2)}
+.check-progress{background:var(--border);border-radius:99px;height:6px;margin-bottom:20px;overflow:hidden}
+.check-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--green),var(--cyan));width:0%;transition:width .4s}
+.check-item{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:12px 14px;border-radius:10px;cursor:pointer;
+  transition:all .2s;margin-bottom:8px;
+  background:var(--card2);border:1px solid transparent;
+}
+.check-item:hover{border-color:var(--border);background:rgba(255,255,255,.03)}
+.check-item.checked{background:rgba(74,222,128,.05);border-color:rgba(74,222,128,.15)}
+.check-box{
+  width:20px;height:20px;border-radius:6px;flex-shrink:0;margin-top:1px;
+  border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;color:var(--green);transition:all .2s;background:transparent;
+}
+.check-item.checked .check-box{background:rgba(74,222,128,.15);border-color:var(--green)}
+.check-text{font-size:13.5px;font-weight:500;transition:all .2s}
+.check-item.checked .check-text{color:var(--muted);text-decoration:line-through}
+.check-sub{font-size:11.5px;color:var(--muted);margin-top:2px}
+
+/* Footer */
+.footer{margin-top:80px;text-align:center;padding:32px 0;border-top:1px solid var(--border)}
+.footer-tags{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.footer-copy{font-size:12px;color:var(--muted)}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.scroll-reveal{opacity:0;transform:translateY(20px);transition:opacity .55s ease,transform .55s ease}
+.scroll-reveal.visible{opacity:1;transform:translateY(0)}
+
+/* Responsive */
+@media(max-width:768px){
+  .nav-links{display:none}
+  .grid-2,.grid-3{grid-template-columns:1fr}
+  .stats-row{gap:10px}
+  .stat-box{min-width:90px;padding:12px 16px}
+  .hero h1{font-size:32px}
+  .section-header{gap:10px}
+  .sec-title{font-size:18px}
+}
+
+/* Step cards */
+.step-list{display:flex;flex-direction:column;gap:12px}
+.step-item{display:flex;gap:14px;align-items:flex-start;padding:14px;background:var(--card2);border-radius:10px;border:1px solid var(--border)}
+.step-num{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--cyan);min-width:28px;height:28px;border-radius:50%;background:rgba(56,245,212,.1);display:flex;align-items:center;justify-content:center;border:1px solid rgba(56,245,212,.2);flex-shrink:0;margin-top:1px}
+.step-body{}
+.step-title{font-size:14px;font-weight:600;margin-bottom:3px}
+.step-desc{font-size:13px;color:var(--muted2)}
+
+/* Prop table */
+.prop-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:13px}
+.prop-table th{text-align:left;padding:8px 12px;background:var(--card2);color:var(--muted2);font-weight:600;font-family:'JetBrains Mono',monospace;font-size:11px;border-bottom:1px solid var(--border)}
+.prop-table td{padding:9px 12px;border-bottom:1px solid rgba(30,45,71,.5);vertical-align:top}
+.prop-table tr:last-child td{border-bottom:none}
+.prop-table td:first-child{font-family:'JetBrains Mono',monospace;color:var(--cyan);font-size:12px}
+.prop-table td:nth-child(2){color:var(--orange);font-family:'JetBrains Mono',monospace;font-size:12px}
+
+/* Speed display box */
+.speed-demo-wrap{margin-top:16px}
+.speed-info{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--card2);border-radius:8px;margin-top:10px;border:1px solid var(--border)}
+.speed-info-label{font-size:12px;color:var(--muted2)}
+.speed-info-val{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:var(--yellow)}
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="progress-bar-outer"><div class="progress-bar-inner" id="progressBar"></div></div>
+
+<nav class="nav">
+  <div class="nav-brand">⚡ SliderCheat</div>
+  <div class="nav-links">
+    <a href="#konsep">Konsep</a>
+    <a href="#struktur">Struktur</a>
+    <a href="#css">CSS</a>
+    <a href="#javascript">JavaScript</a>
+    <a href="#playground">Playground</a>
+    <a href="#quiz">Quiz</a>
+    <a href="#checklist">Checklist</a>
+  </div>
+</nav>
+
+<div class="wrapper">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">📚 CHEATSHEET INTERAKTIF · 2025</div>
+    <h1>Auto Image Slider<br>HTML · CSS · JS</h1>
+    <p class="hero-sub">Panduan lengkap membuat slider gambar otomatis dari nol — dengan struktur, animasi, navigasi, dan timer.</p>
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-num">5</div>
+        <div class="stat-label">Topik Utama</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">4</div>
+        <div class="stat-label">Demo Interaktif</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">10</div>
+        <div class="stat-label">Soal Quiz</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 1: KONSEP -->
+  <div id="konsep"></div>
+  <div class="section-header scroll-reveal">
+    <span class="sec-badge">SECTION 1</span>
+    <span class="sec-title">Apa Itu Auto Slider?</span>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card card-glow-cyan scroll-reveal">
+    <div class="card-title">Definisi & Konsep Dasar</div>
+    <p class="card-desc">Auto Slider (atau Image Carousel) adalah komponen UI yang menampilkan beberapa gambar secara bergiliran dan berpindah otomatis tanpa interaksi user. Sering dipakai di banner website, portfolio, dan landing page.</p>
+    <div class="analogy-box">
+      <div class="analogy-icon">🎠</div>
+      <div class="analogy-text"><strong>Analogi:</strong> Bayangkan slide foto di presentasi PowerPoint yang otomatis berpindah setiap beberapa detik — itulah auto slider! Bedanya, ini dibuat dengan kode HTML/CSS/JS dan hidup di browser.</div>
+    </div>
+    <div class="tag-row">
+      <span class="pill pill-c">UI Component</span>
+      <span class="pill pill-y">setInterval</span>
+      <span class="pill pill-p">CSS Transform</span>
+      <span class="pill pill-g">DOM Manipulation</span>
+    </div>
+  </div>
+
+  <div class="grid-2 scroll-reveal">
+    <div class="card card-glow-purple">
+      <div class="card-title">🧩 3 Lapisan Slider</div>
+      <div class="step-list" style="margin-top:12px">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">HTML — Struktur Kerangka</div>
+            <div class="step-desc">Tempat meletakkan gambar, tombol panah, dan indikator dots</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">CSS — Tampilan Visual</div>
+            <div class="step-desc">Menyembunyikan gambar yang tidak aktif, transisi geser, dan desain tombol</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">JS — Logika & Otomatisasi</div>
+            <div class="step-desc">Menggeser slide, menghitung index, dan menjalankan timer otomatis</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card card-glow-cyan">
+      <div class="card-title">⚙️ Cara Kerja Mekanisme</div>
+      <p class="card-desc" style="margin-bottom:14px">Slider bekerja dengan <strong style="color:var(--cyan)">menggeser container</strong> ke kiri menggunakan <code style="color:var(--orange);font-family:JetBrains Mono,monospace">translateX()</code>. Semua slide ditaruh berjajar horizontal, lalu kita hanya "menggeser jendela" pandang.</p>
+      <div style="background:var(--card2);border-radius:10px;padding:14px;border:1px solid var(--border)">
+        <div style="display:flex;gap:8px;margin-bottom:8px">
+          <div style="flex:1;height:40px;background:rgba(56,245,212,.15);border:1px solid var(--cyan);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--cyan);font-family:JetBrains Mono,monospace">Slide 1</div>
+          <div style="flex:1;height:40px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--muted);font-family:JetBrains Mono,monospace">Slide 2</div>
+          <div style="flex:1;height:40px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--muted);font-family:JetBrains Mono,monospace">Slide 3</div>
+        </div>
+        <div style="font-size:11.5px;color:var(--muted2)">👆 Hanya <span style="color:var(--cyan)">Slide 1</span> yang terlihat (overflow: hidden). Slide lain di luar jendela.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: STRUKTUR HTML -->
+  <div id="struktur"></div>
+  <div class="section-header scroll-reveal">
+    <span class="sec-badge">SECTION 2</span>
+    <span class="sec-title">Struktur HTML</span>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card card-glow-purple scroll-reveal">
+    <div class="card-title">Kerangka HTML Slider</div>
+    <p class="card-desc">Slider membutuhkan 3 elemen utama dalam strukturnya: container pembungkus, wrapper slide (yang bergerak), dan setiap slide individu.</p>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="mac-dots"><span class="mac-dot mac-dot-r"></span><span class="mac-dot mac-dot-y"></span><span class="mac-dot mac-dot-g"></span></div>
+        <span class="code-lang">HTML</span>
+        <button class="copy-btn" onclick="copyCode(this,'code1')">copy</button>
+      </div>
+      <div class="code-body" id="code1"><span class="cm">&lt;!-- 1. Container: batas tampilan (overflow: hidden) --&gt;</span>
+<span class="sel">&lt;div</span> <span class="prop">class</span>=<span class="str">"slider-container"</span><span class="sel">&gt;</span>
+
+  <span class="cm">&lt;!-- 2. Wrapper: bergerak ke kiri/kanan --&gt;</span>
+  <span class="sel">&lt;div</span> <span class="prop">class</span>=<span class="str">"slides"</span> <span class="prop">id</span>=<span class="str">"slide-wrapper"</span><span class="sel">&gt;</span>
+
+    <span class="cm">&lt;!-- 3. Setiap slide (min-width: 100%) --&gt;</span>
+    <span class="sel">&lt;div</span> <span class="prop">class</span>=<span class="str">"slide"</span><span class="sel">&gt;</span>
+      <span class="sel">&lt;img</span> <span class="prop">src</span>=<span class="str">"gambar1.jpg"</span> <span class="prop">alt</span>=<span class="str">"Slide 1"</span><span class="sel">&gt;</span>
+    <span class="sel">&lt;/div&gt;</span>
+    <span class="sel">&lt;div</span> <span class="prop">class</span>=<span class="str">"slide"</span><span class="sel">&gt;</span>
+      <span class="sel">&lt;img</span> <span class="prop">src</span>=<span class="str">"gambar2.jpg"</span> <span class="prop">alt</span>=<span class="str">"Slide 2"</span><span class="sel">&gt;</span>
+    <span class="sel">&lt;/div&gt;</span>
+
+  <span class="sel">&lt;/div&gt;</span>
+
+  <span class="cm">&lt;!-- 4. Tombol navigasi panah --&gt;</span>
+  <span class="sel">&lt;button</span> <span class="prop">class</span>=<span class="str">"prev"</span> <span class="prop">onclick</span>=<span class="str">"changeSlide(-1)"</span><span class="sel">&gt;</span>&#10094;<span class="sel">&lt;/button&gt;</span>
+  <span class="sel">&lt;button</span> <span class="prop">class</span>=<span class="str">"next"</span> <span class="prop">onclick</span>=<span class="str">"changeSlide(1)"</span><span class="sel">&gt;</span>&#10095;<span class="sel">&lt;/button&gt;</span>
+
+  <span class="cm">&lt;!-- 5. Dots indikator posisi --&gt;</span>
+  <span class="sel">&lt;div</span> <span class="prop">class</span>=<span class="str">"dots-container"</span><span class="sel">&gt;</span>
+    <span class="sel">&lt;span</span> <span class="prop">class</span>=<span class="str">"dot active"</span> <span class="prop">onclick</span>=<span class="str">"currentSlide(0)"</span><span class="sel">&gt;&lt;/span&gt;</span>
+    <span class="sel">&lt;span</span> <span class="prop">class</span>=<span class="str">"dot"</span> <span class="prop">onclick</span>=<span class="str">"currentSlide(1)"</span><span class="sel">&gt;&lt;/span&gt;</span>
+  <span class="sel">&lt;/div&gt;</span>
+
+<span class="sel">&lt;/div&gt;</span></div>
+    </div>
+    <div class="analogy-box" style="margin-top:14px">
+      <div class="analogy-icon">🎬</div>
+      <div class="analogy-text"><strong>Analogi:</strong> Bayangkan <code>.slider-container</code> sebagai layar bioskop (bingkai tetap), <code>.slides</code> sebagai gulungan film yang bisa digeser, dan setiap <code>.slide</code> sebagai satu frame film.</div>
+    </div>
+  </div>
+
+  <!-- Selectable: elemen HTML -->
+  <div class="card card-glow-cyan scroll-reveal">
+    <div class="card-title">🔍 Klik elemen untuk lihat penjelasan</div>
+    <div class="select-grid" id="html-sel-grid">
+      <div class="sel-card" onclick="selectHtml(this,0)">
+        <div class="sel-card-icon">📦</div>
+        <div class="sel-card-label">.slider-container</div>
+        <div class="sel-card-sub">Pembungkus utama</div>
+      </div>
+      <div class="sel-card" onclick="selectHtml(this,1)">
+        <div class="sel-card-icon">🎞️</div>
+        <div class="sel-card-label">.slides</div>
+        <div class="sel-card-sub">Track geser</div>
+      </div>
+      <div class="sel-card" onclick="selectHtml(this,2)">
+        <div class="sel-card-icon">🖼️</div>
+        <div class="sel-card-label">.slide</div>
+        <div class="sel-card-sub">Item slide</div>
+      </div>
+      <div class="sel-card" onclick="selectHtml(this,3)">
+        <div class="sel-card-icon">◀▶</div>
+        <div class="sel-card-label">.prev / .next</div>
+        <div class="sel-card-sub">Tombol panah</div>
+      </div>
+      <div class="sel-card" onclick="selectHtml(this,4)">
+        <div class="sel-card-icon">⚫</div>
+        <div class="sel-card-label">.dot</div>
+        <div class="sel-card-sub">Indikator posisi</div>
+      </div>
+    </div>
+    <div class="sel-preview" id="html-preview"></div>
+  </div>
+
+  <!-- SECTION 3: CSS -->
+  <div id="css"></div>
+  <div class="section-header scroll-reveal">
+    <span class="sec-badge">SECTION 3</span>
+    <span class="sec-title">Styling CSS</span>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card card-glow-cyan scroll-reveal">
+    <div class="card-title">CSS Inti — Container & Overflow</div>
+    <p class="card-desc">Kunci utama slider ada di dua properti: <code style="color:var(--orange);font-family:JetBrains Mono,monospace">overflow: hidden</code> pada container (menyembunyikan slide di luar), dan <code style="color:var(--orange);font-family:JetBrains Mono,monospace">display: flex</code> pada wrapper (membuat slide berjajar horizontal).</p>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="mac-dots"><span class="mac-dot mac-dot-r"></span><span class="mac-dot mac-dot-y"></span><span class="mac-dot mac-dot-g"></span></div>
+        <span class="code-lang">CSS</span>
+        <button class="copy-btn" onclick="copyCode(this,'code2')">copy</button>
+      </div>
+      <div class="code-body" id="code2"><span class="cm">/* Container: batas pandang, sembunyikan yang di luar */</span>
+<span class="sel">.slider-container</span> {
+  <span class="prop">position</span>: <span class="val">relative</span>;
+  <span class="prop">width</span>: <span class="val">90%</span>;
+  <span class="prop">max-width</span>: <span class="val">800px</span>;
+  <span class="prop">overflow</span>: <span class="val">hidden</span>;     <span class="cm">/* ← KUNCI! Sembunyikan slide lain */</span>
+  <span class="prop">border-radius</span>: <span class="val">15px</span>;
+  <span class="prop">box-shadow</span>: <span class="val">0 10px 25px rgba(0,0,0,.2)</span>;
+}
+
+<span class="cm">/* Wrapper slide: flex = semua slide berjajar horizontal */</span>
+<span class="sel">.slides</span> {
+  <span class="prop">display</span>: <span class="val">flex</span>;             <span class="cm">/* ← Berjajar ke kanan */</span>
+  <span class="prop">transition</span>: <span class="val">transform 0.6s cubic-bezier(.4,0,.2,1)</span>;
+  <span class="prop">width</span>: <span class="val">100%</span>;
+}
+
+<span class="cm">/* Setiap slide: lebar 100% dari container */</span>
+<span class="sel">.slide</span> {
+  <span class="prop">min-width</span>: <span class="val">100%</span>;         <span class="cm">/* ← Setiap slide selebar container */</span>
+  <span class="prop">position</span>: <span class="val">relative</span>;
+}
+
+<span class="sel">.slide img</span> {
+  <span class="prop">width</span>: <span class="val">100%</span>;
+  <span class="prop">display</span>: <span class="val">block</span>;
+  <span class="prop">object-fit</span>: <span class="val">cover</span>;
+}</div>
+    </div>
+  </div>
+
+  <div class="grid-2 scroll-reveal">
+    <div class="card card-glow-purple">
+      <div class="card-title">CSS Tombol Panah</div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="mac-dots"><span class="mac-dot mac-dot-r"></span><span class="mac-dot mac-dot-y"></span><span class="mac-dot mac-dot-g"></span></div>
+          <span class="code-lang">CSS</span>
+          <button class="copy-btn" onclick="copyCode(this,'code3')">copy</button>
+        </div>
+        <div class="code-body" id="code3"><span class="sel">.prev, .next</span> {
+  <span class="prop">position</span>: <span class="val">absolute</span>;
+  <span class="prop">top</span>: <span class="val">50%</span>;
+  <span class="prop">transform</span>: <span class="val">translateY(-50%)</span>;
+  <span class="prop">background</span>: <span class="val">rgba(255,255,255,.7)</span>;
+  <span class="prop">border</span>: <span class="val">none</span>;
+  <span class="prop">padding</span>: <span class="val">15px</span>;
+  <span class="prop">cursor</span>: <span class="val">pointer</span>;
+  <span class="prop">border-radius</span>: <span class="val">50%</span>;
+  <span class="prop">z-index</span>: <span class="val">10</span>;
+  <span class="prop">transition</span>: <span class="val">0.3s</span>;
+}
+
+<span class="sel">.prev</span> { <span class="prop">left</span>: <span class="val">20px</span>; }
+<span class="sel">.next</span> { <span class="prop">right</span>: <span class="val">20px</span>; }</div>
+      </div>
+    </div>
+    <div class="card card-glow-cyan">
+      <div class="card-title">CSS Dots Indikator</div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="mac-dots"><span class="mac-dot mac-dot-r"></span><span class="mac-dot mac-dot-y"></span><span class="mac-dot mac-dot-g"></span></div>
+          <span class="code-lang">CSS</span>
+          <button class="copy-btn" onclick="copyCode(this,'code4')">copy</button>
+        </div>
+        <div class="code-body" id="code4"><span class="sel">.dots-container</span> {
+  <span class="prop">position</span>: <span class="val">absolute</span>;
+  <span class="prop">bottom</span>: <span class="val">20px</span>;
+  <span class="prop">left</span>: <span class="val">50%</span>;
+  <span class="prop">transform</span>: <span class="val">translateX(-50%)</span>;
+  <span class="prop">display</span>: <span class="val">flex</span>;
+  <span class="prop">gap</span>: <span class="val">10px</span>;
+}
+
+<span class="sel">.dot</span> {
+  <span class="prop">width</span>: <span class="val">12px</span>;
+  <span class="prop">height</span>: <span class="val">12px</span>;
+  <span class="prop">background</span>: <span class="val">rgba(255,255,255,.5)</span>;
+  <span class="prop">border-radius</span>: <span class="val">50%</span>;
+  <span class="prop">cursor</span>: <span class="val">pointer</span>;
+  <span class="prop">transition</span>: <span class="val">0.3s</span>;
+}
+
+<span class="sel">.dot.active</span> {
+  <span class="prop">background</span>: <span class="val">white</span>;
+  <span class="prop">transform</span>: <span class="val">scale(1.3)</span>;
+}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabel properti CSS penting -->
+  <div class="card card-glow-purple scroll-reveal">
+    <div class="card-title">📋 Properti CSS Kunci</div>
+    <table class="prop-table">
+      <thead>
+        <tr><th>Properti</th><th>Nilai</th><th>Fungsi</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>overflow</td><td>hidden</td><td>Menyembunyikan slide yang di luar batas container</td></tr>
+        <tr><td>display</td><td>flex</td><td>Membuat semua slide berjajar horizontal</td></tr>
+        <tr><td>min-width</td><td>100%</td><td>Setiap slide memenuhi lebar container</td></tr>
+        <tr><td>transition</td><td>transform .6s</td><td>Animasi halus saat slide berpindah</td></tr>
+        <tr><td>transform</td><td>translateX(-N%)</td><td>Menggeser wrapper ke slide yang aktif</td></tr>
+        <tr><td>position</td><td>absolute</td><td>Menempatkan panah & dots di atas slide</td></tr>
+        <tr><td>object-fit</td><td>cover</td><td>Gambar memenuhi area tanpa distorsi</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SECTION 4: JAVASCRIPT -->
+  <div id="javascript"></div>
+  <div class="section-header scroll-reveal">
+    <span class="sec-badge">SECTION 4</span>
+    <span class="sec-title">JavaScript — Logika Slider</span>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card card-glow-cyan scroll-reveal">
+    <div class="card-title">Fungsi showSlide() — Inti Pergerakan</div>
+    <p class="card-desc">Fungsi ini menggeser wrapper menggunakan <code style="color:var(--orange);font-family:JetBrains Mono,monospace">translateX()</code> berdasarkan index slide yang aktif, lalu memperbarui dot yang menyala.</p>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="mac-dots"><span class="mac-dot mac-dot-r"></span><span class="mac-dot mac-dot-y"></span><span class="mac-dot mac-dot-g"></span></div>
+        <span class="code-lang">JavaScript</span>
+        <button class="copy-btn" onclick="copyCode(this,'code5')">copy</button>
+      </div>
+      <div class="code-body" id="code5"><span class="kw">var</span> slides = document.<span class="fn">getElementById</span>(<span class="str">'slide-wrapper'</span>);
+<span class="kw">var</span> dots   = document.<span class="fn">querySelectorAll</span>(<span class="str">'.dot'</span>);
+<span class="kw">var</span> totalSlides = document.<span class="fn">querySelectorAll</span>(<span class="str">'.slide'</span>).length;
+<span class="kw">var</span> index = <span class="val">0</span>;
+<span class="kw">var</span> slideInterval;
+
+<span class="kw">function</span> <span class="fn">showSlide</span>(n) {
+  index = n;
+
+  <span class="cm">// Loop balik jika index melewati batas</span>
+  <span class="kw">if</span> (index >= totalSlides) index = <span class="val">0</span>;
+  <span class="kw">if</span> (index < <span class="val">0</span>) index = totalSlides - <span class="val">1</span>;
+
+  <span class="cm">// Geser wrapper: -index * 100% = geser ke slide ke-N</span>
+  slides.style.<span class="prop">transform</span> = <span class="str">'translateX('</span> + (-index * <span class="val">100</span>) + <span class="str">'%)'</span>;
+
+  <span class="cm">// Update dots: hapus semua .active, beri ke dot saat ini</span>
+  <span class="kw">for</span> (<span class="kw">var</span> i = <span class="val">0</span>; i < dots.length; i++) {
+    dots[i].classList.<span class="fn">remove</span>(<span class="str">'active'</span>);
+  }
+  dots[index].classList.<span class="fn">add</span>(<span class="str">'active'</span>);
+}</div>
+    </div>
+    <div class="analogy-box">
+      <div class="analogy-icon">📐</div>
+      <div class="analogy-text"><strong>Rumus translateX:</strong> Jika ada 3 slide dan kita mau ke slide ke-2 (index=1), maka <code>translateX(-1 × 100%) = translateX(-100%)</code> — artinya geser wrapper 100% ke kiri!</div>
+    </div>
+  </div>
+
+  <div class="grid-2 scroll-reveal">
+    <div class="card card-glow-purple">
+      <div class="card-title">Navigasi Manual</div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="mac-dots"><span class="mac-dot mac-dot-r"></span><span class="mac-dot mac-dot-y"></span><span class="mac-dot mac-dot-g"></span></div>
+          <span class="code-lang">JavaScript</span>
+          <button class="copy-btn" onclick="copyCode(this,'code6')">copy</button>
+        </div>
+        <div class="code-body" id="code6"><span class="cm">// Tombol panah: maju/mundur 1 step</span>
+<span class="kw">function</span> <span class="fn">changeSlide</span>(step) {
+  <span class="fn">resetTimer</span>();
+  <span class="fn">showSlide</span>(index + step);
+}
+
+<span class="cm">// Klik dot: langsung ke slide tertentu</span>
+<span class="kw">function</span> <span class="fn">currentSlide</span>(n) {
+  <span class="fn">resetTimer</span>();
+  <span class="fn">showSlide</span>(n);
+}</span>
+
+<span class="cm">// changeSlide(1)  → maju ke depan</span>
+<span class="cm">// changeSlide(-1) → mundur ke belakang</span></div>
+      </div>
+    </div>
+    <div class="card card-glow-cyan">
+      <div class="card-title">Auto Slide & Timer</div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="mac-dots"><span class="mac-dot mac-dot-r"></span><span class="mac-dot mac-dot-y"></span><span class="mac-dot mac-dot-g"></span></div>
+          <span class="code-lang">JavaScript</span>
+          <button class="copy-btn" onclick="copyCode(this,'code7')">copy</button>
+        </div>
+        <div class="code-body" id="code7"><span class="cm">// Mulai timer otomatis dengan setInterval</span>
+<span class="kw">function</span> <span class="fn">startAutoSlide</span>() {
+  slideInterval = <span class="fn">setInterval</span>(<span class="kw">function</span>() {
+    <span class="fn">showSlide</span>(index + <span class="val">1</span>);
+  }, <span class="val">4000</span>); <span class="cm">// setiap 4000ms = 4 detik</span>
+}
+
+<span class="cm">// Reset timer saat user klik manual</span>
+<span class="kw">function</span> <span class="fn">resetTimer</span>() {
+  <span class="fn">clearInterval</span>(slideInterval);
+  <span class="fn">startAutoSlide</span>();
+}
+
+<span class="cm">// Jalankan pertama kali saat halaman dimuat</span>
+<span class="fn">startAutoSlide</span>();</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-glow-purple scroll-reveal">
+    <div class="card-title">📊 Alur Kerja Lengkap JavaScript</div>
+    <div class="step-list" style="margin-top:12px">
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Inisialisasi variabel</div>
+          <div class="step-desc"><code style="color:var(--cyan);font-family:JetBrains Mono,monospace">index = 0</code> (slide aktif), ambil referensi elemen DOM, hitung total slide</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">startAutoSlide() dipanggil</div>
+          <div class="step-desc"><code style="color:var(--yellow);font-family:JetBrains Mono,monospace">setInterval</code> berjalan, setiap N detik memanggil <code style="color:var(--cyan);font-family:JetBrains Mono,monospace">showSlide(index + 1)</code></div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">showSlide(n) menggeser slider</div>
+          <div class="step-desc">Validasi index (loop balik jika melebihi), terapkan <code style="color:var(--orange);font-family:JetBrains Mono,monospace">translateX</code>, update dot</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">User klik panah/dot → resetTimer()</div>
+          <div class="step-desc"><code style="color:var(--red);font-family:JetBrains Mono,monospace">clearInterval</code> menghentikan timer lama, lalu <code style="color:var(--green);font-family:JetBrains Mono,monospace">startAutoSlide</code> memulai ulang dari 0</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 5: PLAYGROUND -->
+  <div id="playground"></div>
+  <div class="section-header scroll-reveal">
+    <span class="sec-badge">SECTION 5</span>
+    <span class="sec-title">Demo Interaktif</span>
+    <div class="sec-line"></div>
+  </div>
+
+  <!-- DEMO 1: Live Slider Mini -->
+  <div class="card card-glow-cyan scroll-reveal">
+    <div class="card-title">🎛️ Demo 1 — Live Slider</div>
+    <p class="card-desc" style="margin-bottom:16px">Slider sungguhan berjalan di bawah ini. Coba klik panah, klik dot, atau ubah konfigurasi!</p>
+
+    <div class="mini-slider-wrap" id="demo-slider">
+      <div class="mini-slides" id="demo-slides">
+        <div class="mini-slide ms1">🌊 Slide 1</div>
+        <div class="mini-slide ms2">🌸 Slide 2</div>
+        <div class="mini-slide ms3">🌿 Slide 3</div>
+        <div class="mini-slide ms4">🔥 Slide 4</div>
+      </div>
+      <button class="mini-prev" onclick="demoChange(-1)">‹</button>
+      <button class="mini-next" onclick="demoChange(1)">›</button>
+      <div class="mini-dots" id="demo-dots">
+        <span class="mini-dot active" onclick="demoCurrent(0)"></span>
+        <span class="mini-dot" onclick="demoCurrent(1)"></span>
+        <span class="mini-dot" onclick="demoCurrent(2)"></span>
+        <span class="mini-dot" onclick="demoCurrent(3)"></span>
+      </div>
+      <div class="mini-timer-bar" id="demo-timer-bar"></div>
+    </div>
+
+    <div style="margin-top:16px">
+      <div class="demo-label">⚙️ Konfigurasi</div>
+      <div class="ctrl-row">
+        <button class="ctrl-btn on" id="btn-auto" onclick="toggleAuto(this)">▶ Auto Play</button>
+        <button class="ctrl-btn on" id="btn-dots" onclick="toggleDots(this)">⚫ Tampilkan Dots</button>
+        <button class="ctrl-btn on" id="btn-arrows" onclick="toggleArrows(this)">◀▶ Tampilkan Panah</button>
+        <button class="ctrl-btn on" id="btn-timerbar" onclick="toggleTimerBar(this)">⏱ Timer Bar</button>
+      </div>
+
+      <div class="range-wrap">
+        <div class="range-label-row">
+          <span class="range-label">⏱ Kecepatan Auto Slide</span>
+          <span class="range-val" id="speed-val">3 detik</span>
+        </div>
+        <input type="range" id="speed-range" min="1" max="8" value="3" oninput="changeSpeed(this.value)">
+      </div>
+
+      <div class="range-wrap">
+        <div class="range-label-row">
+          <span class="range-label">🎬 Durasi Transisi CSS</span>
+          <span class="range-val" id="trans-val">0.6s</span>
+        </div>
+        <input type="range" id="trans-range" min="1" max="20" value="6" oninput="changeTrans(this.value)">
+      </div>
+
+      <div class="gen-css" id="gen-css-display"></div>
+    </div>
+  </div>
+
+  <!-- DEMO 2: Toggle fitur -->
+  <div class="card card-glow-purple scroll-reveal">
+    <div class="card-title">🃏 Demo 2 — Pilih Gaya Transisi</div>
+    <p class="card-desc" style="margin-bottom:8px">Pilih salah satu gaya transisi CSS untuk melihat perbedaan efeknya pada slider:</p>
+    <div class="select-grid" id="trans-grid">
+      <div class="sel-card selected" onclick="selectTrans(this,0)">
+        <div class="sel-card-icon">🌊</div>
+        <div class="sel-card-label">Ease In Out</div>
+        <div class="sel-card-sub">cubic-bezier(.4,0,.2,1)</div>
+      </div>
+      <div class="sel-card" onclick="selectTrans(this,1)">
+        <div class="sel-card-icon">⚡</div>
+        <div class="sel-card-label">Linear</div>
+        <div class="sel-card-sub">Kecepatan tetap</div>
+      </div>
+      <div class="sel-card" onclick="selectTrans(this,2)">
+        <div class="sel-card-icon">🏀</div>
+        <div class="sel-card-label">Bounce</div>
+        <div class="sel-card-sub">cubic-bezier(.34,1.56,.64,1)</div>
+      </div>
+      <div class="sel-card" onclick="selectTrans(this,3)">
+        <div class="sel-card-icon">🐢</div>
+        <div class="sel-card-label">Ease In</div>
+        <div class="sel-card-sub">Mulai lambat</div>
+      </div>
+    </div>
+    <div class="sel-preview show" id="trans-preview">
+      <div class="demo-label">CSS yang digunakan</div>
+      <div class="gen-css" id="trans-css-display"><span class="prop">transition</span>: <span class="val">transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)</span>;</div>
+    </div>
+  </div>
+
+  <!-- SECTION QUIZ -->
+  <div id="quiz"></div>
+  <div class="section-header scroll-reveal">
+    <span class="sec-badge">SECTION 6</span>
+    <span class="sec-title">Quiz — Uji Pemahamanmu!</span>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card card-glow-cyan scroll-reveal">
+    <div id="quiz-main">
+      <div class="quiz-wrap">
+        <div class="score-dots" id="score-dots"></div>
+        <div class="quiz-counter" id="quiz-counter">1 / 10</div>
+        <div class="quiz-q" id="quiz-q"></div>
+        <div class="quiz-opts" id="quiz-opts"></div>
+        <div class="quiz-feedback" id="quiz-feedback"></div>
+        <button class="quiz-next-btn" id="quiz-next" onclick="nextQ()">Soal Berikutnya →</button>
+      </div>
+    </div>
+    <div class="quiz-result" id="quiz-result">
+      <div class="result-emoji" id="result-emoji"></div>
+      <div class="result-title" id="result-title"></div>
+      <div class="result-score" id="result-score"></div>
+      <div class="result-sub" id="result-sub"></div>
+      <button class="restart-btn" onclick="restartQuiz()">🔄 Coba Lagi</button>
+    </div>
+  </div>
+
+  <!-- SECTION CHECKLIST -->
+  <div id="checklist"></div>
+  <div class="section-header scroll-reveal">
+    <span class="sec-badge">SECTION 7</span>
+    <span class="sec-title">Checklist Sebelum Selesai</span>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="card card-glow-purple scroll-reveal">
+    <div class="check-header">
+      <div class="card-title" style="margin-bottom:0">✅ Checklist Pembuatan Auto Slider</div>
+      <div class="check-count" id="checkCount">0 / 10 selesai</div>
+    </div>
+    <div class="check-progress"><div class="check-fill" id="checkFill"></div></div>
+
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div>
+        <div class="check-text">Buat struktur HTML dengan .slider-container, .slides, dan .slide</div>
+        <div class="check-sub">Pastikan urutan elemen benar dan ID sesuai</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div>
+        <div class="check-text">Tambahkan overflow: hidden pada .slider-container</div>
+        <div class="check-sub">Tanpa ini, semua slide akan terlihat sekaligus</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div>
+        <div class="check-text">Set display: flex pada .slides agar berjajar horizontal</div>
+        <div class="check-sub">min-width: 100% pada setiap .slide</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div>
+        <div class="check-text">Tambahkan transition: transform pada .slides</div>
+        <div class="check-sub">Buat animasi geser menjadi halus, bukan langsung berpindah</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div>
+        <div class="check-text">Tulis fungsi showSlide(n) dengan translateX</div>
+        <div class="check-sub">Rumus: translateX(-index * 100%)</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div>
+        <div class="check-text">Tambahkan logika loop balik (index >= total / index < 0)</div>
+        <div class="check-sub">Agar slider tidak berhenti di ujung tapi kembali ke awal</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div>
+        <div class="check-text">Buat fungsi startAutoSlide() dengan setInterval</div>
+        <div class="check-sub">setInterval memanggil showSlide(index+1) setiap N milidetik</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div>
+        <div class="check-text">Buat fungsi resetTimer() untuk navigasi manual</div>
+        <div class="check-sub">clearInterval lama, lalu startAutoSlide() baru</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div>
+        <div class="check-text">Update dots aktif setiap kali slide berubah</div>
+        <div class="check-sub">Loop hapus semua .active, lalu tambah ke dots[index]</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-box"></div>
+      <div>
+        <div class="check-text">Panggil startAutoSlide() di akhir skrip JS</div>
+        <div class="check-sub">Slider berjalan otomatis begitu halaman dimuat</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer scroll-reveal">
+    <div class="footer-tags">
+      <span class="pill pill-c">HTML5</span>
+      <span class="pill pill-p">CSS Flexbox</span>
+      <span class="pill pill-y">Vanilla JS</span>
+      <span class="pill pill-g">setInterval</span>
+      <span class="pill pill-o">translateX</span>
+      <span class="pill pill-r">overflow:hidden</span>
+    </div>
+    <div class="footer-copy">Auto Slider Cheatsheet · Dibuat dengan HTML + CSS + JS murni</div>
+  </div>
+
+</div>
+
+<script>
+// ==================== PROGRESS BAR ====================
+window.addEventListener('scroll', () => {
+  const el = document.getElementById('progressBar');
+  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+  el.style.width = Math.min(pct, 100) + '%';
+});
+
+// ==================== SCROLL REVEAL ====================
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1, rootMargin: '0px 0px -20px 0px' });
+document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+
+function triggerVisibleElements() {
+  document.querySelectorAll('.scroll-reveal').forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) el.classList.add('visible');
+  });
+}
+triggerVisibleElements();
+setTimeout(triggerVisibleElements, 100);
+setTimeout(triggerVisibleElements, 400);
+
+// ==================== COPY CODE ====================
+function copyCode(btn, id) {
+  const el = document.getElementById(id);
+  navigator.clipboard.writeText(el.innerText);
+  btn.textContent = '✓ copied';
+  btn.classList.add('copied');
+  setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 2000);
+}
+
+// ==================== NAV ACTIVE ====================
+const sections = ['konsep','struktur','css','javascript','playground','quiz','checklist'];
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && window.scrollY >= el.offsetTop - 120) current = id;
+  });
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+});
+
+// ==================== HTML SELECTABLE ====================
+const htmlData = [
+  {
+    title: '.slider-container — Pembungkus Utama',
+    content: '<p style="color:var(--muted2);font-size:13.5px;margin-bottom:10px">Elemen terluar slider. Fungsi terpentingnya adalah <strong style="color:var(--cyan)">overflow: hidden</strong> yang menyembunyikan slide-slide di luar area tampilan.</p><div class="gen-css"><span class="prop">position</span>: <span class="val">relative</span>;<br><span class="prop">overflow</span>: <span class="val">hidden</span>; <span class="cm">/* WAJIB ADA */</span><br><span class="prop">width</span>: <span class="val">90%</span>;<br><span class="prop">border-radius</span>: <span class="val">15px</span>;</div>'
+  },
+  {
+    title: '.slides — Track Bergerak',
+    content: '<p style="color:var(--muted2);font-size:13.5px;margin-bottom:10px">Elemen yang benar-benar bergerak saat slide berpindah. Menggunakan <strong style="color:var(--cyan)">display: flex</strong> agar semua slide berjajar ke kanan, dan <strong style="color:var(--orange)">transition</strong> untuk animasi halus.</p><div class="gen-css"><span class="prop">display</span>: <span class="val">flex</span>;<br><span class="prop">transition</span>: <span class="val">transform 0.6s ease</span>;<br><span class="prop">width</span>: <span class="val">100%</span>;</div>'
+  },
+  {
+    title: '.slide — Item Slide Individual',
+    content: '<p style="color:var(--muted2);font-size:13.5px;margin-bottom:10px">Setiap gambar berada dalam elemen ini. Properti <strong style="color:var(--cyan)">min-width: 100%</strong> memastikan setiap slide selebar container, sehingga hanya satu yang tampak dalam bingkai.</p><div class="gen-css"><span class="prop">min-width</span>: <span class="val">100%</span>; <span class="cm">/* KUNCI */</span><br><span class="prop">position</span>: <span class="val">relative</span>;</div>'
+  },
+  {
+    title: '.prev & .next — Tombol Navigasi',
+    content: '<p style="color:var(--muted2);font-size:13.5px;margin-bottom:10px">Tombol panah kiri dan kanan. Diposisikan secara absolut di tengah-tengah slider menggunakan <strong style="color:var(--cyan)">top: 50%; transform: translateY(-50%)</strong>. z-index tinggi agar berada di atas gambar.</p><div class="gen-css"><span class="prop">position</span>: <span class="val">absolute</span>;<br><span class="prop">top</span>: <span class="val">50%</span>;<br><span class="prop">transform</span>: <span class="val">translateY(-50%)</span>;<br><span class="prop">z-index</span>: <span class="val">10</span>;</div>'
+  },
+  {
+    title: '.dot — Indikator Posisi',
+    content: '<p style="color:var(--muted2);font-size:13.5px;margin-bottom:10px">Titik-titik kecil di bawah slider yang menunjukkan posisi slide aktif. Kelas <strong style="color:var(--cyan)">.active</strong> ditambahkan secara dinamis via JS ke dot yang sesuai dengan index.</p><div class="gen-css"><span class="prop">width</span>: <span class="val">12px</span>;<br><span class="prop">height</span>: <span class="val">12px</span>;<br><span class="prop">border-radius</span>: <span class="val">50%</span>;<br><span class="prop">cursor</span>: <span class="val">pointer</span>;</div>'
+  }
+];
+
+function selectHtml(el, idx) {
+  document.querySelectorAll('#html-sel-grid .sel-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  const prev = document.getElementById('html-preview');
+  prev.innerHTML = '<div style="font-family:Syne,sans-serif;font-size:15px;font-weight:700;margin-bottom:10px;color:var(--cyan)">' + htmlData[idx].title + '</div>' + htmlData[idx].content;
+  prev.classList.add('show');
+}
+
+// ==================== DEMO SLIDER ====================
+var demoIndex = 0;
+var demoTotal = 4;
+var demoInterval;
+var demoSpeed = 3000;
+var demoTransDur = 0.6;
+var demoAutoOn = true;
+var demoTimerBarInterval;
+
+function demoShowSlide(n) {
+  demoIndex = n;
+  if (demoIndex >= demoTotal) demoIndex = 0;
+  if (demoIndex < 0) demoIndex = demoTotal - 1;
+  document.getElementById('demo-slides').style.transform = 'translateX(' + (-demoIndex * 100) + '%)';
+  document.querySelectorAll('#demo-dots .mini-dot').forEach((d,i) => d.classList.toggle('active', i === demoIndex));
+  resetTimerBar();
+}
+
+function demoChange(step) { demoResetTimer(); demoShowSlide(demoIndex + step); }
+function demoCurrent(n) { demoResetTimer(); demoShowSlide(n); }
+
+function demoStartAuto() {
+  if (!demoAutoOn) return;
+  demoInterval = setInterval(() => demoShowSlide(demoIndex + 1), demoSpeed);
+}
+function demoResetTimer() { clearInterval(demoInterval); demoStartAuto(); }
+
+function toggleAuto(btn) {
+  demoAutoOn = !demoAutoOn;
+  btn.classList.toggle('on', demoAutoOn);
+  btn.textContent = demoAutoOn ? '▶ Auto Play' : '⏸ Auto Play';
+  if (demoAutoOn) demoStartAuto(); else clearInterval(demoInterval);
+  updateGenCSS();
+}
+function toggleDots(btn) {
+  btn.classList.toggle('on');
+  document.getElementById('demo-dots').style.display = btn.classList.contains('on') ? 'flex' : 'none';
+}
+function toggleArrows(btn) {
+  btn.classList.toggle('on');
+  const vis = btn.classList.contains('on') ? 'flex' : 'none';
+  document.querySelector('#demo-slider .mini-prev').style.display = vis;
+  document.querySelector('#demo-slider .mini-next').style.display = vis;
+}
+function toggleTimerBar(btn) {
+  btn.classList.toggle('on');
+  document.getElementById('demo-timer-bar').style.display = btn.classList.contains('on') ? 'block' : 'none';
+}
+
+function changeSpeed(v) {
+  demoSpeed = v * 1000;
+  document.getElementById('speed-val').textContent = v + ' detik';
+  demoResetTimer();
+  updateGenCSS();
+}
+function changeTrans(v) {
+  demoTransDur = v / 10;
+  document.getElementById('trans-val').textContent = demoTransDur.toFixed(1) + 's';
+  document.getElementById('demo-slides').style.transition = 'transform ' + demoTransDur.toFixed(1) + 's cubic-bezier(.4,0,.2,1)';
+  updateGenCSS();
+}
+
+function updateGenCSS() {
+  document.getElementById('gen-css-display').innerHTML =
+    '<span class="prop">transition</span>: <span class="val">transform ' + demoTransDur.toFixed(1) + 's cubic-bezier(0.4,0,0.2,1)</span>;<br>' +
+    '<span class="cm">/* Auto slide interval: ' + (demoSpeed/1000) + ' detik */</span><br>' +
+    '<span class="fn">setInterval</span>(<span class="kw">function</span>() { ... }, <span class="val">' + demoSpeed + '</span>);';
+}
+
+// Timer bar animation
+function resetTimerBar() {
+  const bar = document.getElementById('demo-timer-bar');
+  clearInterval(demoTimerBarInterval);
+  bar.style.transition = 'none';
+  bar.style.width = '0%';
+  setTimeout(() => {
+    bar.style.transition = 'width ' + (demoSpeed / 1000) + 's linear';
+    bar.style.width = '100%';
+  }, 30);
+}
+
+demoStartAuto();
+updateGenCSS();
+resetTimerBar();
+
+// ==================== TRANSITION SELECTOR ====================
+const transData = [
+  { css: 'transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);', bezier: 'cubic-bezier(0.4,0,0.2,1)' },
+  { css: 'transition: transform 0.6s linear;', bezier: 'linear' },
+  { css: 'transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);', bezier: 'cubic-bezier(0.34,1.56,0.64,1)' },
+  { css: 'transition: transform 0.6s ease-in;', bezier: 'ease-in' }
+];
+
+function selectTrans(el, idx) {
+  document.querySelectorAll('#trans-grid .sel-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('trans-css-display').innerHTML =
+    '<span class="prop">transition</span>: <span class="val">' + transData[idx].css.replace('transition: transform 0.6s ','transform 0.6s ').replace(';','') + '</span>;';
+  document.getElementById('demo-slides').style.transition = 'transform 0.6s ' + transData[idx].bezier;
+  demoChange(1);
+}
+
+// ==================== QUIZ ====================
+const questions = [
+  {
+    q: 'Properti CSS apa yang WAJIB diberikan pada .slider-container agar slide yang tidak aktif tersembunyi?',
+    opts: ['display: none', 'overflow: hidden', 'visibility: hidden', 'z-index: -1'],
+    ans: 1,
+    exp: 'overflow: hidden menyembunyikan konten yang berada di luar batas elemen. Slide yang di luar "jendela" tidak akan terlihat, tapi tetap ada di DOM dan bisa digeser ke dalam.'
+  },
+  {
+    q: 'Properti CSS apa yang digunakan agar semua .slide berjajar secara horizontal di dalam .slides?',
+    opts: ['display: grid', 'float: left', 'display: flex', 'display: inline'],
+    ans: 2,
+    exp: 'display: flex membuat semua elemen anak (.slide) berjajar dalam satu baris horizontal, seperti rel kereta yang memanjang ke kanan.'
+  },
+  {
+    q: 'Bagaimana cara menggeser .slides agar slide ke-2 (index=1) tampil di layar?',
+    opts: ['margin-left: -100%', 'translateX(-100%)', 'left: -100%', 'translateY(-100%)'],
+    ans: 1,
+    exp: 'Rumusnya: translateX(-index * 100%). Untuk index=1: translateX(-1 * 100%) = translateX(-100%). Ini menggeser seluruh wrapper 100% ke kiri sehingga slide ke-2 masuk ke "jendela".'
+  },
+  {
+    q: 'Fungsi JavaScript apa yang digunakan untuk menjalankan auto slide secara otomatis berulang?',
+    opts: ['setTimeout()', 'setInterval()', 'requestAnimationFrame()', 'addEventListener()'],
+    ans: 1,
+    exp: 'setInterval() menjalankan fungsi callback secara berulang setiap N milidetik. Berbeda dengan setTimeout() yang hanya berjalan sekali.'
+  },
+  {
+    q: 'Mengapa fungsi resetTimer() perlu dipanggil saat user mengklik tombol panah?',
+    opts: ['Untuk menghapus semua slide', 'Untuk menghentikan timer lama dan memulai timer baru dari awal', 'Untuk memperbarui tampilan CSS', 'Untuk menambah slide baru'],
+    ans: 1,
+    exp: 'Jika user klik manual, timer lama tetap berjalan dan bisa menyebabkan slide langsung berpindah lagi sesaat kemudian. resetTimer() = clearInterval (hentikan) + startAutoSlide (mulai ulang).'
+  },
+  {
+    q: 'Apa nilai yang tepat untuk properti min-width pada setiap elemen .slide?',
+    opts: ['50%', 'auto', '100%', '200px'],
+    ans: 2,
+    exp: 'min-width: 100% memastikan setiap slide memenuhi lebar container. Jika kurang dari 100%, beberapa slide bisa terlihat sekaligus dalam satu bingkai.'
+  },
+  {
+    q: 'Apa fungsi dari logika "if (index >= totalSlides) index = 0" dalam showSlide()?',
+    opts: ['Menghentikan slider', 'Membuat slider kembali ke awal saat melewati slide terakhir', 'Menambah slide baru', 'Mempercepat animasi'],
+    ans: 1,
+    exp: 'Ini adalah logika "loop" atau "circular". Ketika sudah di slide terakhir dan maju lagi, index akan direset ke 0 (slide pertama) sehingga slider berjalan terus tanpa henti.'
+  },
+  {
+    q: 'Bagaimana cara update tampilan dots agar dot yang aktif berbeda dari yang lain?',
+    opts: ['Ubah warna langsung via CSS', 'Hapus class .active dari semua dot, lalu tambahkan ke dot[index]', 'Sembunyikan dot lain dengan display: none', 'Gunakan JavaScript alert()'],
+    ans: 1,
+    exp: 'Caranya: loop semua dot → classList.remove("active"), lalu dots[index].classList.add("active"). Ini memindahkan tanda aktif ke dot yang sesuai dengan slide saat ini.'
+  },
+  {
+    q: 'Properti CSS apa yang membuat animasi transisi slide terlihat halus (smooth)?',
+    opts: ['animation: slide 1s', 'transform: smooth()', 'transition: transform 0.6s ease', 'scroll-behavior: smooth'],
+    ans: 2,
+    exp: 'transition: transform 0.6s ease memberi tahu browser untuk menganimasi perubahan properti transform selama 0.6 detik dengan kurva ease. Tanpa ini, slide akan berpindah secara tiba-tiba.'
+  },
+  {
+    q: 'Untuk slide ke-3 (index = 2) dari total 4 slide, nilai translateX yang tepat adalah...',
+    opts: ['translateX(-200%)', 'translateX(-300%)', 'translateX(-400%)', 'translateX(-100%)'],
+    ans: 0,
+    exp: 'Rumus: translateX(-index * 100%) = translateX(-2 * 100%) = translateX(-200%). Index dimulai dari 0, jadi slide ke-3 = index 2.'
+  }
+];
+
+let qIdx = 0, scores = [], answered = false;
+
+function buildQuiz() {
+  // Score dots
+  let dotsHtml = '';
+  for (let i = 0; i < questions.length; i++) {
+    const state = scores[i] === true ? 'correct' : scores[i] === false ? 'wrong' : '';
+    dotsHtml += '<div class="score-dot ' + state + '">' + (state === 'correct' ? '✓' : state === 'wrong' ? '✗' : '') + '</div>';
+  }
+  document.getElementById('score-dots').innerHTML = dotsHtml;
+  document.getElementById('quiz-counter').textContent = (qIdx + 1) + ' / ' + questions.length;
+
+  const q = questions[qIdx];
+  document.getElementById('quiz-q').textContent = q.q;
+
+  let optsHtml = '';
+  const labels = ['A','B','C','D'];
+  q.opts.forEach((o,i) => {
+    optsHtml += '<div class="quiz-opt" onclick="answerQuiz(' + i + ')" id="opt-' + i + '"><span class="opt-label">' + labels[i] + '</span><span class="opt-text">' + o + '</span></div>';
+  });
+  document.getElementById('quiz-opts').innerHTML = optsHtml;
+
+  document.getElementById('quiz-feedback').className = 'quiz-feedback';
+  document.getElementById('quiz-feedback').textContent = '';
+  document.getElementById('quiz-next').className = 'quiz-next-btn';
+  answered = false;
+}
+
+function answerQuiz(i) {
+  if (answered) return;
+  answered = true;
+  const q = questions[qIdx];
+  const correct = i === q.ans;
+  scores[qIdx] = correct;
+
+  document.querySelectorAll('.quiz-opt').forEach(o => o.classList.add('disabled'));
+  document.getElementById('opt-' + q.ans).classList.add('correct-opt');
+  if (!correct) document.getElementById('opt-' + i).classList.add('wrong-opt');
+
+  const fb = document.getElementById('quiz-feedback');
+  fb.textContent = (correct ? '✅ Benar! ' : '❌ Salah. ') + q.exp;
+  fb.className = 'quiz-feedback show ' + (correct ? 'ok' : 'no');
+
+  document.getElementById('quiz-next').className = 'quiz-next-btn show';
+
+  // update dots immediately
+  let dotsHtml = '';
+  for (let j = 0; j < questions.length; j++) {
+    const state = scores[j] === true ? 'correct' : scores[j] === false ? 'wrong' : '';
+    dotsHtml += '<div class="score-dot ' + state + '">' + (state === 'correct' ? '✓' : state === 'wrong' ? '✗' : '') + '</div>';
+  }
+  document.getElementById('score-dots').innerHTML = dotsHtml;
+}
+
+function nextQ() {
+  qIdx++;
+  if (qIdx >= questions.length) {
+    showResult(); return;
+  }
+  buildQuiz();
+}
+
+function showResult() {
+  document.getElementById('quiz-main').style.display = 'none';
+  const res = document.getElementById('quiz-result');
+  res.classList.add('show');
+  const sc = scores.filter(s => s === true).length;
+  const pct = Math.round(sc / questions.length * 100);
+  const emojis = ['😢','😕','🙂','😊','🤩'];
+  const titles = ['Perlu Belajar Lagi','Lumayan, Terus Berlatih!','Cukup Bagus!','Hebat!','SEMPURNA! Master Slider! 🏆'];
+  const ei = sc <= 2 ? 0 : sc <= 4 ? 1 : sc <= 6 ? 2 : sc <= 8 ? 3 : 4;
+  document.getElementById('result-emoji').textContent = emojis[ei];
+  document.getElementById('result-title').textContent = titles[ei];
+  document.getElementById('result-score').textContent = sc + ' / ' + questions.length;
+  document.getElementById('result-sub').textContent = 'Kamu menjawab benar ' + sc + ' dari ' + questions.length + ' soal (' + pct + '%)';
+}
+
+function restartQuiz() {
+  qIdx = 0; scores = []; answered = false;
+  document.getElementById('quiz-main').style.display = 'block';
+  document.getElementById('quiz-result').classList.remove('show');
+  buildQuiz();
+}
+
+buildQuiz();
+
+// ==================== CHECKLIST ====================
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+  el.querySelector('.check-box').textContent = el.classList.contains('checked') ? '✓' : '';
+  updateCheckProgress();
+}
+function updateCheckProgress() {
+  const total = document.querySelectorAll('.check-item').length;
+  const done = document.querySelectorAll('.check-item.checked').length;
+  document.getElementById('checkCount').textContent = done + ' / ' + total + ' selesai';
+  document.getElementById('checkFill').style.width = (done / total * 100) + '%';
+}
+</script>
+</body>
+</html>
